@@ -1,5 +1,9 @@
 import Phaser, { Physics } from 'phaser'
 
+
+/*Main Game Class, where the pirates fight
+*
+*/
 export default class HelloWorldScene extends Phaser.Scene 
 {
 	constructor() 
@@ -27,7 +31,9 @@ export default class HelloWorldScene extends Phaser.Scene
 	private p2Action = "nothing";
 
 
-
+	/*Preload all assets from public/assets
+	*
+	*/
 	preload() 
 	{
 		this.load.image('pirateship', 'assets/pirateship.png');
@@ -39,6 +45,11 @@ export default class HelloWorldScene extends Phaser.Scene
 		});
 	}
 
+
+	/* Create all physics objects, such as player1, player2, the coints, and the ground.
+	* Also sets the players collisions boxes.
+	*
+	*/
 	create() 
 	{
 		this.add.image(400, 300, 'pirateship').setScale(2);
@@ -100,14 +111,19 @@ export default class HelloWorldScene extends Phaser.Scene
 
 	}
 
+
+	/*Update function
+	*
+	*
+	*/
 	update(time: number, delta: number) 
 	{
-
+		//If we cant find input then return
 		if(!this.cursors) {
 			return;
 		}
 
-		//Set Stats
+		//Set Player stats, such as traction
 		if(this.player) {
 			this.playerAttributes(this.player);
 		}
@@ -123,6 +139,8 @@ export default class HelloWorldScene extends Phaser.Scene
 			this.performNextAction(this.player2, delta);
 		}
 
+
+		//Switch player sides if they are on the opposite side code.
 		if(this.player && this.player2) {
 			if(this.player.body.x < this.player2.body.x) {
 				this.player.flipX = false;
@@ -151,6 +169,7 @@ export default class HelloWorldScene extends Phaser.Scene
 	}
 
 	private onAnimationEnd(player: Phaser.Physics.Arcade.Sprite) {
+		//Reset player timer. the timer resets to 0 when idle
 		if(player==this.player) {
 			this.p1Timer = 0; 
 			//this.p1Action = "nothing";
@@ -161,6 +180,10 @@ export default class HelloWorldScene extends Phaser.Scene
 		}
 	}
 
+
+	/*Whenever a player does a move, the timer goes off and the player will stay in the new animation
+	* until the timer reaches 500. Once that happens the player returns to the idle state.
+	*/
 	private performNextAction(player: Phaser.Physics.Arcade.Sprite, delta: number) {
 
 		if(player==this.player) {
@@ -190,6 +213,9 @@ export default class HelloWorldScene extends Phaser.Scene
 
 	}
 
+	/*Set player attributes such as traction whenever you dash.
+	*
+	*/
 	private playerAttributes(player: Phaser.Physics.Arcade.Sprite) {
 		if (player?.body && player.body.velocity.x > 10) {
 			player?.setVelocityX(player?.body && player.body.velocity.x-5);
@@ -204,6 +230,9 @@ export default class HelloWorldScene extends Phaser.Scene
 		}
 	}
 
+	/*Expand player collision box when doing moves that have a lot of range
+	* (i.e. crouching hook, roundhouse kick)
+	*/
 	private attackRanges(player: Phaser.Physics.Arcade.Sprite, leftside: boolean) {
 		const offset = (leftside)? 0 : 80;
 		const rangeMul = (leftside)? 1: -1;
@@ -221,6 +250,9 @@ export default class HelloWorldScene extends Phaser.Scene
 
 	}
 
+	/*Script to move the player, theres a walk forward, backward, and a jump.
+	*
+	*/
 	private movePlayer(player: Phaser.Physics.Arcade.Sprite, distance: number, moveType: string) {
 		if(moveType=="walk") {
 			player?.setVelocityX(0);
@@ -239,6 +271,9 @@ export default class HelloWorldScene extends Phaser.Scene
 		}
 	}
 
+	/*Sets player attack to use, calls the function to play the animation given via the moveType parameter
+	*
+	*/
 	private playerAttack(player: Phaser.Physics.Arcade.Sprite, damage: number, moveType:string) {
 
 		
@@ -253,6 +288,8 @@ export default class HelloWorldScene extends Phaser.Scene
 		
 		this.onAnimationEnd(player);
 	}
+
+
 
 	private handleHitBomb(player: Phaser.GameObjects.GameObject, b: Phaser.GameObjects.GameObject) {
 		this.physics.pause();
@@ -283,6 +320,9 @@ export default class HelloWorldScene extends Phaser.Scene
 		*/
 	}
 
+	/*Fires whenever the player collides with another player and one of them is attacking.
+	*Makes the opponent fly in the air if hit.
+	*/
 	private hitCallback(user: Phaser.GameObjects.GameObject, target: Phaser.GameObjects.GameObject) {
 		console.log("Hitbox collided with target! " + this.p1Action);
 		const userSprite = user as Phaser.Physics.Arcade.Sprite;
@@ -340,7 +380,9 @@ export default class HelloWorldScene extends Phaser.Scene
 		}
 	}
 	
-
+	/*All the animations for the pirates added in the game in one function
+	*
+	*/
 	private animationHandler() {
 		this.anims.create({
 			key: 'left',
@@ -433,7 +475,9 @@ export default class HelloWorldScene extends Phaser.Scene
 		});
 	}
 
-	
+	/*All the keyboard inputs in the game in one function
+	*
+	*/
 	private handleKeyboardInputs() {
 		// Handle the 'o' key press
 		const keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
