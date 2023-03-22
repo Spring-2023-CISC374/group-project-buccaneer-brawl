@@ -1,8 +1,9 @@
 import Phaser, { Physics } from 'phaser'
+import KeyboardInput from './Classes/keyboardinput';
 import Player from './classes/player'
 
 
-export default class HelloWorldScene extends Phaser.Scene 
+export default class FightScene extends Phaser.Scene 
 {
 	constructor() 
 	{
@@ -13,10 +14,9 @@ export default class HelloWorldScene extends Phaser.Scene
 	private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
 	private player1?: Player
 	private player2?: Player
-	private stars?: Phaser.Physics.Arcade.Group;
+	private coins?: Phaser.Physics.Arcade.Group;
 	private extraStars?: Phaser.Physics.Arcade.Group;
-	private bombs?: Phaser.Physics.Arcade.Group;
-	private hitboxes?: Phaser.Physics.Arcade.Group;
+	private keyInputs?: KeyboardInput;
 
 	private score = 0;
 	private scoreText?: Phaser.GameObjects.Text;
@@ -45,7 +45,6 @@ export default class HelloWorldScene extends Phaser.Scene
 		this.player1 = new Player(this.physics.add.sprite(100, 350, 'dude').setSize(54, 108).setOffset(0,12).setScale(2));
 		this.player2 = new Player(this.physics.add.sprite(700, 350, 'dude').setSize(54, 108).setOffset(70,12).setScale(2), 0x0096ff);
 		this.animationHandler();
-		//this.player.setBounce(0.2);
 
 
 		//Collisions for physics objects
@@ -54,37 +53,24 @@ export default class HelloWorldScene extends Phaser.Scene
 		
 		this.cursors = this.input.keyboard.createCursorKeys();
 		
-		this.stars = this.physics.add.group({
+		this.coins = this.physics.add.group({
 			key: 'star',
 			repeat: 12,
 			setXY: {x: Phaser.Math.Between(0 , 100), y: 0, stepX: Phaser.Math.Between(70 , 100)}
 		});
-		this.stars.children.iterate(c => {
+		this.coins.children.iterate(c => {
 			const child = c as Phaser.Physics.Arcade.Image;
 			child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8))
 		});
 
-		this.physics.add.collider(this.stars, this.platforms);
-		this.physics.add.overlap(this.player1.sprite, this.stars, this.handleCollectStar, undefined, this);
-		this.physics.add.overlap(this.player2.sprite, this.stars, this.handleCollectStar, undefined, this);
+		this.physics.add.collider(this.coins, this.platforms);
+		this.physics.add.overlap(this.player1.sprite, this.coins, this.handleCollectCoin, undefined, this);
+		this.physics.add.overlap(this.player2.sprite, this.coins, this.handleCollectCoin, undefined, this);
 
 		this.scoreText = this.add.text(16,16, 'score: 0', {
 			fontSize: '32 px',
 			color: '#000'
 		});
-
-		//Create bomb
-		this.bombs = this.physics.add.group();
-		//Create hitbox
-		this.hitboxes = this.physics.add.group({
-			immovable: true,
-			allowGravity: false
-		});
-		//Allow collision between physics objects and ground
-		this.physics.add.collider(this.bombs, this.platforms);
-		//this.physics.add.collider(this.player, this.bombs, this.handleHitBomb, undefined, this);
-
-
 
 		this.handleKeyboardInputs();
 
@@ -98,6 +84,13 @@ export default class HelloWorldScene extends Phaser.Scene
 		if(!this.cursors) {
 			return;
 		}
+
+		//Alter both player's traction and fall speed.
+		this.player1?.setPlayerTraction();
+		this.player1?.setPlayerFallSpeed();
+
+		this.player2?.setPlayerFallSpeed();
+		this.player2?.setPlayerTraction();
 
 		//Go back to idle/next animation after the one thats playing ends.
 		if(this.player1) {
@@ -134,60 +127,6 @@ export default class HelloWorldScene extends Phaser.Scene
 
 	}
 
-	/*private onAnimationEnd(player: Phaser.Physics.Arcade.Sprite) {
-		if(player==this.player) {
-			this.p1Timer = 0; 
-			//this.p1Action = "nothing";
-		}
-		else {
-			this.p2Timer = 0;
-			//this.p2Action = "nothing";
-		}
-	}*/
-
-	/*private performNextAction(player: Phaser.Physics.Arcade.Sprite, delta: number) {
-
-		if(player==this.player) {
-			if(this.p1Action != "nothing") this.p1Timer += delta;
-
-			while (this.p1Timer > 500) {
-				//this.timer -= 1000;
-				this.p1Timer = 0;
-	
-				this.p1Action = "nothing"
-				player?.anims.play('turn', true);
-			}
-
-		} else {
-
-			if(this.p2Action != "nothing") this.p2Timer += delta;
-
-			while (this.p2Timer > 500) {
-				//this.timer -= 1000;
-				this.p2Timer = 0;
-	
-				this.p2Action = "nothing"
-				player?.anims.play('turn', true);
-			}
-
-		}
-
-	}*/
-
-	/*private playerAttributes(player: Phaser.Physics.Arcade.Sprite) {
-		if (player?.body && player.body.velocity.x > 10) {
-			player?.setVelocityX(player?.body && player.body.velocity.x-5);
-		} else if ( player?.body && player?.body.velocity.x < -10) {
-			player?.setVelocityX(player?.body && player.body.velocity.x+5);
-		} else {
-			player?.setVelocityX(0);
-		}
-
-		if(player?.body && player.body.velocity.y < 10) {
-			player.setVelocityY(player?.body && player.body.velocity.y + 10);
-		}
-	}*/
-
 	private attackRanges(player: Player, leftside: boolean) {
 		const offset = (leftside)? 0 : 80;
 		const rangeMul = (leftside)? 1: -1;
@@ -205,66 +144,12 @@ export default class HelloWorldScene extends Phaser.Scene
 
 	}
 
-	/*private movePlayer(player: Phaser.Physics.Arcade.Sprite, distance: number, moveType: string) {
-		if(moveType=="walk") {
-			player?.setVelocityX(0);
-			player?.setVelocityX(-distance);
-			player?.anims.play('left', true);
-			if(player == this.player) this.p1Action = "walking"; else this.p2Action = "walking";
-
-			this.onAnimationEnd(player);
-			
-		} else if (moveType=="jump") {
-			player?.setVelocityY(distance);
-			player?.anims.play('right', true);
-			if(player == this.player) this.p1Action = "jumping"; else this.p2Action = "jumping";
-
-			this.onAnimationEnd(player);
-		}
-	}*/
-
-	/*private playerAttack(player: Phaser.Physics.Arcade.Sprite, damage: number, moveType:string) {
-
-		
-		player?.anims.play(moveType, true);
-		//console.log(this.p1Timer);
-
-		//Adding range to some moves
-
-
-		if(player == this.player) this.p1Action = "attack/" + moveType; else this.p2Action = "attack/" + moveType;
-		this.hitboxes?.setVisible(true);
-		
-		this.onAnimationEnd(player);
-	}*/
-
-	/*private handleHitBomb(player: Phaser.GameObjects.GameObject, b: Phaser.GameObjects.GameObject) {
-		this.physics.pause();
-
-		this.player?.setTint(0xff0000);
-		this.player?.anims.play('turn');
-
-		this.gameOver = true;
-	}*/
-
-	private handleCollectStar(player: Phaser.GameObjects.GameObject, s: Phaser.GameObjects.GameObject) {
+	private handleCollectCoin(player: Phaser.GameObjects.GameObject, s: Phaser.GameObjects.GameObject) {
 		const star = s as Phaser.Physics.Arcade.Image;
 		star.disableBody(true, true);
 
 		this.score += 10;
 		this.scoreText?.setText(`Score: ${this.score}`);
-
-		//this.speedUp += 0.1;
-
-		/*
-		if(this.stars?.countActive(true) === 0) {
-			this.stars.children.iterate(c => {
-				const child = c as Phaser.Physics.Arcade.Image;
-				child.enableBody(true, child.x, 0, true, true);
-			})
-		
-		}
-		*/
 	}
 
 	private hitCallback(user: Phaser.GameObjects.GameObject, target: Phaser.GameObjects.GameObject) {
@@ -292,7 +177,7 @@ export default class HelloWorldScene extends Phaser.Scene
 					setXY: {x: Phaser.Math.Between(0 , 100), y: 0, stepX: Phaser.Math.Between(70 , 100)}
 				});
 
-				this.stars?.children.iterate(c => {
+				this.coins?.children.iterate(c => {
 					const child = c as Phaser.Physics.Arcade.Image;
 					child.enableBody(true, child.x, 0, true, true);
 				})
@@ -316,7 +201,7 @@ export default class HelloWorldScene extends Phaser.Scene
 					setXY: {x: Phaser.Math.Between(0 , 100), y: 0, stepX: Phaser.Math.Between(70 , 100)}
 				});
 
-				this.stars?.children.iterate(c => {
+				this.coins?.children.iterate(c => {
 					const child = c as Phaser.Physics.Arcade.Image;
 					child.enableBody(true, child.x, 0, true, true);
 				})
@@ -421,139 +306,139 @@ export default class HelloWorldScene extends Phaser.Scene
 	private handleKeyboardInputs() {
 		// Handle the 'o' key press
 		const keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-		const keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-		const keyUp = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
-
-		const keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-		const keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-		const keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-
-		const keyI = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.I);
-		const keyO = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.O);
-		const keyP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
-
-		const keyJ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
-		const keyK = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.K);
-		const keyL = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L);
-
-		const keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
-		const keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
-		const keyT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T);
-
-		const keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
-		const keyG = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G);
-		const keyH = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.H);
-
-		keyLeft.on('down', ()=> {
-			if(this.player1?.sprite.body.touching.down) {
-				this.player1?.movePlayer(260,"walk");
-			}
-
-		});
-
-		keyA.on('down', ()=> {
-			if(this.player2?.sprite.body.touching.down) {
-				this.player2?.movePlayer(260,"walk");
-			}
-
-		});
-
-		keyRight.on('down', ()=> {
-			if(this.player1?.sprite.body.touching.down) {
-				this.player1?.movePlayer(-260,"walk");
-			}
-		});
-		keyD.on('down', ()=> {
-			if(this.player2?.sprite.body.touching.down) {
-				this.player2?.movePlayer(-260,"walk");
-			}
-		});
-
-		keyUp.on('down', ()=> {
-			if(this.player1?.sprite.body.touching.down) {
-				this.player1?.movePlayer(-580,"jump");
-			}
-
-		});
-
-		keyW.on('down', ()=> {
-			if(this.player2?.sprite.body.touching.down) {
-				this.player2?.movePlayer(-580,"jump");
-			}
-		});
-
-		keyI.on('down', ()=> {
-			if(this.player1) {
-				this.player1.playerAttack(10, 'punch');
-			}
-		});
-
-		keyE.on('down', ()=> {
-			if(this.player2) {
-				this.player2.playerAttack(10, 'punch');
-			}
-		});
-
-		keyO.on('down', ()=> {
-			if(this.player1) {
-				this.player1.playerAttack(10, 'hook');
-			}
-		});
-
-		keyR.on('down', ()=> {
-			if(this.player2) {
-				this.player2.playerAttack(10, 'hook');
-			}
-		});
-
-		keyP.on('down', ()=> {
-			if(this.player1) {
-				this.player1.playerAttack(10, 'kick');
-			}
-		});
-
-		keyT.on('down', ()=> {
-			if(this.player2) {
-				this.player2.playerAttack(10, 'kick');
-			}
-		});
-
-		keyJ.on('down', ()=> {
-			if(this.player1) {
-				this.player1.playerAttack(10, 'uppercut');
-			}
-		});
-
-		keyF.on('down', ()=> {
-			if(this.player2) {
-				this.player2.playerAttack(10, 'uppercut');
-			}
-		});
-
-		keyK.on('down', ()=> {
-			if(this.player1) {
-				this.player1.playerAttack(10, 'crhook');
-			}
-		});
-
-		keyG.on('down', ()=> {
-			if(this.player2) {
-				this.player2.playerAttack(10, 'crhook');
-			}
-		});
-
-		keyL.on('down', ()=> {
-			if(this.player1) {
-				this.player1.playerAttack(10, 'roundhouse');
-			}
-		});
-
-		keyH.on('down', ()=> {
-			if(this.player2) {
-				this.player2.playerAttack(10, 'roundhouse');
-			}
-		});
-
+        const keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        const keyUp = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+    
+        const keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+        const keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+        const keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+    
+        const keyI = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.I);
+        const keyO = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.O);
+        const keyP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
+    
+        const keyJ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
+        const keyK = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.K);
+        const keyL = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L);
+    
+        const keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
+        const keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
+        const keyT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T);
+    
+        const keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
+        const keyG = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G);
+        const keyH = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.H);
+    
+        keyLeft.on('down', ()=> {
+            if(this.player1?.sprite.body.touching.down) {
+                this.player1?.movePlayer(260,"walk");
+            }
+    
+        });
+    
+        keyA.on('down', ()=> {
+            if(this.player2?.sprite.body.touching.down) {
+                this.player2?.movePlayer(260,"walk");
+            }
+    
+        });
+    
+        keyRight.on('down', ()=> {
+            if(this.player1?.sprite.body.touching.down) {
+                this.player1?.movePlayer(-260,"walk");
+            }
+        });
+        keyD.on('down', ()=> {
+            if(this.player2?.sprite.body.touching.down) {
+                this.player2?.movePlayer(-260,"walk");
+            }
+        });
+    
+        keyUp.on('down', ()=> {
+            if(this.player1?.sprite.body.touching.down) {
+                this.player1?.movePlayer(-580,"jump");
+            }
+    
+        });
+    
+        keyW.on('down', ()=> {
+            if(this.player2?.sprite.body.touching.down) {
+                this.player2?.movePlayer(-580,"jump");
+            }
+        });
+    
+        keyI.on('down', ()=> {
+            if(this.player1) {
+                this.player1.playerAttack(10, 'punch');
+            }
+        });
+    
+        keyE.on('down', ()=> {
+            if(this.player2) {
+                this.player2.playerAttack(10, 'punch');
+            }
+        });
+    
+        keyO.on('down', ()=> {
+            if(this.player1) {
+                this.player1.playerAttack(10, 'hook');
+            }
+        });
+    
+        keyR.on('down', ()=> {
+            if(this.player2) {
+                this.player2.playerAttack(10, 'hook');
+            }
+        });
+    
+        keyP.on('down', ()=> {
+            if(this.player1) {
+                this.player1.playerAttack(10, 'kick');
+            }
+        });
+    
+        keyT.on('down', ()=> {
+            if(this.player2) {
+                this.player2.playerAttack(10, 'kick');
+            }
+        });
+    
+        keyJ.on('down', ()=> {
+            if(this.player1) {
+                this.player1.playerAttack(10, 'uppercut');
+            }
+        });
+    
+        keyF.on('down', ()=> {
+            if(this.player2) {
+                this.player2.playerAttack(10, 'uppercut');
+            }
+        });
+    
+        keyK.on('down', ()=> {
+            if(this.player1) {
+                this.player1.playerAttack(10, 'crhook');
+            }
+        });
+    
+        keyG.on('down', ()=> {
+            if(this.player2) {
+                this.player2.playerAttack(10, 'crhook');
+            }
+        });
+    
+        keyL.on('down', ()=> {
+            if(this.player1) {
+                this.player1.playerAttack(10, 'roundhouse');
+            }
+        });
+    
+        keyH.on('down', ()=> {
+            if(this.player2) {
+                this.player2.playerAttack(10, 'roundhouse');
+            }
+        });
+    
 	}
 
 
