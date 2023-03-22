@@ -16,7 +16,7 @@ export default class Player {
       }
     }
 
-    setPlayerAttributes(){
+    setPlayerTraction(){
         if (this.sprite.body && this.sprite.body.velocity.x > 10) {
 			this.sprite.setVelocityX(this.sprite.body && this.sprite.body.velocity.x-5);
 		} else if (this.sprite.body && this.sprite.body.velocity.x < -10) {
@@ -24,11 +24,14 @@ export default class Player {
 		} else {
 			this.sprite.setVelocityX(0);
 		}
+    }
 
+	setPlayerFallSpeed() {
 		if(this.sprite.body && this.sprite.body.velocity.y < 10) {
 			this.sprite.setVelocityY(this.sprite?.body && this.sprite.body.velocity.y + 10);
 		}
-    }
+	}
+
     movePlayer(distance: number, moveType: string){
         if(moveType=="walk") {
 			this.sprite.setVelocityX(0);
@@ -51,12 +54,13 @@ export default class Player {
     performNextAction(delta: number) {
 		if(this.action != "nothing") this.timer += delta;
         
-        while (this.timer > 500) {
-	    	//this.timer -= 1000;
+        while (this.timer > 500) {  	
+			//this.timer -= 1000;
 			this.timer = 0;
 
 			this.action = "nothing"
 			this.sprite.anims.play('turn', true);
 		}
 	}
+	
 }
