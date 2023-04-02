@@ -16,6 +16,7 @@ export default class LoadingScene extends Phaser.Scene {
     loadingText.setOrigin(0.5);
 
     // Load assets here
+  
     this.load.image('bomg', 'assets/bomb.png');
     this.load.image('dude', 'assets/dude.png');
     this.load.image('pirateship', 'assets/pirateship.png');
