@@ -17,7 +17,7 @@ export default class LoadingScene extends Phaser.Scene {
 
     // Load assets here
   
-    this.load.image('bomg', 'assets/bomb.png');
+    this.load.image('bomb', 'assets/bomb.png');
     this.load.image('dude', 'assets/dude.png');
     this.load.image('pirateship', 'assets/pirateship.png');
     this.load.image('platform', 'assets/platform.png');
