@@ -1,7 +1,7 @@
 import Phaser, { Physics } from 'phaser'
 import KeyboardInput from './Classes/keyboardinput';
-import Player from './classes/player'
-
+import Player from './Classes/player'
+import registerInput from './moves/registerInput';
 
 export default class FightScene extends Phaser.Scene 
 {
@@ -17,6 +17,7 @@ export default class FightScene extends Phaser.Scene
 	private coins?: Phaser.Physics.Arcade.Group;
 	private extraStars?: Phaser.Physics.Arcade.Group;
 	private keyInputs?: KeyboardInput;
+	private registerOne?: registerInput;
 
 	private score = 0;
 	private scoreText?: Phaser.GameObjects.Text;
@@ -75,7 +76,8 @@ export default class FightScene extends Phaser.Scene
 		this.handleKeyboardInputs();
 
 		this.player1.sprite.anims.play('turn', true);	
-
+		this.registerOne = new registerInput();
+		this.registerOne?.validInput("kick", 4, this.player1, this.player2);
 	}
 
 	update(time: number, delta: number) 
@@ -84,7 +86,7 @@ export default class FightScene extends Phaser.Scene
 		if(!this.cursors) {
 			return;
 		}
-
+		
 		//Alter both player's traction and fall speed.
 		this.player1?.setPlayerTraction();
 		this.player1?.setPlayerFallSpeed();
