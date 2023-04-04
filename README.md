@@ -10,3 +10,17 @@ Izahe': Combo system, Knockdowns,  needs Health so player can win and lose.
 Max & Rob: Registering inputs via a string/string array.
 
 Tavon Gage: Title screen + menus, preloading scnees, make the video
+
+Max's Progress
+<ul>
+    <li>
+    Attempting to work on registering inputs via a string array
+    </li>
+    <li>
+    Currently with some refactoring and some conditonal suggestions from Chris, I was
+    able to create some logic depending if the input belongs to the valid inputs I declared in my constructor as well as my avaliable_keys.
+    </li>
+    <li>
+    However I've hit a roadblock with the mvp so far as I was having difficulty, to get both players to execute the commands without the use of keyboard input. I'll consider stopping by office hours this week to make sure I'm not falling behind in the class as well as not slipping up on tasks that were assigned to the group.
+    </li>
+</ul>
