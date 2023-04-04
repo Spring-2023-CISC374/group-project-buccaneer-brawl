@@ -5,17 +5,25 @@ export default class Player {
     sprite: Phaser.Physics.Arcade.Sprite; //The actual sprite that moves, attacks, etc. Was previously the "player" variable
     timer: number; //Time remaining until player can perform an action
     action: string; //Action that the player intends to do
-
+	health: number; //Pirates health; when it falls to 0 the pirate loses
+	cooldown: boolean; //Handler for player collisions (one hit registering for 10+ hits); A player cannot hit another player while cooldown is false
+y
     constructor(sprite: Phaser.Physics.Arcade.Sprite, tint?: number) {
       this.sprite = sprite;
+	  this.health = 3;
       this.sprite.setCollideWorldBounds(true);
       this.action = "nothing";
       this.timer = 0;
+	  this.health = 100;
+	  this.cooldown = true;
+
       if (tint){
         this.sprite.setTint(tint);
       }
     }
-
+	setCooldown(b: boolean){
+		this.cooldown = b;
+	}
     setPlayerTraction(){
         if (this.sprite.body && this.sprite.body.velocity.x > 10) {
 			this.sprite.setVelocityX(this.sprite.body && this.sprite.body.velocity.x-5);
