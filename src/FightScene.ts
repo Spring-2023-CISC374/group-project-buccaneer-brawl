@@ -73,11 +73,12 @@ export default class FightScene extends Phaser.Scene
 			color: '#000'
 		});
 
-		this.handleKeyboardInputs();
+		//this.handleKeyboardInputs();
 
 		this.player1.sprite.anims.play('turn', true);	
 		this.registerOne = new registerInput();
-		this.registerOne?.validInput("kick", 4, this.player1, this.player2);
+		this.registerOne?.validInput(["walk", "walk_back", "jump_forward", "kick", "punch", "uppercut", "crhook", "roundhouse"], 4, this.player1, this.player2);
+		console.log(this.registerOne)
 	}
 
 	update(time: number, delta: number) 
@@ -305,7 +306,7 @@ export default class FightScene extends Phaser.Scene
 	}
 
 	
-	private handleKeyboardInputs() {
+	/*private handleKeyboardInputs() {
 		// Handle the 'o' key press
 		const keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         const keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
@@ -441,7 +442,7 @@ export default class FightScene extends Phaser.Scene
             }
         });
     
-	}
+	}*/
 
 
 
