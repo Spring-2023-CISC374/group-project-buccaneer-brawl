@@ -43,8 +43,11 @@ export default class Player {
 		} else if (moveType==="jump") {
 			this.sprite.setVelocityY(distance);
 			this.sprite.anims.play('right', true);
+			//Sets the jumping distance in the left direction
+			this.sprite.setVelocityY(-distance);
+			this.sprite.anims.play("left", true)
 			this.action = "jumping";
-		}
+		} 
     }
     playerAttack(damage: number, moveType: string){
         this.action = "attack/" + moveType;

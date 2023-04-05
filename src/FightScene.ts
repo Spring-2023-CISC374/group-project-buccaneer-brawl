@@ -1,7 +1,7 @@
 import Phaser, { Physics } from 'phaser'
 import KeyboardInput from './Classes/keyboardinput';
-import Player from './classes/player'
-
+import Player from './Classes/player'
+import registerInput from './moves/registerInput';
 
 export default class FightScene extends Phaser.Scene 
 {
@@ -17,6 +17,7 @@ export default class FightScene extends Phaser.Scene
 	private coins?: Phaser.Physics.Arcade.Group;
 	private extraStars?: Phaser.Physics.Arcade.Group;
 	private keyInputs?: KeyboardInput;
+	private registerOne?: registerInput;
 
 	private score = 0;
 	private scoreText?: Phaser.GameObjects.Text;
@@ -72,10 +73,12 @@ export default class FightScene extends Phaser.Scene
 			color: '#000'
 		});
 
-		this.handleKeyboardInputs();
+		//this.handleKeyboardInputs();
 
 		this.player1.sprite.anims.play('turn', true);	
-
+		this.registerOne = new registerInput();
+		this.registerOne?.validInput(["walk", "walk_back", "jump_forward", "kick", "punch", "uppercut", "crhook", "roundhouse"], 4, this.player1, this.player2);
+		console.log(this.registerOne)
 	}
 
 	update(time: number, delta: number) 
@@ -84,7 +87,7 @@ export default class FightScene extends Phaser.Scene
 		if(!this.cursors) {
 			return;
 		}
-
+		
 		//Alter both player's traction and fall speed.
 		this.player1?.setPlayerTraction();
 		this.player1?.setPlayerFallSpeed();
@@ -303,7 +306,7 @@ export default class FightScene extends Phaser.Scene
 	}
 
 	
-	private handleKeyboardInputs() {
+	/*private handleKeyboardInputs() {
 		// Handle the 'o' key press
 		const keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         const keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
@@ -439,7 +442,7 @@ export default class FightScene extends Phaser.Scene
             }
         });
     
-	}
+	}*/
 
 
 
