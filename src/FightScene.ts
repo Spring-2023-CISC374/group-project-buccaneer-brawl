@@ -77,7 +77,7 @@ export default class FightScene extends Phaser.Scene
 
 		this.player1.sprite.anims.play('turn', true);	
 		this.registerOne = new registerInput();
-		this.registerOne?.validInput(["walk", "walk_back", "jump_forward", "kick", "punch", "uppercut", "crhook", "roundhouse"], 4, this.player1, this.player2);
+		
 		console.log(this.registerOne)
 	}
 
@@ -87,6 +87,8 @@ export default class FightScene extends Phaser.Scene
 		if(!this.cursors) {
 			return;
 		}
+
+		this.registerOne?.validInput(["walk", "walk_back", "jump_forward", "kick", "punch", "uppercut", "crhook", "roundhouse"], 4,this.player1, this.player2);
 		
 		//Alter both player's traction and fall speed.
 		this.player1?.setPlayerTraction();
