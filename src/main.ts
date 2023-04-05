@@ -1,5 +1,4 @@
 import Phaser from 'phaser'
-
 import FightScene from './FightScene'
 
 const config: Phaser.Types.Core.GameConfig = {
@@ -7,6 +6,7 @@ const config: Phaser.Types.Core.GameConfig = {
 	parent: 'app',
 	width: 800,
 	height: 600,
+	title: "Buccaneer Brawl",
 	physics: {
 		default: 'arcade',
 		arcade: {
