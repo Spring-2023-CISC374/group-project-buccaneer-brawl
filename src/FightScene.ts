@@ -221,7 +221,7 @@ export default class FightScene extends Phaser.Scene
 			frames: this.anims.generateFrameNumbers('dude', {
 				start: 3, end: 5
 			}),
-			frameRate: 20,
+			frameRate: 5,
 			repeat: -1 //-1 for infinite repeats
 		});
 

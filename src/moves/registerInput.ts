@@ -13,11 +13,9 @@ export default class registerInput extends Phaser.Scene{
     //Calls the players registers input first
     public validInput(input: string[], spaces: number, player1?: Player, player2?: Player){
         //Check if the input is considered a non-fighting move for loop, reset to start!!!
-        let index = 0;
         let timer = 0;
-
-        while(index < input.length) {
-            if(timer <= this.game.getTime()) {
+        for(let index = 0; index < input.length; index++) {
+            if(timer <= 10) {
             
                 if(this.keys_to_choose[index] === "walk" || this.keys_to_choose[index] === "walk_back" || this.keys_to_choose[index] === "jump_forward"){
                     player1?.movePlayer(spaces, input[index]);
@@ -30,8 +28,7 @@ export default class registerInput extends Phaser.Scene{
                 if(index === input.length){
                     index = 0;
                 }
-                timer += this.game.getTime() + 1000;
-                index++;
+                timer += 10;
             }
         }
 
