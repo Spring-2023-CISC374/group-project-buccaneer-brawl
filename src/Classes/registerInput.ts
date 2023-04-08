@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import Player from "../Classes/player";
+import Player from "./player";
 export default class registerInput extends Phaser.Scene{
     private keys_to_choose: string[] = ["walk_forward", "walk_back", "jump_forward", "kick", "punch", "uppercut", "crhook", "roundhouse"];
     private key_index = 0;
