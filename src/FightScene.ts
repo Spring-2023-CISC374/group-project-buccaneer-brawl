@@ -160,6 +160,7 @@ export default class FightScene extends Phaser.Scene
 
 		//this.score += 10;
 		//this.scoreText?.setText(`Score: ${this.score}`);
+		
 	}
 	
 	private checkCooldown(){
