@@ -50,14 +50,14 @@ export default class Player {
 			this.action = "walking"
 			this.timer = 0;
 			
-		} else if (moveType == "walk_back") {
+		} else if (moveType === "walk_back") {
 			this.sprite.setVelocityX(0);
 			this.sprite.setVelocityX(-distance);
 			this.sprite.anims.play('left', true);
 			this.action = "walking"
 			this.timer = 0;
 			
-		} else if (moveType=="jump") {
+		} else if (moveType ==="jump") {
 			this.sprite.setVelocityY(distance);
 			this.sprite.anims.play('right', true);
 			//Sets the jumping distance in the left direction
@@ -65,13 +65,13 @@ export default class Player {
 			this.sprite.anims.play("left", true)
 			this.action = "jumping";
 		}
-		else if (moveType==="jump_forward") {
+		else if (moveType ==="jump_forward") {
 			this.sprite.setVelocityY(distance);
 			this.sprite.setVelocityX(distance);
 			this.sprite.anims.play('right', true);
 			this.action = "jumping";
 		}
-		else if (moveType==="jump_back") {
+		else if (moveType ==="jump_back") {
 			this.sprite.setVelocityY(distance);
 			this.sprite.setVelocityX(0);
 			this.sprite.setVelocityX(-distance);
