@@ -98,7 +98,7 @@ export default class FightScene extends Phaser.Scene
 			return;
 		}
 
-		this.registerOne?.validInput(["walk_forward", "walk_back", "jump_forward", "kick", "punch", "uppercut", "crhook", "roundhouse"], 4, delta, this.player1);
+		this.registerOne?.validInput(["walk_forward", "walk_back", "jump", "kick", "punch", "uppercut", "crhook", "roundhouse"], 4, delta, this.player1);
 		
 		//Alter both player's traction and fall speed.
 		this.player1?.setPlayerTraction();

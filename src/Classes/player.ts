@@ -62,6 +62,19 @@ export default class Player {
 			this.sprite.anims.play('right', true);
 			this.action = "jumping";
 		}
+		else if (moveType==="jump_forward") {
+			this.sprite.setVelocityY(distance);
+			this.sprite.setVelocityX(distance);
+			this.sprite.anims.play('right', true);
+			this.action = "jumping";
+		}
+		else if (moveType==="jump_back") {
+			this.sprite.setVelocityY(distance);
+			this.sprite.setVelocityX(0);
+			this.sprite.setVelocityX(-distance);
+			this.sprite.anims.play('right', true);
+			this.action = "jumping";
+		}
 	}
 	playerAttack(damage: number, moveType: string){
 		this.action = "attack/" + moveType;

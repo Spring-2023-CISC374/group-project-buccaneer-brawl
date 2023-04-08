@@ -20,7 +20,7 @@ export default class registerInput extends Phaser.Scene{
             this.key_timer = 0;
             console.log(input[this.key_index]);
 
-            if(input[this.key_index] === "walk_forward" || input[this.key_index] === "walk_back" || input[this.key_index] === "jump_forward"){
+            if(input[this.key_index].startsWith("walk") || input[this.key_index].startsWith("jump")){
                 player?.movePlayer(260, input[this.key_index]);
             }
             else{
