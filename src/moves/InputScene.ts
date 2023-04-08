@@ -17,8 +17,16 @@ export default class InputScene extends Phaser.Scene {
       color: '#000',
     });
 
-    const inputForm = document.getElementById('inputForm') as HTMLFormElement;
-    inputForm.style.display = 'block';
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "css-class-name"; // set the CSS class
+    document.body.appendChild(input);
+
+
+   // const inputForm = document.getElementById('inputForm') as HTMLFormElement;
+    //inputForm.style.display = 'block';
+
+
 
     const submitButton = this.add.text(200, 200, 'Submit', {
       fontSize: '32px',
@@ -35,16 +43,13 @@ export default class InputScene extends Phaser.Scene {
   }
 
   saveInput() {
-    const inputElement = document.getElementById(
-      'nameField'
-    ) as HTMLInputElement;
-    this.savedText = inputElement.value;
+    const inputElement = document.getElementsByTagName("input");
+  //  this.savedText = inputElement.namedItem.name;
     console.log('Saved text: ', this.savedText);
 
-    inputElement.value = '';
 
-    const inputForm = document.getElementById('inputForm') as HTMLFormElement;
-    inputForm.style.display = 'none';
+    const inputForm = document.getElementById('input') as HTMLFormElement;
+   // inputForm.style.display = 'none';
 
     this.scene.start('FightScene');
   }

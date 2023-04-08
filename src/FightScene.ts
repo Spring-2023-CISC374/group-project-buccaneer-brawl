@@ -8,7 +8,7 @@ export default class FightScene extends Phaser.Scene
 {
 	constructor() 
 	{
-		super('hello-world')
+		super('FightScene')
 	}
 
 	private platforms?: Phaser.Physics.Arcade.StaticGroup;
