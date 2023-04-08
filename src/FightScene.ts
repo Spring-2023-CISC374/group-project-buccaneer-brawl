@@ -1,6 +1,7 @@
 import Phaser, { Physics } from 'phaser'
 import KeyboardInput from './Classes/keyboardinput';
-import Player from './classes/player'
+import Player from './Classes/player';
+import RegisterInput from './moves/registerInput';
 
 
 export default class FightScene extends Phaser.Scene 
@@ -17,9 +18,13 @@ export default class FightScene extends Phaser.Scene
 	private coins?: Phaser.Physics.Arcade.Group;
 	private extraStars?: Phaser.Physics.Arcade.Group;
 	private keyInputs?: KeyboardInput;
+	private registerOne?: RegisterInput;
 
 	private score = 0;
 	private scoreText?: Phaser.GameObjects.Text;
+	private P1_HPText?: Phaser.GameObjects.Text;
+	private P2_HPText?: Phaser.GameObjects.Text;
+
 
 	private gameOver = false;
 
@@ -67,15 +72,23 @@ export default class FightScene extends Phaser.Scene
 		this.physics.add.overlap(this.player1.sprite, this.coins, this.handleCollectCoin, undefined, this);
 		this.physics.add.overlap(this.player2.sprite, this.coins, this.handleCollectCoin, undefined, this);
 
-		this.scoreText = this.add.text(16,16, 'score: 0', {
-			fontSize: '32 px',
+		this.P1_HPText = this.add.text(16,16, 'Player 1 HP: 0', {
+			fontSize: '30px',
+			color: '#000'
+		});
+		this.P2_HPText = this.add.text(510,16, 'Player 2 HP: 0', {
+			fontSize: '30px',
 			color: '#000'
 		});
 
+		this.P1_HPText?.setText(`Player 1 HP: ${this.player1.health}`);
+		this.P2_HPText?.setText(`Player 2 HP: ${this.player2.health}`);
 		this.handleKeyboardInputs();
 
 		this.player1.sprite.anims.play('turn', true);	
+		this.player2.sprite.anims.play('turn', true);	
 
+		this.registerOne = new RegisterInput();
 	}
 
 	update(time: number, delta: number) 
@@ -85,6 +98,8 @@ export default class FightScene extends Phaser.Scene
 			return;
 		}
 
+		this.registerOne?.validInput(["walk_forward", "walk_back", "jump", "kick", "punch", "uppercut", "crhook", "roundhouse"], 4, delta, this.player1);
+		
 		//Alter both player's traction and fall speed.
 		this.player1?.setPlayerTraction();
 		this.player1?.setPlayerFallSpeed();
@@ -122,7 +137,7 @@ export default class FightScene extends Phaser.Scene
 
 		//Continously see if player1 is colliding with player2
 		if(this.player1 && this.player2) {
-			this.physics.overlap(this.player1.sprite, this.player2.sprite, this.hitCallback, undefined, this);
+			this.physics.overlap(this.player1.sprite, this.player2.sprite, this.hitCallback, this.checkCooldown, this);
 		}
 
 	}
@@ -148,28 +163,51 @@ export default class FightScene extends Phaser.Scene
 		const star = s as Phaser.Physics.Arcade.Image;
 		star.disableBody(true, true);
 
-		this.score += 10;
-		this.scoreText?.setText(`Score: ${this.score}`);
+		//this.score += 10;
+		//this.scoreText?.setText(`Score: ${this.score}`);
+		
+	}
+	
+	private checkCooldown(){
+		return this.player1?.cooldown && this.player2?.cooldown
 	}
 
 	private hitCallback(user: Phaser.GameObjects.GameObject, target: Phaser.GameObjects.GameObject) {
 		console.log("Hitbox collided with target! " + this.player1?.action);
+
 		const userSprite = user as Phaser.Physics.Arcade.Sprite;
 		const targetSprite  = target as Phaser.Physics.Arcade.Sprite;
-
+		
 		if(this.player1 && this.player2) {
-			if(this.player1.action.startsWith("attack")) {
+			if(this.player1.action.startsWith("attack") && this.player1.cooldown) {
+				this.player1.setCooldown(false);
 				if(this.player1.sprite.body.x < this.player2.sprite.body.x) {
 					userSprite.setVelocityX(-260);
 					targetSprite.setVelocityX(260);
 					targetSprite.setVelocityY(-460);
-					targetSprite.anims.play('hit', true);
+					targetSprite.anims.play('hit', true);	
 				} else {
 					userSprite.setVelocityX(260);
 					targetSprite.setVelocityX(-260);
 					targetSprite.setVelocityY(-460);
 					targetSprite.anims.play('hit', true);
-				}	
+				}
+
+				this.player2.health -= this.player1.damage;
+				this.P2_HPText?.setText(`Player 2 HP: ${this.player2.health}`);
+
+				//This makes it so that a hit only damages a player once every second
+				setTimeout(() => {
+					this.player1?.setCooldown(true);
+					console.log("attack ready!");
+				}, 1000);
+
+				//Game over placeholder
+				if (this.player2.health <= 0){
+					this.player2.health = 0;
+					this.physics.pause();
+					this.player2.sprite.setTint(0xff0000);
+				}
 
 				this.extraStars = this.physics.add.group({
 					key: 'star',
@@ -183,6 +221,8 @@ export default class FightScene extends Phaser.Scene
 				})
 			}
 			if(this.player2.action.startsWith("attack")) {
+				this.player2.setCooldown(false);
+
 				if(this.player1.sprite.body.x > this.player2.sprite.body.x) {
 					targetSprite.setVelocityX(-260);
 					userSprite.setVelocityX(260);
@@ -193,6 +233,21 @@ export default class FightScene extends Phaser.Scene
 					userSprite.setVelocityX(-260);
 					userSprite.setVelocityY(-460);
 					userSprite.anims.play('hit', true);
+				}
+				this.player1.health -= this.player2.damage;
+				this.P1_HPText?.setText(`Player 1 HP: ${this.player1.health}`);
+
+				//This makes it so that a hit only damages a player once every second
+				setTimeout(() => {
+					this.player2?.setCooldown(true);
+					console.log("attack ready!");
+				}, 1000);
+
+				//Game over placeholder
+				if (this.player1.health <= 0){
+					this.player1.health = 0;
+					this.physics.pause();
+					this.player1.sprite.setTint(0xff0000);
 				}
 
 				this.extraStars = this.physics.add.group({
@@ -381,61 +436,61 @@ export default class FightScene extends Phaser.Scene
     
         keyO.on('down', ()=> {
             if(this.player1) {
-                this.player1.playerAttack(10, 'hook');
+                this.player1.playerAttack(15, 'hook');
             }
         });
     
         keyR.on('down', ()=> {
             if(this.player2) {
-                this.player2.playerAttack(10, 'hook');
+                this.player2.playerAttack(15, 'hook');
             }
         });
     
         keyP.on('down', ()=> {
             if(this.player1) {
-                this.player1.playerAttack(10, 'kick');
+                this.player1.playerAttack(20, 'kick');
             }
         });
     
         keyT.on('down', ()=> {
             if(this.player2) {
-                this.player2.playerAttack(10, 'kick');
+                this.player2.playerAttack(20, 'kick');
             }
         });
     
         keyJ.on('down', ()=> {
             if(this.player1) {
-                this.player1.playerAttack(10, 'uppercut');
+                this.player1.playerAttack(30, 'uppercut');
             }
         });
     
         keyF.on('down', ()=> {
             if(this.player2) {
-                this.player2.playerAttack(10, 'uppercut');
+                this.player2.playerAttack(30, 'uppercut');
             }
         });
     
         keyK.on('down', ()=> {
             if(this.player1) {
-                this.player1.playerAttack(10, 'crhook');
+                this.player1.playerAttack(45, 'crhook');
             }
         });
     
         keyG.on('down', ()=> {
             if(this.player2) {
-                this.player2.playerAttack(10, 'crhook');
+                this.player2.playerAttack(45, 'crhook');
             }
         });
     
         keyL.on('down', ()=> {
             if(this.player1) {
-                this.player1.playerAttack(10, 'roundhouse');
+                this.player1.playerAttack(60, 'roundhouse');
             }
         });
     
         keyH.on('down', ()=> {
             if(this.player2) {
-                this.player2.playerAttack(10, 'roundhouse');
+                this.player2.playerAttack(60, 'roundhouse');
             }
         });
     
