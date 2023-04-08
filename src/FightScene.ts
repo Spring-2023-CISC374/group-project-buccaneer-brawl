@@ -1,6 +1,7 @@
 import Phaser, { Physics } from 'phaser'
 import KeyboardInput from './Classes/keyboardinput';
 import Player from './Classes/player';
+import RegisterInput from './moves/registerInput';
 
 
 export default class FightScene extends Phaser.Scene 
@@ -17,6 +18,7 @@ export default class FightScene extends Phaser.Scene
 	private coins?: Phaser.Physics.Arcade.Group;
 	private extraStars?: Phaser.Physics.Arcade.Group;
 	private keyInputs?: KeyboardInput;
+	private registerOne?: RegisterInput;
 
 	private score = 0;
 	private scoreText?: Phaser.GameObjects.Text;
@@ -86,6 +88,7 @@ export default class FightScene extends Phaser.Scene
 		this.player1.sprite.anims.play('turn', true);	
 		this.player2.sprite.anims.play('turn', true);	
 
+		this.registerOne = new RegisterInput();
 	}
 
 	update(time: number, delta: number) 
