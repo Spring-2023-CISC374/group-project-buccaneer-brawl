@@ -1,6 +1,6 @@
 import Phaser, { Physics } from 'phaser'
 import KeyboardInput from './Classes/keyboardinput';
-import Player from './classes/player'
+import Player from './Classes/player';
 
 
 export default class FightScene extends Phaser.Scene 
@@ -84,6 +84,7 @@ export default class FightScene extends Phaser.Scene
 		this.handleKeyboardInputs();
 
 		this.player1.sprite.anims.play('turn', true);	
+		this.player2.sprite.anims.play('turn', true);	
 
 	}
 
@@ -186,7 +187,7 @@ export default class FightScene extends Phaser.Scene
 					targetSprite.anims.play('hit', true);
 				}
 
-				this.player2.health -= 50;
+				this.player2.health -= this.player1.damage;
 				this.P2_HPText?.setText(`Player 2 HP: ${this.player2.health}`);
 
 				//This makes it so that a hit only damages a player once every second
@@ -196,7 +197,8 @@ export default class FightScene extends Phaser.Scene
 				}, 1000);
 
 				//Game over placeholder
-				if (this.player2.health == 0){
+				if (this.player2.health <= 0){
+					this.player2.health = 0;
 					this.physics.pause();
 					this.player2.sprite.setTint(0xff0000);
 				}
@@ -226,7 +228,7 @@ export default class FightScene extends Phaser.Scene
 					userSprite.setVelocityY(-460);
 					userSprite.anims.play('hit', true);
 				}
-				this.player1.health -= 50;
+				this.player1.health -= this.player2.damage;
 				this.P1_HPText?.setText(`Player 1 HP: ${this.player1.health}`);
 
 				//This makes it so that a hit only damages a player once every second
@@ -236,7 +238,8 @@ export default class FightScene extends Phaser.Scene
 				}, 1000);
 
 				//Game over placeholder
-				if (this.player1.health == 0){
+				if (this.player1.health <= 0){
+					this.player1.health = 0;
 					this.physics.pause();
 					this.player1.sprite.setTint(0xff0000);
 				}
@@ -427,61 +430,61 @@ export default class FightScene extends Phaser.Scene
     
         keyO.on('down', ()=> {
             if(this.player1) {
-                this.player1.playerAttack(10, 'hook');
+                this.player1.playerAttack(15, 'hook');
             }
         });
     
         keyR.on('down', ()=> {
             if(this.player2) {
-                this.player2.playerAttack(10, 'hook');
+                this.player2.playerAttack(15, 'hook');
             }
         });
     
         keyP.on('down', ()=> {
             if(this.player1) {
-                this.player1.playerAttack(10, 'kick');
+                this.player1.playerAttack(20, 'kick');
             }
         });
     
         keyT.on('down', ()=> {
             if(this.player2) {
-                this.player2.playerAttack(10, 'kick');
+                this.player2.playerAttack(20, 'kick');
             }
         });
     
         keyJ.on('down', ()=> {
             if(this.player1) {
-                this.player1.playerAttack(10, 'uppercut');
+                this.player1.playerAttack(30, 'uppercut');
             }
         });
     
         keyF.on('down', ()=> {
             if(this.player2) {
-                this.player2.playerAttack(10, 'uppercut');
+                this.player2.playerAttack(30, 'uppercut');
             }
         });
     
         keyK.on('down', ()=> {
             if(this.player1) {
-                this.player1.playerAttack(10, 'crhook');
+                this.player1.playerAttack(45, 'crhook');
             }
         });
     
         keyG.on('down', ()=> {
             if(this.player2) {
-                this.player2.playerAttack(10, 'crhook');
+                this.player2.playerAttack(45, 'crhook');
             }
         });
     
         keyL.on('down', ()=> {
             if(this.player1) {
-                this.player1.playerAttack(10, 'roundhouse');
+                this.player1.playerAttack(60, 'roundhouse');
             }
         });
     
         keyH.on('down', ()=> {
             if(this.player2) {
-                this.player2.playerAttack(10, 'roundhouse');
+                this.player2.playerAttack(60, 'roundhouse');
             }
         });
     
