@@ -18,6 +18,7 @@ export default class InputScene extends Phaser.Scene {
     });
 
     const input = document.createElement("input");
+    input.id = "myText"
     input.type = "text";
     input.className = "css-class-name"; // set the CSS class
     document.body.appendChild(input);
@@ -43,12 +44,15 @@ export default class InputScene extends Phaser.Scene {
   }
 
   saveInput() {
-    const inputElement = document.getElementsByTagName("input");
-  //  this.savedText = inputElement.namedItem.name;
+    const inputElement = document.getElementById(
+      'myText'
+    ) as HTMLInputElement;
+    this.savedText = inputElement.value;
     console.log('Saved text: ', this.savedText);
 
+    inputElement.value = '';
 
-    const inputForm = document.getElementById('input') as HTMLFormElement;
+    const inputForm = document.getElementById('inputForm') as HTMLFormElement;
    // inputForm.style.display = 'none';
 
     this.scene.start('FightScene');
