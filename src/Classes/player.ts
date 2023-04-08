@@ -42,15 +42,22 @@ export default class Player {
 		}
 	}
 
-	movePlayer(distance: number, moveType: string){
-		if(moveType=="walk") {
+    movePlayer(distance: number, moveType: string){
+        if(moveType ==="walk_forward") {
+			this.sprite.setVelocityX(0);
+			this.sprite.setVelocityX(distance);
+			this.sprite.anims.play('left', true);
+			this.action = "walking"
+			this.timer = 0;
+			
+		} else if (moveType == "walk_back") {
 			this.sprite.setVelocityX(0);
 			this.sprite.setVelocityX(-distance);
 			this.sprite.anims.play('left', true);
 			this.action = "walking"
 			this.timer = 0;
-			
-		} else if (moveType=="jump") {
+		} 
+		else if (moveType==="jump") {
 			this.sprite.setVelocityY(distance);
 			this.sprite.anims.play('right', true);
 			this.action = "jumping";
