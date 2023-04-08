@@ -1,13 +1,14 @@
 import Phaser, { Physics } from 'phaser'
-import KeyboardInput from './Classes/keyboardinput';
-import Player from './Classes/player'
-import registerInput from './moves/registerInput';
+import KeyboardInput from '../Classes/keyboardinput';
+import Player from '../Classes/player';
+import RegisterInput from '../Classes/registerInput';
+
 
 export default class FightScene extends Phaser.Scene 
 {
 	constructor() 
 	{
-		super('hello-world')
+		super({key: 'FightScene'})
 	}
 
 	private platforms?: Phaser.Physics.Arcade.StaticGroup;
@@ -17,24 +18,13 @@ export default class FightScene extends Phaser.Scene
 	private coins?: Phaser.Physics.Arcade.Group;
 	private extraStars?: Phaser.Physics.Arcade.Group;
 	private keyInputs?: KeyboardInput;
-	private registerOne?: registerInput;
+	private registerOne?: RegisterInput;
+	private P1_HPText?: Phaser.GameObjects.Text;
+	private P2_HPText?: Phaser.GameObjects.Text;
 
-	private score = 0;
-	private scoreText?: Phaser.GameObjects.Text;
 
 	private gameOver = false;
 
-
-	preload() 
-	{
-		this.load.image('pirateship', 'assets/pirateship.png');
-		this.load.image('ground', 'assets/platform.png');
-		this.load.image('star', 'assets/star.png');
-		this.load.image('bomb', 'assets/bomb.png');
-		this.load.spritesheet('dude', 'assets/dude.png', {
-			frameWidth: 128, frameHeight: 128
-		});
-	}
 
 	create() 
 	{
@@ -68,17 +58,22 @@ export default class FightScene extends Phaser.Scene
 		this.physics.add.overlap(this.player1.sprite, this.coins, this.handleCollectCoin, undefined, this);
 		this.physics.add.overlap(this.player2.sprite, this.coins, this.handleCollectCoin, undefined, this);
 
-		this.scoreText = this.add.text(16,16, 'score: 0', {
-			fontSize: '32 px',
+		this.P1_HPText = this.add.text(16,16, 'Player 1 HP: 0', {
+			fontSize: '30px',
+			color: '#000'
+		});
+		this.P2_HPText = this.add.text(510,16, 'Player 2 HP: 0', {
+			fontSize: '30px',
 			color: '#000'
 		});
 
-		//this.handleKeyboardInputs();
+		this.P1_HPText?.setText(`Player 1 HP: ${this.player1.health}`);
+		this.P2_HPText?.setText(`Player 2 HP: ${this.player2.health}`);
 
 		this.player1.sprite.anims.play('turn', true);	
-		this.registerOne = new registerInput();
-		
-		console.log(this.registerOne)
+		this.player2.sprite.anims.play('turn', true);	
+
+		this.registerOne = new RegisterInput();
 	}
 
 	update(time: number, delta: number) 
@@ -88,7 +83,7 @@ export default class FightScene extends Phaser.Scene
 			return;
 		}
 
-		this.registerOne?.validInput(["walk", "walk_back", "jump_forward", "kick", "punch", "uppercut", "crhook", "roundhouse"], 4,this.player1, this.player2);
+		this.registerOne?.validInput(["walk_forward", "walk_back", "jump", "kick", "punch", "uppercut", "crhook", "roundhouse"], 4, delta, this.player1);
 		
 		//Alter both player's traction and fall speed.
 		this.player1?.setPlayerTraction();
@@ -127,7 +122,7 @@ export default class FightScene extends Phaser.Scene
 
 		//Continously see if player1 is colliding with player2
 		if(this.player1 && this.player2) {
-			this.physics.overlap(this.player1.sprite, this.player2.sprite, this.hitCallback, undefined, this);
+			this.physics.overlap(this.player1.sprite, this.player2.sprite, this.hitCallback, this.checkCooldown, this);
 		}
 
 	}
@@ -153,28 +148,51 @@ export default class FightScene extends Phaser.Scene
 		const star = s as Phaser.Physics.Arcade.Image;
 		star.disableBody(true, true);
 
-		this.score += 10;
-		this.scoreText?.setText(`Score: ${this.score}`);
+		//this.score += 10;
+		//this.scoreText?.setText(`Score: ${this.score}`);
+		
+	}
+	
+	private checkCooldown(){
+		return this.player1?.cooldown && this.player2?.cooldown
 	}
 
 	private hitCallback(user: Phaser.GameObjects.GameObject, target: Phaser.GameObjects.GameObject) {
 		console.log("Hitbox collided with target! " + this.player1?.action);
+
 		const userSprite = user as Phaser.Physics.Arcade.Sprite;
 		const targetSprite  = target as Phaser.Physics.Arcade.Sprite;
-
+		
 		if(this.player1 && this.player2) {
-			if(this.player1.action.startsWith("attack")) {
+			if(this.player1.action.startsWith("attack") && this.player1.cooldown) {
+				this.player1.setCooldown(false);
 				if(this.player1.sprite.body.x < this.player2.sprite.body.x) {
 					userSprite.setVelocityX(-260);
 					targetSprite.setVelocityX(260);
 					targetSprite.setVelocityY(-460);
-					targetSprite.anims.play('hit', true);
+					targetSprite.anims.play('hit', true);	
 				} else {
 					userSprite.setVelocityX(260);
 					targetSprite.setVelocityX(-260);
 					targetSprite.setVelocityY(-460);
 					targetSprite.anims.play('hit', true);
-				}	
+				}
+
+				this.player2.health -= this.player1.damage;
+				this.P2_HPText?.setText(`Player 2 HP: ${this.player2.health}`);
+
+				//This makes it so that a hit only damages a player once every second
+				setTimeout(() => {
+					this.player1?.setCooldown(true);
+					console.log("attack ready!");
+				}, 1000);
+
+				//Game over placeholder
+				if (this.player2.health <= 0){
+					this.player2.health = 0;
+					this.physics.pause();
+					this.player2.sprite.setTint(0xff0000);
+				}
 
 				this.extraStars = this.physics.add.group({
 					key: 'star',
@@ -188,6 +206,8 @@ export default class FightScene extends Phaser.Scene
 				})
 			}
 			if(this.player2.action.startsWith("attack")) {
+				this.player2.setCooldown(false);
+
 				if(this.player1.sprite.body.x > this.player2.sprite.body.x) {
 					targetSprite.setVelocityX(-260);
 					userSprite.setVelocityX(260);
@@ -198,6 +218,21 @@ export default class FightScene extends Phaser.Scene
 					userSprite.setVelocityX(-260);
 					userSprite.setVelocityY(-460);
 					userSprite.anims.play('hit', true);
+				}
+				this.player1.health -= this.player2.damage;
+				this.P1_HPText?.setText(`Player 1 HP: ${this.player1.health}`);
+
+				//This makes it so that a hit only damages a player once every second
+				setTimeout(() => {
+					this.player2?.setCooldown(true);
+					console.log("attack ready!");
+				}, 1000);
+
+				//Game over placeholder
+				if (this.player1.health <= 0){
+					this.player1.health = 0;
+					this.physics.pause();
+					this.player1.sprite.setTint(0xff0000);
 				}
 
 				this.extraStars = this.physics.add.group({
@@ -221,7 +256,7 @@ export default class FightScene extends Phaser.Scene
 			frames: this.anims.generateFrameNumbers('dude', {
 				start: 3, end: 5
 			}),
-			frameRate: 5,
+			frameRate: 20,
 			repeat: -1 //-1 for infinite repeats
 		});
 
@@ -306,146 +341,6 @@ export default class FightScene extends Phaser.Scene
 			repeat: -1 //-1 for infinite repeats
 		});
 	}
-
-	
-	/*private handleKeyboardInputs() {
-		// Handle the 'o' key press
-		const keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-        const keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-        const keyUp = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
-    
-        const keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-        const keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-        const keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-    
-        const keyI = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.I);
-        const keyO = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.O);
-        const keyP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
-    
-        const keyJ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
-        const keyK = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.K);
-        const keyL = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L);
-    
-        const keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
-        const keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
-        const keyT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T);
-    
-        const keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
-        const keyG = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G);
-        const keyH = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.H);
-    
-        keyLeft.on('down', ()=> {
-            if(this.player1?.sprite.body.touching.down) {
-                this.player1?.movePlayer(260,"walk");
-            }
-    
-        });
-    
-        keyA.on('down', ()=> {
-            if(this.player2?.sprite.body.touching.down) {
-                this.player2?.movePlayer(260,"walk");
-            }
-    
-        });
-    
-        keyRight.on('down', ()=> {
-            if(this.player1?.sprite.body.touching.down) {
-                this.player1?.movePlayer(-260,"walk");
-            }
-        });
-        keyD.on('down', ()=> {
-            if(this.player2?.sprite.body.touching.down) {
-                this.player2?.movePlayer(-260,"walk");
-            }
-        });
-    
-        keyUp.on('down', ()=> {
-            if(this.player1?.sprite.body.touching.down) {
-                this.player1?.movePlayer(-580,"jump");
-            }
-    
-        });
-    
-        keyW.on('down', ()=> {
-            if(this.player2?.sprite.body.touching.down) {
-                this.player2?.movePlayer(-580,"jump");
-            }
-        });
-    
-        keyI.on('down', ()=> {
-            if(this.player1) {
-                this.player1.playerAttack(10, 'punch');
-            }
-        });
-    
-        keyE.on('down', ()=> {
-            if(this.player2) {
-                this.player2.playerAttack(10, 'punch');
-            }
-        });
-    
-        keyO.on('down', ()=> {
-            if(this.player1) {
-                this.player1.playerAttack(10, 'hook');
-            }
-        });
-    
-        keyR.on('down', ()=> {
-            if(this.player2) {
-                this.player2.playerAttack(10, 'hook');
-            }
-        });
-    
-        keyP.on('down', ()=> {
-            if(this.player1) {
-                this.player1.playerAttack(10, 'kick');
-            }
-        });
-    
-        keyT.on('down', ()=> {
-            if(this.player2) {
-                this.player2.playerAttack(10, 'kick');
-            }
-        });
-    
-        keyJ.on('down', ()=> {
-            if(this.player1) {
-                this.player1.playerAttack(10, 'uppercut');
-            }
-        });
-    
-        keyF.on('down', ()=> {
-            if(this.player2) {
-                this.player2.playerAttack(10, 'uppercut');
-            }
-        });
-    
-        keyK.on('down', ()=> {
-            if(this.player1) {
-                this.player1.playerAttack(10, 'crhook');
-            }
-        });
-    
-        keyG.on('down', ()=> {
-            if(this.player2) {
-                this.player2.playerAttack(10, 'crhook');
-            }
-        });
-    
-        keyL.on('down', ()=> {
-            if(this.player1) {
-                this.player1.playerAttack(10, 'roundhouse');
-            }
-        });
-    
-        keyH.on('down', ()=> {
-            if(this.player2) {
-                this.player2.playerAttack(10, 'roundhouse');
-            }
-        });
-    
-	}*/
-
 
 
 }
