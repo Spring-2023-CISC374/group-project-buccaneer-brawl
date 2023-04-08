@@ -1,14 +1,14 @@
 import Phaser, { Physics } from 'phaser'
-import KeyboardInput from './Classes/keyboardinput';
-import Player from './Classes/player';
-import RegisterInput from './moves/registerInput';
+import KeyboardInput from '../Classes/keyboardinput';
+import Player from '../Classes/player';
+import RegisterInput from '../Classes/registerInput';
 
 
 export default class FightScene extends Phaser.Scene 
 {
 	constructor() 
 	{
-		super('FightScene')
+		super({key: 'FightScene'})
 	}
 
 	private platforms?: Phaser.Physics.Arcade.StaticGroup;
@@ -28,17 +28,6 @@ export default class FightScene extends Phaser.Scene
 
 	private gameOver = false;
 
-
-	preload() 
-	{
-		this.load.image('pirateship', 'assets/pirateship.png');
-		this.load.image('ground', 'assets/platform.png');
-		this.load.image('star', 'assets/star.png');
-		this.load.image('bomb', 'assets/bomb.png');
-		this.load.spritesheet('dude', 'assets/dude.png', {
-			frameWidth: 128, frameHeight: 128
-		});
-	}
 
 	create() 
 	{

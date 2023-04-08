@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 
 export default class LoadingScene extends Phaser.Scene {
   constructor() {
-    super({ key: 'loading' });
+    super({ key: 'LoadingScene' });
   }
 
   preload() {
@@ -16,16 +16,18 @@ export default class LoadingScene extends Phaser.Scene {
     loadingText.setOrigin(0.5);
 
     // Load assets here
-    this.load.image('bomg', 'assets/bomb.png');
-    this.load.image('dude', 'assets/dude.png');
+    this.load.image('bomb', 'assets/bomb.png');
+    this.load.spritesheet('dude', 'assets/dude.png', {
+			frameWidth: 128, frameHeight: 128
+		});
     this.load.image('pirateship', 'assets/pirateship.png');
-    this.load.image('platform', 'assets/platform.png');
+    this.load.image('ground', 'assets/platform.png');
     this.load.image('sky.png','assets/sky.png');
-    this.load.image('star.png','assets/star.png');
+    this.load.image('star', 'assets/star.png');
   }
 
   create() {
     // Start menu scene
-    this.scene.start('menu');
+    this.scene.start('InputScene');
   }
 }
