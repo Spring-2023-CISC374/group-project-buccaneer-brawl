@@ -58,9 +58,16 @@ export default class Player {
 			this.timer = 0;
 			
 		} else if (moveType=="jump") {
+<<<<<<< HEAD
 			this.sprite.setVelocityY(-580);
 			this.sprite.anims.play('right', true);
 			//Sets the jumping distance in the left direction
+=======
+			this.sprite.setVelocityY(distance);
+			this.sprite.anims.play('right', true);
+			//Sets the jumping distance in the left direction
+			this.sprite.setVelocityY(-distance);
+>>>>>>> 84bf9a9c5c87f8fa0fa82fea5ecf6e0f05b333b6
 			this.sprite.anims.play("left", true)
 			this.action = "jumping";
 		}
@@ -76,13 +83,13 @@ export default class Player {
 			this.sprite.anims.play('right', true);
 			this.action = "jumping";
 		}
-	}
-	playerAttack(damage: number, moveType: string){
-		this.action = "attack/" + moveType;
-		this.sprite.anims.play(moveType, true);
-		this.damage = damage;
-	}
-	performNextAction(delta: number) {
+    }
+    playerAttack(damage: number, moveType: string){
+        this.action = "attack/" + moveType;
+        this.sprite.anims.play(moveType, true);
+
+    }
+    performNextAction(delta: number) {
 		if(this.action != "nothing") this.timer += delta;
 		
 		while (this.timer > 500) {  	

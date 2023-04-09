@@ -1,14 +1,14 @@
 import Phaser, { Physics } from 'phaser'
-import KeyboardInput from './Classes/keyboardinput';
-import Player from './Classes/player';
-import RegisterInput from './moves/registerInput';
+import KeyboardInput from '../Classes/keyboardinput';
+import Player from '../Classes/player';
+import RegisterInput from '../Classes/registerInput';
 
 
 export default class FightScene extends Phaser.Scene 
 {
 	constructor() 
 	{
-		super('hello-world')
+		super({key: 'FightScene'})
 	}
 
 	private platforms?: Phaser.Physics.Arcade.StaticGroup;
@@ -19,26 +19,12 @@ export default class FightScene extends Phaser.Scene
 	private extraStars?: Phaser.Physics.Arcade.Group;
 	private keyInputs?: KeyboardInput;
 	private registerOne?: RegisterInput;
-
-	private score = 0;
-	private scoreText?: Phaser.GameObjects.Text;
 	private P1_HPText?: Phaser.GameObjects.Text;
 	private P2_HPText?: Phaser.GameObjects.Text;
 
 
 	private gameOver = false;
 
-
-	preload() 
-	{
-		this.load.image('pirateship', 'assets/pirateship.png');
-		this.load.image('ground', 'assets/platform.png');
-		this.load.image('star', 'assets/star.png');
-		this.load.image('bomb', 'assets/bomb.png');
-		this.load.spritesheet('dude', 'assets/dude.png', {
-			frameWidth: 128, frameHeight: 128
-		});
-	}
 
 	create() 
 	{
@@ -83,7 +69,6 @@ export default class FightScene extends Phaser.Scene
 
 		this.P1_HPText?.setText(`Player 1 HP: ${this.player1.health}`);
 		this.P2_HPText?.setText(`Player 2 HP: ${this.player2.health}`);
-		this.handleKeyboardInputs();
 
 		this.player1.sprite.anims.play('turn', true);	
 		this.player2.sprite.anims.play('turn', true);	
@@ -356,146 +341,6 @@ export default class FightScene extends Phaser.Scene
 			repeat: -1 //-1 for infinite repeats
 		});
 	}
-
-	
-	private handleKeyboardInputs() {
-		// Handle the 'o' key press
-		const keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-        const keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-        const keyUp = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
-    
-        const keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-        const keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-        const keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-    
-        const keyI = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.I);
-        const keyO = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.O);
-        const keyP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
-    
-        const keyJ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
-        const keyK = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.K);
-        const keyL = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L);
-    
-        const keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
-        const keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
-        const keyT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T);
-    
-        const keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
-        const keyG = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G);
-        const keyH = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.H);
-    
-        keyLeft.on('down', ()=> {
-            if(this.player1?.sprite.body.touching.down) {
-                this.player1?.movePlayer(260,"walk");
-            }
-    
-        });
-    
-        keyA.on('down', ()=> {
-            if(this.player2?.sprite.body.touching.down) {
-                this.player2?.movePlayer(260,"walk");
-            }
-    
-        });
-    
-        keyRight.on('down', ()=> {
-            if(this.player1?.sprite.body.touching.down) {
-                this.player1?.movePlayer(-260,"walk");
-            }
-        });
-        keyD.on('down', ()=> {
-            if(this.player2?.sprite.body.touching.down) {
-                this.player2?.movePlayer(-260,"walk");
-            }
-        });
-    
-        keyUp.on('down', ()=> {
-            if(this.player1?.sprite.body.touching.down) {
-                this.player1?.movePlayer(-580,"jump");
-            }
-    
-        });
-    
-        keyW.on('down', ()=> {
-            if(this.player2?.sprite.body.touching.down) {
-                this.player2?.movePlayer(-580,"jump");
-            }
-        });
-    
-        keyI.on('down', ()=> {
-            if(this.player1) {
-                this.player1.playerAttack(10, 'punch');
-            }
-        });
-    
-        keyE.on('down', ()=> {
-            if(this.player2) {
-                this.player2.playerAttack(10, 'punch');
-            }
-        });
-    
-        keyO.on('down', ()=> {
-            if(this.player1) {
-                this.player1.playerAttack(15, 'hook');
-            }
-        });
-    
-        keyR.on('down', ()=> {
-            if(this.player2) {
-                this.player2.playerAttack(15, 'hook');
-            }
-        });
-    
-        keyP.on('down', ()=> {
-            if(this.player1) {
-                this.player1.playerAttack(20, 'kick');
-            }
-        });
-    
-        keyT.on('down', ()=> {
-            if(this.player2) {
-                this.player2.playerAttack(20, 'kick');
-            }
-        });
-    
-        keyJ.on('down', ()=> {
-            if(this.player1) {
-                this.player1.playerAttack(30, 'uppercut');
-            }
-        });
-    
-        keyF.on('down', ()=> {
-            if(this.player2) {
-                this.player2.playerAttack(30, 'uppercut');
-            }
-        });
-    
-        keyK.on('down', ()=> {
-            if(this.player1) {
-                this.player1.playerAttack(45, 'crhook');
-            }
-        });
-    
-        keyG.on('down', ()=> {
-            if(this.player2) {
-                this.player2.playerAttack(45, 'crhook');
-            }
-        });
-    
-        keyL.on('down', ()=> {
-            if(this.player1) {
-                this.player1.playerAttack(60, 'roundhouse');
-            }
-        });
-    
-        keyH.on('down', ()=> {
-            if(this.player2) {
-                this.player2.playerAttack(60, 'roundhouse');
-            }
-        });
-    
-	}
-
 
 
 }
