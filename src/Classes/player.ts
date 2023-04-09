@@ -50,14 +50,14 @@ export default class Player {
 			this.action = "walking"
 			this.timer = 0;
 			
-		} else if (moveType == "walk_back") {
+		} else if (moveType === "walk_back") {
 			this.sprite.setVelocityX(0);
 			this.sprite.setVelocityX(-distance);
 			this.sprite.anims.play('left', true);
 			this.action = "walking"
 			this.timer = 0;
 			
-		} else if (moveType=="jump") {
+		} else if (moveType==="jump") {
 			this.sprite.setVelocityY(distance);
 			this.sprite.anims.play('right', true);
 			//Sets the jumping distance in the left direction
