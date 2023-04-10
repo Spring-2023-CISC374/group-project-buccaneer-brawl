@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { generateResponse } from '../Classes/chatgptrequest';
-import available_moves from "../Types/available_moves";
+import available_moves from '../Types/available_moves';
 
 export default class InputScene extends Phaser.Scene {
   private savedText: string;
@@ -8,15 +8,14 @@ export default class InputScene extends Phaser.Scene {
   private moveMap: Map<string, string>;
 
   constructor() {
-    super({key: 'InputScene'});
+    super({ key: 'InputScene' });
     this.savedText = '';
-    this.p1_responseText = ["random"];
+    this.p1_responseText = ['random'];
 
     this.moveMap = available_moves.reduce((accumulator, curr) => {
-      accumulator.set(curr, "true");
+      accumulator.set(curr, 'true');
       return accumulator;
     }, new Map<string, string>());
-
   }
 
   create() {
@@ -27,21 +26,22 @@ export default class InputScene extends Phaser.Scene {
       color: '#000',
     });
 
-    const input = document.createElement("input");
-    input.id = "myText"
-    input.type = "text";
-    input.className = "css-class-name"; // set the CSS class
+    const input = document.createElement('input');
+    input.id = 'myText';
+    input.type = 'text';
+    input.className = 'css-class-name'; // set the CSS class
+    input.style.position = 'absolute';
+    input.style.left = '50px';
+    input.style.top = '60px';
     document.body.appendChild(input);
 
     const map = available_moves.reduce((accumulator, curr) => {
-      accumulator.set(curr, "true");
+      accumulator.set(curr, 'true');
       return accumulator;
     }, new Map<string, string>());
 
-
-   // const inputForm = document.getElementById('inputForm') as HTMLFormElement;
+    // const inputForm = document.getElementById('inputForm') as HTMLFormElement;
     //inputForm.style.display = 'block';
-
 
     const submitButton = this.add.text(200, 200, 'Submit', {
       fontSize: '32px',
@@ -58,55 +58,48 @@ export default class InputScene extends Phaser.Scene {
   }
 
   saveInput() {
-    const inputElement = document.getElementById(
-      'myText'
-    ) as HTMLInputElement;
+    const inputElement = document.getElementById('myText') as HTMLInputElement;
     this.savedText = inputElement.value;
     console.log('Saved text: ', this.savedText);
 
     inputElement.value = '';
 
     const inputForm = document.getElementById('inputForm') as HTMLFormElement;
-   // inputForm.style.display = 'none';
+    // inputForm.style.display = 'none';
 
-      // Usage:
+    // Usage:
     generateResponse(this.savedText).then((generatedText) => {
       console.log(generatedText);
       this.p1_responseText = this.formatRequest(generatedText);
       this.scene.start('FightScene', {
-        "p1_responseText": this.p1_responseText
+        p1_responseText: this.p1_responseText,
       });
     });
-   
   }
 
-
   formatRequest(resposneText: string | undefined): string[] {
-
-    if(resposneText == undefined) {
-      return ["random"];
+    if (resposneText == undefined) {
+      return ['random'];
     }
 
-    const beginSubstring = resposneText.indexOf("[");
-    const endSubstring = resposneText.indexOf("]");
+    const beginSubstring = resposneText.indexOf('[');
+    const endSubstring = resposneText.indexOf(']');
 
-    if(beginSubstring == undefined || endSubstring == undefined) {
-      return ["random"];
+    if (beginSubstring == undefined || endSubstring == undefined) {
+      return ['random'];
     }
 
     const subText = resposneText.substring(beginSubstring + 1, endSubstring);
     const map = this.moveMap;
-    console.log("map" , map);
+    console.log('map', map);
 
-    const splitText = subText.split(',').map(function(item) {
-      if(map.has(item.trim())) {
+    const splitText = subText.split(',').map(function (item) {
+      if (map.has(item.trim())) {
         return item.trim();
       }
-      return "random"
-
+      return 'random';
     });
-    console.log("splitText", splitText);
+    console.log('splitText', splitText);
     return splitText;
-
   }
 }
