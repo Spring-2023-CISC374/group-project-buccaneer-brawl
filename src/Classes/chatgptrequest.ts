@@ -7,8 +7,9 @@ import chatGPTKey from '../secrets/secretkeys';
 import { OpenAIApi, Configuration, ChatCompletionResponseMessageRoleEnum } from "openai";
 
 
-const prefixPrompt = "Translate my message into a new list from the list of options below, it can be any length. Here is the list: [walk_forward, walk_back, jump_forward, kick, punch, uppercut, crhook, roundhouse, random]. Here is my message: "
-const suffixPrompt = ". If you cannot translate it then just pick the random option";
+const prefixPrompt = "Please provide a sequence of actions from the following list that best represents the message:  "
+
+const suffixPrompt = ": [walk_forward, walk_back, jump_forward, kick, punch, uppercut, crhook, roundhouse, random]. Your job is to make a new array of the message given. You can only select options from the original list, if there's anything not in the original list the array fails. If you're unable to translate something then select the random option. ";
 
 const configuration = new Configuration({
     apiKey: chatGPTKey,

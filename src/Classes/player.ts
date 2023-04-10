@@ -42,38 +42,40 @@ export default class Player {
 		}
 	}
 
-    movePlayer(distance: number, moveType: string){
+    movePlayer(distance: number, moveType: string, opponent?: Player){
+		if(opponent === undefined) return;
+		const dist = (this.sprite.body.x > opponent.sprite.body.x)? -distance: distance;
+
         if(moveType ==="walk_forward") {
 			this.sprite.setVelocityX(0);
-			this.sprite.setVelocityX(distance);
+			this.sprite.setVelocityX(dist);
 			this.sprite.anims.play('left', true);
 			this.action = "walking"
 			this.timer = 0;
 			
 		} else if (moveType === "walk_back") {
 			this.sprite.setVelocityX(0);
-			this.sprite.setVelocityX(-distance);
+			this.sprite.setVelocityX(-dist);
 			this.sprite.anims.play('left', true);
 			this.action = "walking"
 			this.timer = 0;
 			
 		} else if (moveType==="jump") {
-			this.sprite.setVelocityY(distance);
 			this.sprite.anims.play('right', true);
 			//Sets the jumping distance in the left direction
-			this.sprite.setVelocityY(-distance);
+			this.sprite.setVelocityY(-580);
 			this.sprite.anims.play("left", true)
 			this.action = "jumping";
 		}
 		else if (moveType==="jump_forward") {
 			this.sprite.setVelocityY(-580);
-			this.sprite.setVelocityX(distance);
+			this.sprite.setVelocityX(dist);
 			this.sprite.anims.play('right', true);
 			this.action = "jumping";
 		}
 		else if (moveType==="jump_back") {
 			this.sprite.setVelocityY(-580);
-			this.sprite.setVelocityX(-distance);
+			this.sprite.setVelocityX(-dist);
 			this.sprite.anims.play('right', true);
 			this.action = "jumping";
 		}
