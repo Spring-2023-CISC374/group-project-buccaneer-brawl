@@ -11,6 +11,8 @@ export default class FightScene extends Phaser.Scene
 		super({key: 'FightScene'})
 	}
 
+
+
 	private platforms?: Phaser.Physics.Arcade.StaticGroup;
 	private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
 	private player1?: Player
@@ -21,9 +23,14 @@ export default class FightScene extends Phaser.Scene
 	private registerOne?: RegisterInput;
 	private P1_HPText?: Phaser.GameObjects.Text;
 	private P2_HPText?: Phaser.GameObjects.Text;
+	private p1_responseText?: string[];
 
 
 	private gameOver = false;
+
+	init(data: { p1_responseText: string[] | undefined; }) {
+		this.p1_responseText = data.p1_responseText;
+	}
 
 
 	create() 
@@ -83,7 +90,10 @@ export default class FightScene extends Phaser.Scene
 			return;
 		}
 
-		this.registerOne?.validInput(["walk_forward", "walk_back", "jump", "kick", "punch", "uppercut", "crhook", "roundhouse"], 4, delta, this.player1);
+		if(this.p1_responseText === undefined) {
+			this.p1_responseText = ["random"];
+		}
+		this.registerOne?.validInput(this.p1_responseText, 4, delta, this.player1, this.player2);
 		
 		//Alter both player's traction and fall speed.
 		this.player1?.setPlayerTraction();
