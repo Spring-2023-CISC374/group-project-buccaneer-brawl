@@ -2,16 +2,17 @@
 
 import Phaser from 'phaser';
 import axios, { AxiosError } from 'axios';
+import chatGPTKey from '../secrets/secretkeys';
 
-import { OpenAIApi, Configuration } from "openai";
+import { OpenAIApi, Configuration, ChatCompletionResponseMessageRoleEnum } from "openai";
 
 const configuration = new Configuration({
-    apiKey: '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',
+    apiKey: chatGPTKey,
   });
 
   
 const openai = new OpenAIApi(configuration);
-const conversationContext = [];
+const conversationContext: string[][] = [];
 const currentMessages = [];
 
 
@@ -23,20 +24,24 @@ export const generateResponse = async (prompt: string) => {
   
       // Restore the previous context
       for (const [inputText, responseText] of conversationContext) {
-        currentMessages.push({ role: "user", content: inputText });
-        currentMessages.push({ role: "assistant", content: responseText });
+        currentMessages.push({ role: ChatCompletionResponseMessageRoleEnum.User, content: inputText });
+        currentMessages.push({ role: ChatCompletionResponseMessageRoleEnum.Assistant, content: responseText });
       }
   
       // Stores the new message
-      currentMessages.push({ role: "user", content: promptText });
+      currentMessages.push({ role: ChatCompletionResponseMessageRoleEnum.User, content: promptText });
   
       const result = await openai.createChatCompletion({
         model: modelId,
         messages: currentMessages,
       });
   
-      const responseText = result.data.choices.shift().message.content;
-      conversationContext.push([promptText, responseText]);
+      const responseText = result.data.choices.shift()?.message?.content;
+
+      if(responseText !== undefined) {
+        conversationContext.push([promptText, responseText]);
+      }
+
   
       return responseText;
     } catch (err) {
