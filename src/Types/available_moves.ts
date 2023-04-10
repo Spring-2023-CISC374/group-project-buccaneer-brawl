@@ -1,0 +1,1 @@
+export default ["walk_forward", "walk_back", "jump_forward", "kick", "punch", "uppercut", "crhook", "roundhouse"]
