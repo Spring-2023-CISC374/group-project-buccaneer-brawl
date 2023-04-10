@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-
+import { generateResponse } from '../Classes/chatgptrequest';
 
 export default class InputScene extends Phaser.Scene {
   private savedText: string;
@@ -55,6 +55,12 @@ export default class InputScene extends Phaser.Scene {
     const inputForm = document.getElementById('inputForm') as HTMLFormElement;
    // inputForm.style.display = 'none';
 
-    this.scene.start('FightScene');
+      // Usage:
+    generateResponse(this.savedText).then((generatedText) => {
+      console.log(generatedText);
+      this.scene.start('FightScene');
+    });
+
+   
   }
 }
