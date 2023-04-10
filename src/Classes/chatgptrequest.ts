@@ -6,6 +6,10 @@ import chatGPTKey from '../secrets/secretkeys';
 
 import { OpenAIApi, Configuration, ChatCompletionResponseMessageRoleEnum } from "openai";
 
+
+const prefixPrompt = "Translate my message into a new list from the list of options below, it can be any length. Here is the list: [walk_forward, walk_back, jump_forward, kick, punch, uppercut, crhook, roundhouse, random]. Here is my message: "
+const suffixPrompt = ". If you cannot translate it then just pick the random option";
+
 const configuration = new Configuration({
     apiKey: chatGPTKey,
   });
@@ -19,7 +23,7 @@ const currentMessages = [];
 export const generateResponse = async (prompt: string) => {
     try {
       const modelId = "gpt-3.5-turbo";
-      const promptText = `${prompt}\n\nResponse:`;
+      const promptText = `${prefixPrompt + prompt + suffixPrompt}\n\nResponse:`;
       const currentMessages = [];
   
       // Restore the previous context
