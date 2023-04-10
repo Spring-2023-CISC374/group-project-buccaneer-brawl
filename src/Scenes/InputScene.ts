@@ -86,27 +86,30 @@ export default class InputScene extends Phaser.Scene {
     console.log('Saved text Player 1: ', this.savedTextP1);
     console.log('Saved text Player 2: ', this.savedTextP2);
 
-    inputElement1.remove();
-    inputElement2.remove();
+    // check if both players have input
+    if (this.savedTextP1 && this.savedTextP2) {
+      inputElement1.remove();
+      inputElement2.remove();
 
-    inputElement1.value = '';
-    inputElement2.value = '';
+      inputElement1.value = '';
+      inputElement2.value = '';
 
-    Promise.all([
-      generateResponse(this.savedTextP1),
-      generateResponse(this.savedTextP2),
-    ]).then(([generatedTextP1, generatedTextP2]) => {
-      console.log(generatedTextP1);
-      console.log(generatedTextP2);
+      Promise.all([
+        generateResponse(this.savedTextP1),
+        generateResponse(this.savedTextP2),
+      ]).then(([generatedTextP1, generatedTextP2]) => {
+        console.log(generatedTextP1);
+        console.log(generatedTextP2);
 
-      this.p1_responseText = this.formatRequest(generatedTextP1);
-      this.p2_responseText = this.formatRequest(generatedTextP2);
+        this.p1_responseText = this.formatRequest(generatedTextP1);
+        this.p2_responseText = this.formatRequest(generatedTextP2);
 
-      this.scene.start('FightScene', {
-        p1_responseText: this.p1_responseText,
-        p2_responseText: this.p2_responseText,
+        this.scene.start('FightScene', {
+          p1_responseText: this.p1_responseText,
+          p2_responseText: this.p2_responseText,
+        });
       });
-    });
+    }
   }
 
   formatRequest(resposneText: string | undefined): string[] {
