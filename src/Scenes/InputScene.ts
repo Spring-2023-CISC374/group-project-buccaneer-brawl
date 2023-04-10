@@ -30,13 +30,11 @@ export default class InputScene extends Phaser.Scene {
       color: '#000',
     });
 
-    // Add Player 1 label
     this.add.text(50, 60, 'Player 1', {
       fontSize: '24px',
       color: '#000',
     });
 
-    // Player 1 input
     const input = document.createElement('input');
     input.id = 'myText1';
     input.type = 'text';
@@ -46,13 +44,11 @@ export default class InputScene extends Phaser.Scene {
     input.style.top = '90px';
     document.body.appendChild(input);
 
-    // Add Player 2 label
     this.add.text(350, 60, 'Player 2', {
       fontSize: '24px',
       color: '#000',
     });
 
-    // Player 2 input
     const inputP2 = document.createElement('input');
     inputP2.id = 'myText2';
     inputP2.type = 'text';
@@ -90,11 +86,9 @@ export default class InputScene extends Phaser.Scene {
     console.log('Saved text Player 1: ', this.savedTextP1);
     console.log('Saved text Player 2: ', this.savedTextP2);
 
-    // Remove input elements from the DOM
     inputElement1.remove();
     inputElement2.remove();
 
-    // Clear the input values
     inputElement1.value = '';
     inputElement2.value = '';
 
