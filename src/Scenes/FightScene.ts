@@ -2,7 +2,6 @@ import Phaser, { Physics } from 'phaser';
 import KeyboardInput from '../Classes/keyboardinput';
 import Player from '../Classes/player';
 import RegisterInput from '../Classes/registerInput';
-import RegisterInputp2 from '../Classes/registerInputp2';
 
 export default class FightScene extends Phaser.Scene {
   constructor() {
@@ -21,12 +20,12 @@ export default class FightScene extends Phaser.Scene {
   private P2_HPText?: Phaser.GameObjects.Text;
   private p1_responseText?: string[];
   private p2_responseText?: string[];
-  private registerTwo?: RegisterInputp2;
 
   private gameOver = false;
 
-  init(data: { p1_responseText: string[] | undefined }) {
+  init(data: { p1_responseText: string[] | undefined, p2_responseText: string[] | undefined }) {
     this.p1_responseText = data.p1_responseText;
+	this.p2_responseText = data.p2_responseText;
   }
 
   create() {
@@ -108,7 +107,6 @@ export default class FightScene extends Phaser.Scene {
     this.player2.sprite.anims.play('turn', true);
 
     this.registerOne = new RegisterInput();
-    this.registerTwo = new RegisterInputp2();
   }
 
   update(time: number, delta: number) {
@@ -129,7 +127,7 @@ export default class FightScene extends Phaser.Scene {
     if (this.p2_responseText === undefined) {
       this.p2_responseText = ['random'];
     }
-    this.registerTwo?.validInput(
+    this.registerOne?.validInput(
       this.p2_responseText,
       4,
       delta,
