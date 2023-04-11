@@ -3,15 +3,16 @@ import KeyboardInput from '../Classes/keyboardinput';
 import Player from '../Classes/player';
 import RegisterInput from '../Classes/registerInput';
 
-
+/**Main Fight Scene of the game, where the battles happen
+ * and inputs from the InputScene are put to the test.
+ * 
+ */
 export default class FightScene extends Phaser.Scene 
 {
 	constructor() 
 	{
 		super({key: 'FightScene'})
 	}
-
-
 
 	private platforms?: Phaser.Physics.Arcade.StaticGroup;
 	private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -28,11 +29,15 @@ export default class FightScene extends Phaser.Scene
 
 	private gameOver = false;
 
+	/**Carries over whatever the player typed in InputScene to this one.
+	 * @param data The movelist data from InputScene 
+	 */
 	init(data: { p1_responseText: string[] | undefined; }) {
 		this.p1_responseText = data.p1_responseText;
 	}
 
-
+	/**Create function initializes the players, the ground, coins,  health text and animations.
+	 */
 	create() 
 	{
 		this.add.image(400, 300, 'pirateship').setScale(2);
@@ -83,6 +88,15 @@ export default class FightScene extends Phaser.Scene
 		this.registerOne = new RegisterInput();
 	}
 
+	/** Update function for Phaser3
+	 * First it runs the players input commands generated from InputScene via calling the validInput function
+	 * Then it sets the player attributes such as the Fall Speed and Traction. It also sets a timer for each player action.
+	 * It also checks what side each player is on and updates it accordingly via sprite flips.
+	 * Lastly, it calls the collision callback function if player 1 collides with player 2.
+	 * @param time built in time function for the current time
+	 * @param delta number that goes up by 1 every frame.
+	 * @returns 
+	 */
 	update(time: number, delta: number) 
 	{
 
@@ -137,6 +151,12 @@ export default class FightScene extends Phaser.Scene
 
 	}
 
+	/**Attack Ranges
+	 * Extends the hitbox of the player to account for the new attack animations.
+	 * Code by Christopher Beneett
+	 * @param player the player to extend the hitbox
+	 * @param leftside boolean to check if the player is facing left or right.
+	 */
 	private attackRanges(player: Player, leftside: boolean) {
 		const offset = (leftside)? 0 : 80;
 		const rangeMul = (leftside)? 1: -1;
@@ -154,6 +174,11 @@ export default class FightScene extends Phaser.Scene
 
 	}
 
+	/**Handles coin collection.
+	 * 
+	 * @param player 
+	 * @param s 
+	 */
 	private handleCollectCoin(player: Phaser.GameObjects.GameObject, s: Phaser.GameObjects.GameObject) {
 		const star = s as Phaser.Physics.Arcade.Image;
 		star.disableBody(true, true);
@@ -163,10 +188,19 @@ export default class FightScene extends Phaser.Scene
 		
 	}
 	
+	/**Checks if player 1 and player 2 has a cooldown
+	 * written by Izahe East.
+	 * @returns 
+	 */
 	private checkCooldown(){
 		return this.player1?.cooldown && this.player2?.cooldown
 	}
 
+	/**Callback function that runs whenever player1 or player2 was hit by an attack.
+	 * Written by Christopher Bennett
+	 * @param user the player that thrown out the attack
+	 * @param target the player that was hit by the attack
+	 */
 	private hitCallback(user: Phaser.GameObjects.GameObject, target: Phaser.GameObjects.GameObject) {
 		console.log("Hitbox collided with target! " + this.player1?.action);
 
@@ -259,7 +293,9 @@ export default class FightScene extends Phaser.Scene
 		}
 	}
 	
-
+	/**Handles all animations in the game
+	 * Written by Christopher Bennett
+	 */
 	private animationHandler() {
 		this.anims.create({
 			key: 'left',
@@ -267,7 +303,7 @@ export default class FightScene extends Phaser.Scene
 				start: 3, end: 5
 			}),
 			frameRate: 20,
-			repeat: -1 //-1 for infinite repeats
+			repeat: -1 
 		});
 
 		this.anims.create({
@@ -276,7 +312,7 @@ export default class FightScene extends Phaser.Scene
 				start: 0, end: 3
 			}),
 			frameRate: 10,
-			repeat: -1 //-1 f
+			repeat: -1 
 		})
 
 		this.anims.create({
@@ -294,7 +330,7 @@ export default class FightScene extends Phaser.Scene
 				start: 9, end: 10
 			}),
 			frameRate: 10,
-			repeat: -1 //-1 for infinite repeats
+			repeat: -1 
 		});
 
 		this.anims.create({
@@ -303,7 +339,7 @@ export default class FightScene extends Phaser.Scene
 				start: 11, end: 12
 			}),
 			frameRate: 10,
-			repeat: -1 //-1 for infinite repeats
+			repeat: -1 
 		});
 
 		this.anims.create({
@@ -312,7 +348,7 @@ export default class FightScene extends Phaser.Scene
 				start: 13, end: 14
 			}),
 			frameRate: 10,
-			repeat: -1 //-1 for infinite repeats
+			repeat: -1 
 		});
 
 		this.anims.create({
@@ -321,7 +357,7 @@ export default class FightScene extends Phaser.Scene
 				start: 20, end: 24
 			}),
 			frameRate: 10,
-			repeat: -1 //-1 for infinite repeats
+			repeat: -1 
 		});
 
 		this.anims.create({
@@ -330,7 +366,7 @@ export default class FightScene extends Phaser.Scene
 				start: 25, end: 30
 			}),
 			frameRate: 10,
-			repeat: -1 //-1 for infinite repeats
+			repeat: -1 
 		});
 
 		this.anims.create({
@@ -339,7 +375,7 @@ export default class FightScene extends Phaser.Scene
 				start: 14, end: 19
 			}),
 			frameRate: 10,
-			repeat: -1 //-1 for infinite repeats
+			repeat: -1 
 		});
 
 		this.anims.create({
