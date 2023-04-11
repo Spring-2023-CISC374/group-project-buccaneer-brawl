@@ -104,6 +104,9 @@ export default class InputScene extends Phaser.Scene {
       this.p1_responseText = this.formatRequest(generatedTextP1);
       this.p2_responseText = this.formatRequest(generatedTextP2);
 
+      console.log(this.p1_responseText);
+      console.log(this.p2_responseText);
+
       this.scene.start('FightScene', {
         p1_responseText: this.p1_responseText,
         p2_responseText: this.p2_responseText,

@@ -16,6 +16,7 @@ export default class FightScene extends Phaser.Scene {
   private extraStars?: Phaser.Physics.Arcade.Group;
   private keyInputs?: KeyboardInput;
   private registerOne?: RegisterInput;
+  private registerTwo?: RegisterInput;
   private P1_HPText?: Phaser.GameObjects.Text;
   private P2_HPText?: Phaser.GameObjects.Text;
   private p1_responseText?: string[];
@@ -107,6 +108,7 @@ export default class FightScene extends Phaser.Scene {
     this.player2.sprite.anims.play('turn', true);
 
     this.registerOne = new RegisterInput();
+	this.registerTwo = new RegisterInput();
   }
 
   update(time: number, delta: number) {
@@ -127,7 +129,7 @@ export default class FightScene extends Phaser.Scene {
     if (this.p2_responseText === undefined) {
       this.p2_responseText = ['random'];
     }
-    this.registerOne?.validInput(
+    this.registerTwo?.validInput(
       this.p2_responseText,
       4,
       delta,
