@@ -7,7 +7,7 @@ export default class Player {
     action: string; //Action that the player intends to do
 	health: number; //Pirates health; when it falls to 0 the pirate loses
 	cooldown: boolean; //Handler for player collisions (one hit registering for 10+ hits); A player cannot hit another player while cooldown is false
-	damage: number;
+	damage: number; //Damage of the pirates intended action
 
     constructor(sprite: Phaser.Physics.Arcade.Sprite, tint?: number) {
 		this.sprite = sprite;
@@ -43,6 +43,7 @@ export default class Player {
 	}
 
     movePlayer(distance: number, moveType: string, opponent?: Player){
+		console.log(moveType);
 		if(opponent === undefined) return;
 		const dist = (this.sprite.body.x > opponent.sprite.body.x)? -distance: distance;
 
@@ -80,10 +81,32 @@ export default class Player {
 			this.action = "jumping";
 		}
     }
-    playerAttack(damage: number, moveType: string){
+    playerAttack(moveType: string){
+		console.log(moveType);
         this.action = "attack/" + moveType;
+		switch(moveType){
+			case 'punch':
+				this.damage = 10;
+				break;
+			case 'hook':
+				this.damage = 10;
+				break;
+			case 'kick':
+				this.damage = 10;
+				break;
+			case 'uppercut':
+				this.damage = 20;
+				break;
+			case 'roundhouse':
+				this.damage = 20;
+				break;
+			case 'crhook':
+				this.damage = 20;
+				break;
+			default:
+				break;
+		}
         this.sprite.anims.play(moveType, true);
-
     }
     performNextAction(delta: number) {
 		if(this.action != "nothing") this.timer += delta;
