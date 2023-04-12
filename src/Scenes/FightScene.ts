@@ -218,7 +218,6 @@ export default class FightScene extends Phaser.Scene {
     user: Phaser.GameObjects.GameObject,
     target: Phaser.GameObjects.GameObject
   ) {
-    console.log('Hitbox collided with target! ' + this.player1?.action);
 
     const userSprite = user as Phaser.Physics.Arcade.Sprite;
     const targetSprite = target as Phaser.Physics.Arcade.Sprite;
@@ -244,7 +243,6 @@ export default class FightScene extends Phaser.Scene {
         //This makes it so that a hit only damages a player once every second
         setTimeout(() => {
           this.player1?.setCooldown(true);
-          console.log('attack ready!');
         }, 1000);
 
         //Game over placeholder
@@ -289,7 +287,6 @@ export default class FightScene extends Phaser.Scene {
         //This makes it so that a hit only damages a player once every second
         setTimeout(() => {
           this.player2?.setCooldown(true);
-          console.log('attack ready!');
         }, 1000);
 
         //Game over placeholder
