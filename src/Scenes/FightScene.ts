@@ -18,7 +18,6 @@ export default class FightScene extends Phaser.Scene
   private player2?: Player;
   private coins?: Phaser.Physics.Arcade.Group;
   private extraStars?: Phaser.Physics.Arcade.Group;
-  private keyInputs?: KeyboardInput;
   private registerOne?: RegisterInput;
   private registerTwo?: RegisterInput;
   private P1_HPText?: Phaser.GameObjects.Text;
@@ -125,8 +124,8 @@ export default class FightScene extends Phaser.Scene
     }
     this.registerOne?.validInput(
       this.p1_responseText,
-      4,
       delta,
+      this.gameOver,
       this.player1,
       this.player2
     );
@@ -135,8 +134,8 @@ export default class FightScene extends Phaser.Scene
     }
     this.registerTwo?.validInput(
       this.p2_responseText,
-      4,
       delta,
+      this.gameOver,
       this.player2,
       this.player1
     );
@@ -203,12 +202,13 @@ export default class FightScene extends Phaser.Scene
 						this.player2.setHitstun(false);
 					}
 				}, 500);
-
+			}
+		}
 		//Continously see if player1 is colliding with player2
 		if(this.player1 && this.player2) {
 			this.physics.overlap(this.player1.sprite, this.player2.sprite, this.hitCallback, this.checkCooldown, this);
 		}
-
+		
 	}
 
 	private attackRanges(player: Player, leftside: boolean) {
@@ -350,24 +350,6 @@ export default class FightScene extends Phaser.Scene
     }
   }
 
-  private animationHandler() {
-    this.anims.create({
-      key: 'left',
-      frames: this.anims.generateFrameNumbers('dude', {
-        start: 3,
-        end: 5,
-      }),
-      frameRate: 20,
-      repeat: -1, //-1 for infinite repeats
-    });
-				this.coins?.children.iterate(c => {
-					const child = c as Phaser.Physics.Arcade.Image;
-					child.enableBody(true, child.x, 0, true, true);
-				})
-			}
-		}
-	}
-	
 	//for debugging purposes
 	handleKeyboardInput(player1: Player, player2: Player) {
         const keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
@@ -512,7 +494,7 @@ export default class FightScene extends Phaser.Scene
         });
 	}
 
-	private animationHandler() {
+private animationHandler() {
 		this.anims.create({
 			key: 'left',
 			frames: this.anims.generateFrameNumbers('dude', {
@@ -601,24 +583,22 @@ export default class FightScene extends Phaser.Scene
       frameRate: 10,
       repeat: -1, //-1 for infinite repeats
     });
-
-		this.anims.create({
-			key: 'hit',
-			frames: this.anims.generateFrameNumbers('dude', {
-				start: 6, end: 6
-			}),
-			frameRate: 10,
-			repeat: -1 //-1 for infinite repeats
-		});
-		this.anims.create({
-			key: 'fall',
-			frames: this.anims.generateFrameNumbers('dude', {
-				start: 7, end: 7
-			}),
-			frameRate: 10,
-			repeat: -1 //-1 for infinite repeats
-		});
+	this.anims.create({
+		key: 'hit',
+		frames: this.anims.generateFrameNumbers('dude', {
+			start: 6, 
+			end: 6,
+		}),
+		frameRate: 10,
+		repeat: -1 //-1 for infinite repeats
+	});
+	this.anims.create({
+		key: 'fall',
+		frames: this.anims.generateFrameNumbers('dude', {
+			start: 7, end: 7
+		}),
+		frameRate: 10,
+		repeat: -1 //-1 for infinite repeats
+	});
 	}
-
-
 }

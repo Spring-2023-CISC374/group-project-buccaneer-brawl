@@ -54,7 +54,7 @@ export default class Player {
 			console.log("in hitstun");
 			return;
 		}
-		console.log(moveType);
+		//console.log(moveType);
 		if(opponent === undefined) return;
 		const dist = (this.sprite.body.x > opponent.sprite.body.x)? -distance: distance;
 
@@ -92,9 +92,35 @@ export default class Player {
 			this.action = "jumping";
 		}
     }
-    playerAttack(damage: number, moveType: string){
+ 	playerAttack(moveType: string){
+		if (this.hitstun){
+			console.log("in hitstun");
+			return;
+		}
         this.action = "attack/" + moveType;
-        this.sprite.anims.play(moveType, true);
+		switch(moveType){
+			case 'punch':
+				this.damage = 10;
+				break;
+			case 'hook':
+				this.damage = 10;
+				break;
+			case 'kick':
+				this.damage = 10;
+				break;
+			case 'uppercut':
+				this.damage = 20;
+				break;
+			case 'roundhouse':
+				this.damage = 20;
+				break;
+			case 'crhook':
+				this.damage = 20;
+				break;
+			default:
+				break;
+		}
+		this.sprite.anims.play(moveType);
 
     }
     performNextAction(delta: number) {
