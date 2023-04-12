@@ -21,6 +21,10 @@ export default class registerInput extends Phaser.Scene{
             this.key_timer = 0;
             console.log(input[this.key_index]);
 
+            if(input[this.key_index] === undefined) {
+                input[this.key_index] = "random";
+            }
+
             if(input[this.key_index] === "random") {
                 const randomIndex = Math.floor(Math.random() * (available_moves.length));
                 input[this.key_index] = available_moves[randomIndex];
