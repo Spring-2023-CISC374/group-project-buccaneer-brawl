@@ -1,7 +1,7 @@
 import Phaser, { Physics } from 'phaser'
-import KeyboardInput from '../Classes/keyboardinput';
+import KeyboardInput from '../Engine/keyboardinput';
 import Player from '../Classes/player';
-import RegisterInput from '../Classes/registerInput';
+import RegisterInput from '../Engine/registerInput';
 
 
 export default class FightScene extends Phaser.Scene 
@@ -93,7 +93,7 @@ export default class FightScene extends Phaser.Scene
 		if(this.p1_responseText === undefined) {
 			this.p1_responseText = ["random"];
 		}
-		this.registerOne?.validInput(this.p1_responseText, 4, delta, this.player1, this.player2);
+		this.registerOne?.validInput(this.p1_responseText, delta, this.player1, this.player2);
 		
 		//Alter both player's traction and fall speed.
 		this.player1?.setPlayerTraction();
@@ -168,7 +168,7 @@ export default class FightScene extends Phaser.Scene
 	}
 
 	private hitCallback(user: Phaser.GameObjects.GameObject, target: Phaser.GameObjects.GameObject) {
-		console.log("Hitbox collided with target! " + this.player1?.action);
+		//console.log("Hitbox collided with target! " + this.player1?.action);
 
 		const userSprite = user as Phaser.Physics.Arcade.Sprite;
 		const targetSprite  = target as Phaser.Physics.Arcade.Sprite;
@@ -187,14 +187,14 @@ export default class FightScene extends Phaser.Scene
 					targetSprite.setVelocityY(-460);
 					targetSprite.anims.play('hit', true);
 				}
-
+				console.log(this.player1.damage);
 				this.player2.health -= this.player1.damage;
 				this.P2_HPText?.setText(`Player 2 HP: ${this.player2.health}`);
 
 				//This makes it so that a hit only damages a player once every second
 				setTimeout(() => {
 					this.player1?.setCooldown(true);
-					console.log("attack ready!");
+					//console.log("attack ready!");
 				}, 1000);
 
 				//Game over placeholder
@@ -229,6 +229,7 @@ export default class FightScene extends Phaser.Scene
 					userSprite.setVelocityY(-460);
 					userSprite.anims.play('hit', true);
 				}
+				
 				this.player1.health -= this.player2.damage;
 				this.P1_HPText?.setText(`Player 1 HP: ${this.player1.health}`);
 
@@ -346,6 +347,15 @@ export default class FightScene extends Phaser.Scene
 			key: 'hit',
 			frames: this.anims.generateFrameNumbers('dude', {
 				start: 6, end: 6
+			}),
+			frameRate: 10,
+			repeat: -1 //-1 for infinite repeats
+		});
+
+		this.anims.create({
+			key: 'fall',
+			frames: this.anims.generateFrameNumbers('dude', {
+				start: 7, end: 7
 			}),
 			frameRate: 10,
 			repeat: -1 //-1 for infinite repeats

@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import Player from './player'
+import Player from '../Classes/player'
 
 export default class KeyboardInput extends Phaser.Scene {
 
@@ -68,73 +68,73 @@ export default class KeyboardInput extends Phaser.Scene {
     
         keyI.on('down', ()=> {
             if(player1) {
-                player1.playerAttack(10, 'punch');
+                player1.playerAttack('punch');
             }
         });
     
         keyE.on('down', ()=> {
             if(player2) {
-                player2.playerAttack(10, 'punch');
+                player2.playerAttack('punch');
             }
         });
     
         keyO.on('down', ()=> {
             if(player1) {
-                player1.playerAttack(10, 'hook');
+                player1.playerAttack('hook');
             }
         });
     
         keyR.on('down', ()=> {
             if(player2) {
-                player2.playerAttack(10, 'hook');
+                player2.playerAttack('hook');
             }
         });
     
         keyP.on('down', ()=> {
             if(player1) {
-                player1.playerAttack(10, 'kick');
+                player1.playerAttack('kick');
             }
         });
     
         keyT.on('down', ()=> {
             if(player2) {
-                player2.playerAttack(10, 'kick');
+                player2.playerAttack('kick');
             }
         });
     
         keyJ.on('down', ()=> {
             if(player1) {
-                player1.playerAttack(10, 'uppercut');
+                player1.playerAttack('uppercut');
             }
         });
     
         keyF.on('down', ()=> {
             if(player2) {
-                player2.playerAttack(10, 'uppercut');
+                player2.playerAttack('uppercut');
             }
         });
     
         keyK.on('down', ()=> {
             if(player1) {
-                player1.playerAttack(10, 'crhook');
+                player1.playerAttack('crhook');
             }
         });
     
         keyG.on('down', ()=> {
             if(player2) {
-                player2.playerAttack(10, 'crhook');
+                player2.playerAttack('crhook');
             }
         });
     
         keyL.on('down', ()=> {
             if(player1) {
-                player1.playerAttack(10, 'roundhouse');
+                player1.playerAttack('roundhouse');
             }
         });
     
         keyH.on('down', ()=> {
             if(player2) {
-                player2.playerAttack(10, 'roundhouse');
+                player2.playerAttack('roundhouse');
             }
         });
     
