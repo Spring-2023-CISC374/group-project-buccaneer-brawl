@@ -93,6 +93,7 @@ export default class FightScene extends Phaser.Scene
 		this.player2?.setPlayerTraction();
 
 		//Go back to idle/next animation after the one thats playing ends.
+		
 		if(this.player1) {
 			this.player1.performNextAction(delta);     
 		}
@@ -179,19 +180,21 @@ export default class FightScene extends Phaser.Scene
 				}
 
 				this.player2.health -= this.player1.damage;
-				this.P2_HPText?.setText(`Player 2 HP: ${this.player2.health}`);
-
-				//This makes it so that a hit only damages a player once every second
-				setTimeout(() => {
-					this.player1?.setCooldown(true);
-					console.log("attack ready!");
-				}, 1000);
-
-				//Game over placeholder
+				//game over placeholder
 				if (this.player2.health <= 0){
 					this.player2.health = 0;
+					this.P2_HPText?.setText(`Player 2 HP: 0`);
+					this.gameOver = true;
 					this.physics.pause();
-					this.player2.sprite.setTint(0xff0000);
+					
+				}
+				else{
+					this.P2_HPText?.setText(`Player 2 HP: ${this.player2.health}`);
+					//This makes it so that a hit only damages a player once every 0.3 seconds
+					setTimeout(() => {
+						this.player1?.setCooldown(true);
+						//console.log("attack ready!");
+					}, 300);	
 				}
 
 				this.extraStars = this.physics.add.group({
@@ -220,19 +223,21 @@ export default class FightScene extends Phaser.Scene
 					userSprite.anims.play('hit', true);
 				}
 				this.player1.health -= this.player2.damage;
-				this.P1_HPText?.setText(`Player 1 HP: ${this.player1.health}`);
-
-				//This makes it so that a hit only damages a player once every second
-				setTimeout(() => {
-					this.player2?.setCooldown(true);
-					console.log("attack ready!");
-				}, 1000);
 
 				//Game over placeholder
 				if (this.player1.health <= 0){
 					this.player1.health = 0;
+					this.P1_HPText?.setText(`Player 1 HP: 0`);
+					this.gameOver = true;
 					this.physics.pause();
-					this.player1.sprite.setTint(0xff0000);
+				}
+				else {
+					this.P1_HPText?.setText(`Player 1 HP: ${this.player1.health}`);
+					//This makes it so that a hit only damages a player once every 0.3 seconds
+					setTimeout(() => {
+						this.player2?.setCooldown(true);
+						console.log("attack ready!");
+					}, 300);
 				}
 
 				this.extraStars = this.physics.add.group({
