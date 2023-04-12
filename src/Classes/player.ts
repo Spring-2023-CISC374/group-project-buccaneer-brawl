@@ -1,4 +1,4 @@
-import Phaser from 'phaser'
+import Phaser from 'phaser';
 
 export default class Player {
 
@@ -7,7 +7,8 @@ export default class Player {
     action: string; //Action that the player intends to do
 	health: number; //Pirates health; when it falls to 0 the pirate loses
 	cooldown: boolean; //Handler for player collisions (one hit registering for 10+ hits); A player cannot hit another player while cooldown is false
-	damage: number;
+	hitstun: boolean; //If hitstun is set to true, movePlayer and playerAttack cannot be called until the player hits the ground. A player is put into hitstun when an opposing character's attack damages them
+	damage: number; //Damage of the player intended action
 
     constructor(sprite: Phaser.Physics.Arcade.Sprite, tint?: number) {
 		this.sprite = sprite;
@@ -17,11 +18,15 @@ export default class Player {
 		this.timer = 0;
 		this.health = 100;
 		this.cooldown = true;
+		this.hitstun = false;
 		this.damage = 0;
 
 		if (tint){
 			this.sprite.setTint(tint);
 		}
+	}
+	setHitstun(b: boolean){
+		this.hitstun = b;
 	}
 	setCooldown(b: boolean){
 		this.cooldown = b;
@@ -36,13 +41,20 @@ export default class Player {
 		}
 	}
 
-	setPlayerFallSpeed() {
-		if(this.sprite.body && this.sprite.body.velocity.y < 10) {
-			this.sprite.setVelocityY(this.sprite?.body && this.sprite.body.velocity.y + 10);
-		}
-	}
+  setPlayerFallSpeed() {
+    if (this.sprite.body && this.sprite.body.velocity.y < 10) {
+      this.sprite.setVelocityY(
+        this.sprite?.body && this.sprite.body.velocity.y + 10
+      );
+    }
+  }
 
     movePlayer(distance: number, moveType: string, opponent?: Player){
+		if (this.hitstun){
+			console.log("in hitstun");
+			return;
+		}
+		//console.log(moveType);
 		if(opponent === undefined) return;
 		const dist = (this.sprite.body.x > opponent.sprite.body.x)? -distance: distance;
 
@@ -80,9 +92,36 @@ export default class Player {
 			this.action = "jumping";
 		}
     }
-    playerAttack(damage: number, moveType: string){
+ 	playerAttack(moveType: string){
+		if (this.hitstun){
+			console.log("in hitstun");
+			return;
+		}
         this.action = "attack/" + moveType;
-        this.sprite.anims.play(moveType, true);
+		switch(moveType){
+			case 'punch':
+				this.damage = 10;
+				break;
+			case 'hook':
+				this.damage = 10;
+				break;
+			case 'kick':
+				this.damage = 10;
+				break;
+			case 'uppercut':
+				this.damage = 20;
+				break;
+			case 'roundhouse':
+				this.damage = 20;
+				break;
+			case 'crhook':
+				this.damage = 20;
+				break;
+			default:
+				break;
+		}
+
+		this.sprite.anims.play(moveType, true);
 
     }
     performNextAction(delta: number) {
@@ -92,9 +131,8 @@ export default class Player {
 			//this.timer -= 1000;
 			this.timer = 0;
 
-			this.action = "nothing"
-			this.sprite.anims.play('turn', true);
-		}
-	}
-	
+      this.action = 'nothing';
+      this.sprite.anims.play('turn', true);
+    }
+  }
 }
