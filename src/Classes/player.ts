@@ -1,4 +1,4 @@
-import Phaser from 'phaser'
+import Phaser from 'phaser';
 
 export default class Player {
 
@@ -41,11 +41,13 @@ export default class Player {
 		}
 	}
 
-	setPlayerFallSpeed() {
-		if(this.sprite.body && this.sprite.body.velocity.y < 10) {
-			this.sprite.setVelocityY(this.sprite?.body && this.sprite.body.velocity.y + 10);
-		}
-	}
+  setPlayerFallSpeed() {
+    if (this.sprite.body && this.sprite.body.velocity.y < 10) {
+      this.sprite.setVelocityY(
+        this.sprite?.body && this.sprite.body.velocity.y + 10
+      );
+    }
+  }
 
     movePlayer(distance: number, moveType: string, opponent?: Player){
 		if (this.hitstun){
@@ -90,35 +92,10 @@ export default class Player {
 			this.action = "jumping";
 		}
     }
-    playerAttack(moveType: string){
-		if (this.hitstun){
-			console.log("in hitstun");
-			return;
-		}
+    playerAttack(damage: number, moveType: string){
         this.action = "attack/" + moveType;
-		switch(moveType){
-			case 'punch':
-				this.damage = 10;
-				break;
-			case 'hook':
-				this.damage = 10;
-				break;
-			case 'kick':
-				this.damage = 10;
-				break;
-			case 'uppercut':
-				this.damage = 20;
-				break;
-			case 'roundhouse':
-				this.damage = 20;
-				break;
-			case 'crhook':
-				this.damage = 20;
-				break;
-			default:
-				break;
-		}
         this.sprite.anims.play(moveType, true);
+
     }
     performNextAction(delta: number) {
 		if(this.action != "nothing") this.timer += delta;
@@ -127,9 +104,8 @@ export default class Player {
 			//this.timer -= 1000;
 			this.timer = 0;
 
-			this.action = "nothing"
-			this.sprite.anims.play('turn', true);
-		}
-	}
-	
+      this.action = 'nothing';
+      this.sprite.anims.play('turn', true);
+    }
+  }
 }
