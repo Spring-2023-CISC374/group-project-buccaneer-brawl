@@ -1,5 +1,4 @@
 import Phaser, { Physics } from 'phaser'
-import KeyboardInput from '../Engine/keyboardinput';
 import Player from '../Classes/player';
 import RegisterInput from '../Engine/registerInput';
 
@@ -19,12 +18,11 @@ export default class FightScene extends Phaser.Scene
 	private player2?: Player
 	private coins?: Phaser.Physics.Arcade.Group;
 	private extraStars?: Phaser.Physics.Arcade.Group;
-	private keyInputs?: KeyboardInput;
 	private registerOne?: RegisterInput;
 	private P1_HPText?: Phaser.GameObjects.Text;
 	private P2_HPText?: Phaser.GameObjects.Text;
 	private p1_responseText?: string[];
-
+	
 
 	private gameOver = false;
 
@@ -79,8 +77,11 @@ export default class FightScene extends Phaser.Scene
 
 		this.player1.sprite.anims.play('turn', true);	
 		this.player2.sprite.anims.play('turn', true);	
-
+		
 		this.registerOne = new RegisterInput();
+
+		this.handleKeyboardInput(this.player1, this.player2); //USE FOR DEBUGGING
+		
 	}
 
 	update(time: number, delta: number) 
@@ -93,7 +94,9 @@ export default class FightScene extends Phaser.Scene
 		if(this.p1_responseText === undefined) {
 			this.p1_responseText = ["random"];
 		}
-		this.registerOne?.validInput(this.p1_responseText, delta, this.player1, this.player2);
+		//console.log("Translated to: " + this.p1_responseText);
+
+		//this.registerOne?.validInput(this.p1_responseText, delta, this.player1, this.player2);
 		
 		//Alter both player's traction and fall speed.
 		this.player1?.setPlayerTraction();
@@ -260,6 +263,142 @@ export default class FightScene extends Phaser.Scene
 		}
 	}
 	
+	//for debugging purposes
+	handleKeyboardInput(player1: Player, player2: Player) {
+        const keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+        const keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        const keyUp = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+    
+        const keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+        const keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+        const keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+    
+        const keyI = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.I);
+        const keyO = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.O);
+        const keyP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
+    
+        const keyJ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
+        const keyK = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.K);
+        const keyL = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L);
+    
+        const keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
+        const keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
+        const keyT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T);
+    
+        const keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
+        const keyG = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G);
+        const keyH = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.H);
+    
+        keyLeft.on('down', ()=> {
+            if(player1.sprite.body.touching.down) {
+                player1.movePlayer(260,"walk_back", this.player2);
+            }
+    
+        });
+    
+        keyA.on('down', ()=> {
+            if(player2.sprite.body.touching.down) {
+                player2.movePlayer(260,"walk_forward", this.player1);
+            }
+    
+        });
+    
+        keyRight.on('down', ()=> {
+            if(player1.sprite.body.touching.down) {
+                player1.movePlayer(260,"walk_forward", this.player2);
+            }
+        });
+        keyD.on('down', ()=> {
+            if(player2.sprite.body.touching.down) {
+                player2.movePlayer(260,"walk_back", this.player1);
+            }
+        });
+    
+        keyUp.on('down', ()=> {
+            if(player1.sprite.body.touching.down) {
+                player1.movePlayer(-580,"jump", this.player2);
+            }
+    
+        });
+    
+        keyW.on('down', ()=> {
+            if(player2.sprite.body.touching.down) {
+                player2.movePlayer(-580,"jump", this.player1);
+            }
+        });
+    
+        keyI.on('down', ()=> {
+            if(player1) {
+                player1.playerAttack('punch');
+            }
+        });
+    
+        keyE.on('down', ()=> {
+            if(player2) {
+                player2.playerAttack('punch');
+            }
+        });
+    
+        keyO.on('down', ()=> {
+            if(player1) {
+                player1.playerAttack('hook');
+            }
+        });
+    
+        keyR.on('down', ()=> {
+            if(player2) {
+                player2.playerAttack('hook');
+            }
+        });
+    
+        keyP.on('down', ()=> {
+            if(player1) {
+                player1.playerAttack('kick');
+            }
+        });
+    
+        keyT.on('down', ()=> {
+            if(player2) {
+                player2.playerAttack('kick');
+            }
+        });
+    
+        keyJ.on('down', ()=> {
+            if(player1) {
+                player1.playerAttack('uppercut');
+            }
+        });
+    
+        keyF.on('down', ()=> {
+            if(player2) {
+                player2.playerAttack('uppercut');
+            }
+        });
+    
+        keyK.on('down', ()=> {
+            if(player1) {
+                player1.playerAttack('crhook');
+            }
+        });
+    
+        keyG.on('down', ()=> {
+            if(player2) {
+                player2.playerAttack('crhook');
+            }
+        });
+    
+        keyL.on('down', ()=> {
+            if(player1) {
+                player1.playerAttack('roundhouse');
+            }
+        });
+    
+        keyH.on('down', ()=> {
+            if(player2) {
+                player2.playerAttack('roundhouse');
+            }
+        });
+	}
 
 	private animationHandler() {
 		this.anims.create({
@@ -351,7 +490,6 @@ export default class FightScene extends Phaser.Scene
 			frameRate: 10,
 			repeat: -1 //-1 for infinite repeats
 		});
-
 		this.anims.create({
 			key: 'fall',
 			frames: this.anims.generateFrameNumbers('dude', {
