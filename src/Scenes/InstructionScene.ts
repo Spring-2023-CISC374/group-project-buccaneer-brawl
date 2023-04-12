@@ -46,12 +46,20 @@ export default class InstructionScene extends Phaser.Scene{
       });
       twist.setOrigin(0.5, -7);
 
-      const cmdList = this.add.text(width / 2, height / 2, 'walk_forward, walk_back, jump_forward,  kick, punch, uppercut, crhook, roundhouse', {
+      const cmdList = this.add.text(width / 2, height / 2, 'walk forward, walk back, jump forward,  kick, punch, uppercut, crhook, roundhouse', {
         fontSize: '16px',
         fontFamily: 'Arial',
         color: '#ffffff',
         backgroundColor: '#000000',});
         cmdList.setOrigin(0.5, -8);
+
+        const example = this.add.text(width / 2, height / 2, 'For example if you tell the player to walk forward the player will walk forward.', {
+            fontSize: '16px',
+            fontFamily: 'Arial',
+            color: '#ffffff',
+            backgroundColor: '#000000',});
+            example.setOrigin(0.5, -9);
+            
       const backToStartButton = this.add.text(width / 4, height / 2, 'Return to start', {
         fontSize: '48px',
         fontFamily: 'Arial',
