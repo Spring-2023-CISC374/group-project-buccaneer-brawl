@@ -120,7 +120,8 @@ export default class Player {
 			default:
 				break;
 		}
-		this.sprite.anims.play(moveType);
+
+		this.sprite.anims.play(moveType, true);
 
     }
     performNextAction(delta: number) {
