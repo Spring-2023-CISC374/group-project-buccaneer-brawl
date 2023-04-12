@@ -68,9 +68,8 @@ export default class InputScene extends Phaser.Scene {
 
     const inputForm = document.getElementById('inputForm') as HTMLFormElement;
    // inputForm.style.display = 'none';
-   this.scene.start('FightScene');
-      // Usage:
-      /*
+     
+   // Usage:   
     generateResponse(this.savedText).then((generatedText) => {
       console.log(generatedText);
       this.p1_responseText = this.formatRequest(generatedText);
@@ -78,7 +77,6 @@ export default class InputScene extends Phaser.Scene {
         "p1_responseText": this.p1_responseText
       });
     });
-    */
    
   }
 

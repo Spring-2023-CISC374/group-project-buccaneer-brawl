@@ -13,11 +13,11 @@ export default class registerInput extends Phaser.Scene{
 
 
     //Calls the players registers input first
-    public validInput(input: string[], delta: number, player?: Player, opponent?: Player){
+    public validInput(input: string[], delta: number, gameOver: boolean, player?: Player, opponent?: Player){
         //Check if the input is considered a non-fighting move for loop, reset to start!!!
         this.key_timer += delta;
 
-        while(this.key_timer > 500) {
+        while(this.key_timer > 500 && !gameOver) {
             this.key_timer = 0;
             if(input[this.key_index] === "random") {
                 const randomIndex = Math.floor(Math.random() * (available_moves.length));
