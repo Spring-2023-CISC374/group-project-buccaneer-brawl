@@ -35,6 +35,13 @@ export default class FightScene extends Phaser.Scene
   create() {
     this.add.image(400, 300, 'pirateship').setScale(2);
 
+    this.game.sound.stopAll();
+
+    const music = this.sound.add('battlemusic');
+
+    music.play();
+    music.setLoop(true);
+
     this.platforms = this.physics.add.staticGroup();
     const ground = this.platforms.create(
       400,
@@ -118,7 +125,7 @@ export default class FightScene extends Phaser.Scene
     if (!this.cursors) {
       return;
     }
-
+    
     if (this.p1_responseText === undefined) {
       this.p1_responseText = ['random'];
     }
@@ -139,6 +146,7 @@ export default class FightScene extends Phaser.Scene
       this.player2,
       this.player1
     );
+
 
     //Alter both player's traction and fall speed.
     this.player1?.setPlayerTraction();
@@ -179,21 +187,26 @@ export default class FightScene extends Phaser.Scene
 			if (this.player1?.hitstun && this.player1.sprite.body.touching.down){
 				console.log("p1 touched ground");
 				//if the player is still touching the ground after a half second, get back up
-				this.player1.sprite.anims.play('fall');
-				setTimeout(() => {
-					if (this.player1?.hitstun && this.player1.sprite.body.touching.down){
-						console.log("out of hitstun");
-						this.player1.sprite.anims.play('turn');
-						this.player1.sprite.clearTint();
-						this.player1.setHitstun(false);
-					}
-				}, 500);
+
+          this.player1.sprite.anims.play('fall');
+          setTimeout(() => {
+            if (this.player1?.hitstun && this.player1.sprite.body.touching.down){
+              console.log("out of hitstun");
+              this.player1.sprite.anims.play('turn');
+              this.player1.sprite.clearTint();
+              this.player1.setHitstun(false);
+            }
+          }, 500);
+
+
 
 			}
 			if (this.player2?.hitstun && this.player2.sprite.body.touching.down){
 				console.log("p2 touched ground");
 				//if the player is still touching the ground after a half second, get back up
 				this.player2.sprite.anims.play('fall');
+        
+
 				setTimeout(() => {
 					if (this.player2?.hitstun && this.player2.sprite.body.touching.down){
 						console.log("out of hitstun");
@@ -232,6 +245,16 @@ export default class FightScene extends Phaser.Scene
   ) {
     const star = s as Phaser.Physics.Arcade.Image;
     star.disableBody(true, true);
+
+    /*
+    if(this.player1 && this.player2) {
+      if(this.player1.sprite===player) {
+        this.player1.health++;
+      } else {
+        this.player2.health++;
+      }
+    }
+    */
 
     //this.score += 10;
     //this.scoreText?.setText(`Score: ${this.score}`);
@@ -282,6 +305,7 @@ export default class FightScene extends Phaser.Scene
 					this.player2.health = 0;
 					this.gameOver = true;
 					this.physics.pause();
+          this.scene.start('ResultScene');
 				}
 
         this.extraStars = this.physics.add.group({
@@ -321,7 +345,7 @@ export default class FightScene extends Phaser.Scene
 				//This makes it so that a hit only damages a player once every 0.3 seconds
 				setTimeout(() => {
 					this.player2?.setCooldown(true);
-					console.log("attack ready!");
+					//console.log("attack ready!");
 				}, 300);
 
 				//Game over placeholder
@@ -329,6 +353,7 @@ export default class FightScene extends Phaser.Scene
 					this.player1.health = 0;
 					this.gameOver = true;
 					this.physics.pause();
+          this.scene.start('ResultScene');
 				}
 
         this.extraStars = this.physics.add.group({

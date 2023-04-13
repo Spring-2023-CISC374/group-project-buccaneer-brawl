@@ -92,7 +92,7 @@ export default class Player {
 			this.action = "jumping";
 		}
     }
- 	playerAttack(moveType: string){
+    playerAttack(moveType: string){
 		if (this.hitstun){
 			console.log("in hitstun");
 			return;
@@ -100,22 +100,22 @@ export default class Player {
         this.action = "attack/" + moveType;
 		switch(moveType){
 			case 'punch':
-				this.damage = 10;
+				this.damage = 5;
 				break;
 			case 'hook':
-				this.damage = 10;
+				this.damage = 7;
 				break;
 			case 'kick':
-				this.damage = 10;
+				this.damage = 9;
 				break;
 			case 'uppercut':
-				this.damage = 20;
+				this.damage = 15;
 				break;
 			case 'roundhouse':
-				this.damage = 20;
+				this.damage = 21;
 				break;
 			case 'crhook':
-				this.damage = 20;
+				this.damage = 27;
 				break;
 			default:
 				break;
