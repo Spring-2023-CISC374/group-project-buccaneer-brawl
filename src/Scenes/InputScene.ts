@@ -93,7 +93,7 @@ export default class InputScene extends Phaser.Scene {
 
     inputElement1.value = '';
     inputElement2.value = '';
-      
+
     Promise.all([
       generateResponse(this.savedTextP1),
       generateResponse(this.savedTextP2),
@@ -106,7 +106,7 @@ export default class InputScene extends Phaser.Scene {
 
       console.log(this.p1_responseText);
       console.log(this.p2_responseText);
-      
+
       this.scene.start('FightScene', {
         p1_responseText: this.p1_responseText,
         p2_responseText: this.p2_responseText,
