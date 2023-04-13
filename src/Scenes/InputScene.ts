@@ -115,6 +115,8 @@ export default class InputScene extends Phaser.Scene {
       this.scene.start('FightScene', {
         p1_responseText: this.p1_responseText,
         p2_responseText: this.p2_responseText,
+        p1_understandAmt: this.p1_understandAmt,
+        p2_understandAmt: this.p2_understandAmt
       });
     });
   }

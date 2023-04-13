@@ -24,12 +24,21 @@ export default class FightScene extends Phaser.Scene
   private P2_HPText?: Phaser.GameObjects.Text;
   private p1_responseText?: string[];
   private p2_responseText?: string[];
+  private p1_understandAmt: number;
+  private p2_understandAmt: number;
 
   private gameOver = false;
 
-  init(data: { p1_responseText: string[] | undefined, p2_responseText: string[] | undefined }) {
+  init(data: { p1_responseText: string[] | undefined, 
+    p2_responseText: string[] | undefined,
+    p1_understandAmtt: number, 
+    p2_understandAmt: number
+
+  }) {
     this.p1_responseText = data.p1_responseText;
-	this.p2_responseText = data.p2_responseText;
+	  this.p2_responseText = data.p2_responseText;
+    this.p1_understandAmt = data.p1_understandAmtt;
+	  this.p2_understandAmt = data.p2_understandAmt;
   }
 
   create() {
@@ -305,7 +314,11 @@ export default class FightScene extends Phaser.Scene
 					this.player2.health = 0;
 					this.gameOver = true;
 					this.physics.pause();
-          this.scene.start('ResultScene');
+          this.scene.start('ResultScene', {
+            p1_understandAmt: this.p1_understandAmt,
+            p2_understandAmt: this.p2_understandAmt,
+            who_won: "RedBeard"
+          });
 				}
 
         this.extraStars = this.physics.add.group({
@@ -353,7 +366,11 @@ export default class FightScene extends Phaser.Scene
 					this.player1.health = 0;
 					this.gameOver = true;
 					this.physics.pause();
-          this.scene.start('ResultScene');
+          this.scene.start('ResultScene', {
+            p1_understandAmt: this.p1_understandAmt,
+            p2_understandAmt: this.p2_understandAmt,
+            who_won: "BluBeard"
+          });
 				}
 
         this.extraStars = this.physics.add.group({
