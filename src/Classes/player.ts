@@ -6,7 +6,7 @@ export default class Player {
     timer: number; //Time remaining until player can perform an action
     action: string; //Action that the player intends to do
 	health: number; //Pirates health; when it falls to 0 the pirate loses
-	cooldown: boolean; //Handler for player collisions (one hit registering for 10+ hits); A player cannot hit another player while cooldown is false
+	cooldown: boolean; //Handler for player collisions (one hit registering for 10+ hits). When true a player is "on cooldown"; they cannot hit another player 
 	hitstun: boolean; //If hitstun is set to true, movePlayer and playerAttack cannot be called until the player hits the ground. A player is put into hitstun when an opposing character's attack damages them
 	damage: number; //Damage of the player intended action
 
@@ -17,7 +17,7 @@ export default class Player {
 		this.action = "nothing";
 		this.timer = 0;
 		this.health = 100;
-		this.cooldown = true;
+		this.cooldown = false;
 		this.hitstun = false;
 		this.damage = 0;
 
@@ -51,10 +51,8 @@ export default class Player {
 
     movePlayer(distance: number, moveType: string, opponent?: Player){
 		if (this.hitstun){
-			console.log("in hitstun");
 			return;
 		}
-		//console.log(moveType);
 		if(opponent === undefined) return;
 		const dist = (this.sprite.body.x > opponent.sprite.body.x)? -distance: distance;
 
@@ -94,7 +92,6 @@ export default class Player {
     }
  	playerAttack(moveType: string){
 		if (this.hitstun){
-			console.log("in hitstun");
 			return;
 		}
         this.action = "attack/" + moveType;
