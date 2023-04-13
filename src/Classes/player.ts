@@ -8,6 +8,8 @@ export default class Player {
   cooldown: boolean; //Handler for player collisions (one hit registering for 10+ hits); A player cannot hit another player while cooldown is false
   hitstun: boolean; //If hitstun is set to true, movePlayer and playerAttack cannot be called until the player hits the ground. A player is put into hitstun when an opposing character's attack damages them
   damage: number; //Damage of the player intended action
+  knockbackX: number;
+  knockbackY: number;
 
   constructor(sprite: Phaser.Physics.Arcade.Sprite, tint?: number) {
     this.sprite = sprite;
@@ -19,6 +21,8 @@ export default class Player {
     this.cooldown = true;
     this.hitstun = false;
     this.damage = 0;
+	this.knockbackX = 260;
+	this.knockbackY = 460;
 
     if (tint) {
       this.sprite.setTint(tint);
@@ -61,7 +65,6 @@ export default class Player {
     if (opponent === undefined) return;
     const dist =
       this.sprite.body.x > opponent.sprite.body.x ? -distance : distance;
-
     if (moveType === "walk_forward") {
       this.sprite.setVelocityX(0);
       this.sprite.setVelocityX(dist);
@@ -90,8 +93,11 @@ export default class Player {
       this.sprite.setVelocityX(-dist);
       this.sprite.anims.play("right", true);
       this.action = "jumping";
-    }
+    } else {
+		this.action = "waiting";
+	}
   }
+
   playerAttack(moveType: string) {
     if (this.hitstun) {
       console.log("in hitstun");
@@ -111,21 +117,33 @@ export default class Player {
     switch (moveType) {
       case "punch":
         this.damage = 5;
+		this.knockbackX = 50;
+		this.knockbackY = 0;
         break;
       case "hook":
         this.damage = 7;
+		this.knockbackX = 180;
+		this.knockbackY = 0;
         break;
       case "kick":
         this.damage = 9;
+		this.knockbackX = 50;
+		this.knockbackY = 200;
         break;
       case "uppercut":
         this.damage = 15;
+		this.knockbackX = 20;
+		this.knockbackY = 560;
         break;
       case "roundhouse":
         this.damage = 21;
+		this.knockbackX = 360;
+		this.knockbackY = 460;
         break;
       case "crhook":
         this.damage = 27;
+		this.knockbackX = 80;
+		this.knockbackY = 0;
         break;
       default:
         break;

@@ -25,6 +25,9 @@ export default class FightScene extends Phaser.Scene {
   private roundTimerdelta = 0;
   private timerText?: Phaser.GameObjects.Text;
 
+  private timeoutStorage?: NodeJS.Timeout;
+  private timeoutStorage2?: NodeJS.Timeout;
+
   private gameOver = false;
 
   init(data: {
@@ -203,7 +206,8 @@ export default class FightScene extends Phaser.Scene {
         //if the player is still touching the ground after a half second, get back up
 
         this.player1.sprite.anims.play("fall");
-        setTimeout(() => {
+
+        this.timeoutStorage2 = setTimeout(() => {
           if (this.player1?.hitstun && this.player1.sprite.body.touching.down) {
             //console.log("out of hitstun");
             this.player1.sprite.anims.play("turn");
@@ -221,7 +225,7 @@ export default class FightScene extends Phaser.Scene {
         //if the player is still touching the ground after a half second, get back up
         this.player2.sprite.anims.play("fall");
 
-        setTimeout(() => {
+        this.timeoutStorage2 = setTimeout(() => {
           if (this.player2?.hitstun && this.player2.sprite.body.touching.down) {
             //console.log("out of hitstun");
             this.player2.sprite.anims.play("turn");
@@ -322,14 +326,15 @@ export default class FightScene extends Phaser.Scene {
         //console.log("attack successful!");
         //console.log(this.player2.hitstun);
         if (this.player1.sprite.body.x < this.player2.sprite.body.x) {
+
           userSprite.setVelocityX(-260);
-          targetSprite.setVelocityX(260);
-          targetSprite.setVelocityY(-460);
+          targetSprite.setVelocityX(this.player1.knockbackX);
+          targetSprite.setVelocityY(-this.player1.knockbackY);
           targetSprite.anims.play("hit", true);
         } else {
           userSprite.setVelocityX(260);
-          targetSprite.setVelocityX(-260);
-          targetSprite.setVelocityY(-460);
+          targetSprite.setVelocityX(-this.player1.knockbackX);
+          targetSprite.setVelocityY(-this.player1.knockbackY);
           targetSprite.anims.play("hit", true);
         }
         //console.log(this.player1.damage);
@@ -337,7 +342,8 @@ export default class FightScene extends Phaser.Scene {
         this.P2_HPText?.setText(`Player 2 HP: ${this.player2.health}`);
 
         //This makes it so that a hit only damages a player once every 0.3 seconds
-        setTimeout(() => {
+        if(this.timeoutStorage !== undefined) window.clearTimeout(this.timeoutStorage);
+        this.timeoutStorage = setTimeout(() => {
           this.player1?.setCooldown(true);
           //console.log("attack ready!");
         }, 300);
@@ -379,13 +385,13 @@ export default class FightScene extends Phaser.Scene {
         this.player1.sprite.setTint(0xff0000);
         if (this.player1.sprite.body.x > this.player2.sprite.body.x) {
           targetSprite.setVelocityX(-260);
-          userSprite.setVelocityX(260);
-          userSprite.setVelocityY(-460);
+          userSprite.setVelocityX(this.player2.knockbackX);
+          userSprite.setVelocityY(-this.player2.knockbackY);
           userSprite.anims.play("hit", true);
         } else {
           targetSprite.setVelocityX(260);
-          userSprite.setVelocityX(-260);
-          userSprite.setVelocityY(-460);
+          userSprite.setVelocityX(-this.player2.knockbackX);
+          userSprite.setVelocityY(-this.player2.knockbackY);
           userSprite.anims.play("hit", true);
         }
 
@@ -393,10 +399,14 @@ export default class FightScene extends Phaser.Scene {
         this.P1_HPText?.setText(`Player 1 HP: ${this.player1.health}`);
 
         //This makes it so that a hit only damages a player once every 0.3 seconds
-        setTimeout(() => {
+
+        if(this.timeoutStorage !== undefined) window.clearTimeout(this.timeoutStorage);
+        this.timeoutStorage = setTimeout(() => {
           this.player2?.setCooldown(true);
           //console.log("attack ready!");
         }, 300);
+
+        
 
         //Game over placeholder
         if (this.player1.health <= 0) {

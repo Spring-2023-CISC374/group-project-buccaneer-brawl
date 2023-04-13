@@ -1,1 +1,1 @@
-export default ["walk_forward", "walk_back", "jump_forward", "kick", "punch", "uppercut", "crhook", "roundhouse"]
+export default ["wait", "walk_forward", "walk_back", "jump", "jump_forward", "jump_back", "kick", "punch", "hook", "uppercut", "crhook", "roundhouse"]
