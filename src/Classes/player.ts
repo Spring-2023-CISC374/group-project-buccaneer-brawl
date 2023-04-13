@@ -1,45 +1,48 @@
-import Phaser from 'phaser';
+import Phaser from "phaser";
 
 export default class Player {
+  sprite: Phaser.Physics.Arcade.Sprite; //The actual sprite that moves, attacks, etc. Was previously the "player" variable
+  timer: number; //Time remaining until player can perform an action
+  action: string; //Action that the player intends to do
+  health: number; //Pirates health; when it falls to 0 the pirate loses
+  cooldown: boolean; //Handler for player collisions (one hit registering for 10+ hits); A player cannot hit another player while cooldown is false
+  hitstun: boolean; //If hitstun is set to true, movePlayer and playerAttack cannot be called until the player hits the ground. A player is put into hitstun when an opposing character's attack damages them
+  damage: number; //Damage of the player intended action
 
-    sprite: Phaser.Physics.Arcade.Sprite; //The actual sprite that moves, attacks, etc. Was previously the "player" variable
-    timer: number; //Time remaining until player can perform an action
-    action: string; //Action that the player intends to do
-	health: number; //Pirates health; when it falls to 0 the pirate loses
-	cooldown: boolean; //Handler for player collisions (one hit registering for 10+ hits); A player cannot hit another player while cooldown is false
-	hitstun: boolean; //If hitstun is set to true, movePlayer and playerAttack cannot be called until the player hits the ground. A player is put into hitstun when an opposing character's attack damages them
-	damage: number; //Damage of the player intended action
+  constructor(sprite: Phaser.Physics.Arcade.Sprite, tint?: number) {
+    this.sprite = sprite;
+    this.health = 3;
+    this.sprite.setCollideWorldBounds(true);
+    this.action = "nothing";
+    this.timer = 0;
+    this.health = 100;
+    this.cooldown = true;
+    this.hitstun = false;
+    this.damage = 0;
 
-    constructor(sprite: Phaser.Physics.Arcade.Sprite, tint?: number) {
-		this.sprite = sprite;
-		this.health = 3;
-		this.sprite.setCollideWorldBounds(true);
-		this.action = "nothing";
-		this.timer = 0;
-		this.health = 100;
-		this.cooldown = true;
-		this.hitstun = false;
-		this.damage = 0;
-
-		if (tint){
-			this.sprite.setTint(tint);
-		}
-	}
-	setHitstun(b: boolean){
-		this.hitstun = b;
-	}
-	setCooldown(b: boolean){
-		this.cooldown = b;
-	}
-	setPlayerTraction(){
-		if (this.sprite.body && this.sprite.body.velocity.x > 10) {
-			this.sprite.setVelocityX(this.sprite.body && this.sprite.body.velocity.x-5);
-		} else if (this.sprite.body && this.sprite.body.velocity.x < -10) {
-			this.sprite.setVelocityX(this.sprite?.body && this.sprite.body.velocity.x+5);
-		} else {
-			this.sprite.setVelocityX(0);
-		}
-	}
+    if (tint) {
+      this.sprite.setTint(tint);
+    }
+  }
+  setHitstun(b: boolean) {
+    this.hitstun = b;
+  }
+  setCooldown(b: boolean) {
+    this.cooldown = b;
+  }
+  setPlayerTraction() {
+    if (this.sprite.body && this.sprite.body.velocity.x > 10) {
+      this.sprite.setVelocityX(
+        this.sprite.body && this.sprite.body.velocity.x - 5
+      );
+    } else if (this.sprite.body && this.sprite.body.velocity.x < -10) {
+      this.sprite.setVelocityX(
+        this.sprite?.body && this.sprite.body.velocity.x + 5
+      );
+    } else {
+      this.sprite.setVelocityX(0);
+    }
+  }
 
   setPlayerFallSpeed() {
     if (this.sprite.body && this.sprite.body.velocity.y < 10) {
@@ -49,97 +52,101 @@ export default class Player {
     }
   }
 
-    movePlayer(distance: number, moveType: string, opponent?: Player){
-		if (this.hitstun){
-			console.log("in hitstun");
-			return;
-		}
-		//console.log(moveType);
-		if(opponent === undefined) return;
-		const dist = (this.sprite.body.x > opponent.sprite.body.x)? -distance: distance;
-
-        if(moveType ==="walk_forward") {
-			this.sprite.setVelocityX(0);
-			this.sprite.setVelocityX(dist);
-			this.sprite.anims.play('left', true);
-			this.action = "walking"
-			this.timer = 0;
-			
-		} else if (moveType === "walk_back") {
-			this.sprite.setVelocityX(0);
-			this.sprite.setVelocityX(-dist);
-			this.sprite.anims.play('left', true);
-			this.action = "walking"
-			this.timer = 0;
-			
-		} else if (moveType==="jump") {
-			this.sprite.anims.play('right', true);
-			//Sets the jumping distance in the left direction
-			this.sprite.setVelocityY(-580);
-			this.sprite.anims.play("left", true)
-			this.action = "jumping";
-		}
-		else if (moveType==="jump_forward") {
-			this.sprite.setVelocityY(-580);
-			this.sprite.setVelocityX(dist);
-			this.sprite.anims.play('right', true);
-			this.action = "jumping";
-		}
-		else if (moveType==="jump_back") {
-			this.sprite.setVelocityY(-580);
-			this.sprite.setVelocityX(-dist);
-			this.sprite.anims.play('right', true);
-			this.action = "jumping";
-		}
+  movePlayer(distance: number, moveType: string, opponent?: Player) {
+    if (this.hitstun) {
+      console.log("in hitstun");
+      return;
     }
-    playerAttack(moveType: string){
-		if (this.hitstun){
-			console.log("in hitstun");
-			return;
-		}
-        this.action = "attack/" + moveType;
-		if(moveType==='crhook' || moveType==='uppercut' || moveType === 'roundhouse') this.action = "startup/" + moveType;
-		
-		switch(moveType){
-			case 'punch':
-				this.damage = 5;
-				break;
-			case 'hook':
-				this.damage = 7;
-				break;
-			case 'kick':
-				this.damage = 9;
-				break;
-			case 'uppercut':
-				this.damage = 15;
-				break;
-			case 'roundhouse':
-				this.damage = 21;
-				break;
-			case 'crhook':
-				this.damage = 27;
-				break;
-			default:
-				break;
-		}
+    //console.log(moveType);
+    if (opponent === undefined) return;
+    const dist =
+      this.sprite.body.x > opponent.sprite.body.x ? -distance : distance;
 
-		this.sprite.anims.play(moveType, true);
-
+    if (moveType === "walk_forward") {
+      this.sprite.setVelocityX(0);
+      this.sprite.setVelocityX(dist);
+      this.sprite.anims.play("left", true);
+      this.action = "walking";
+      this.timer = 0;
+    } else if (moveType === "walk_back") {
+      this.sprite.setVelocityX(0);
+      this.sprite.setVelocityX(-dist);
+      this.sprite.anims.play("left", true);
+      this.action = "walking";
+      this.timer = 0;
+    } else if (moveType === "jump") {
+      this.sprite.anims.play("right", true);
+      //Sets the jumping distance in the left direction
+      this.sprite.setVelocityY(-580);
+      this.sprite.anims.play("left", true);
+      this.action = "jumping";
+    } else if (moveType === "jump_forward") {
+      this.sprite.setVelocityY(-580);
+      this.sprite.setVelocityX(dist);
+      this.sprite.anims.play("right", true);
+      this.action = "jumping";
+    } else if (moveType === "jump_back") {
+      this.sprite.setVelocityY(-580);
+      this.sprite.setVelocityX(-dist);
+      this.sprite.anims.play("right", true);
+      this.action = "jumping";
     }
-    performNextAction(delta: number) {
-		if(this.action != "nothing") this.timer += delta;
+  }
+  playerAttack(moveType: string) {
+    if (this.hitstun) {
+      console.log("in hitstun");
+      return;
+    }
 
-		//const moveType = this.action.split('/')[1];
-		let nextMoveTime = 500;
-        //if(moveType === "punch" || moveType ==="kick" || moveType === "hook") nextMoveTime = 250;
-		
-		while (this.timer > nextMoveTime) {  	
-			//this.timer -= 1000;
-			this.timer = 0;
+	this.action = "attack/" + moveType;	
 
-			this.action = 'nothing';
-			this.sprite.anims.play('turn', true);
-    	}
+    if (
+      moveType === "crhook" ||
+      moveType === "uppercut" ||
+      moveType === "roundhouse"
+    ) {
+		this.action = "startup/" + moveType;
+	}
 
+    switch (moveType) {
+      case "punch":
+        this.damage = 5;
+        break;
+      case "hook":
+        this.damage = 7;
+        break;
+      case "kick":
+        this.damage = 9;
+        break;
+      case "uppercut":
+        this.damage = 15;
+        break;
+      case "roundhouse":
+        this.damage = 21;
+        break;
+      case "crhook":
+        this.damage = 27;
+        break;
+      default:
+        break;
+    }
+
+    this.sprite.anims.play(moveType, true);
+  }
+
+  performNextAction(delta: number) {
+    if (this.action != "nothing") this.timer += delta;
+
+    const moveType = this.action.split('/')[1];
+    let nextMoveTime = 500;
+    if(moveType === "punch" || moveType ==="kick" || moveType === "hook") nextMoveTime = 250;
+
+    while (this.timer > nextMoveTime) {
+      //this.timer -= 1000;
+      this.timer = 0;
+
+      this.action = "nothing";
+      this.sprite.anims.play("turn", true);
+    }
   }
 }
