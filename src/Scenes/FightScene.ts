@@ -24,8 +24,11 @@ export default class FightScene extends Phaser.Scene
   private P2_HPText?: Phaser.GameObjects.Text;
   private p1_responseText?: string[];
   private p2_responseText?: string[];
-  private p1_understandAmt: number;
-  private p2_understandAmt: number;
+  private p1_understandAmt?: number;
+  private p2_understandAmt?: number;
+  private roundTimer = 99
+  private roundTimerdelta = 0
+  private timerText?: Phaser.GameObjects.Text;
 
   private gameOver = false;
 
@@ -120,6 +123,11 @@ export default class FightScene extends Phaser.Scene
       color: '#000',
     });
 
+    this.timerText = this.add.text(316, 16, 'Time: 99', {
+      fontSize: '30px',
+      color: '#000',
+    });
+
     this.P1_HPText?.setText(`Player 1 HP: ${this.player1.health}`);
     this.P2_HPText?.setText(`Player 2 HP: ${this.player2.health}`);
 
@@ -127,7 +135,10 @@ export default class FightScene extends Phaser.Scene
     this.player2.sprite.anims.play('turn', true);
 
     this.registerOne = new RegisterInput();
-	this.registerTwo = new RegisterInput();
+	  this.registerTwo = new RegisterInput();
+
+    this.roundTimer = 99;
+    this.roundTimerdelta = 0;
   }
 
   update(time: number, delta: number) {
@@ -204,6 +215,7 @@ export default class FightScene extends Phaser.Scene
               this.player1.sprite.anims.play('turn');
               this.player1.sprite.clearTint();
               this.player1.setHitstun(false);
+              this.player1.action = "nothing";
             }
           }, 500);
 
@@ -222,6 +234,7 @@ export default class FightScene extends Phaser.Scene
 						this.player2.sprite.anims.play('turn');
 						this.player2.sprite.setTint(0x0096ff);
 						this.player2.setHitstun(false);
+            this.player1.action = "nothing";
 					}
 				}, 500);
 			}
@@ -230,6 +243,8 @@ export default class FightScene extends Phaser.Scene
 		if(this.player1 && this.player2) {
 			this.physics.overlap(this.player1.sprite, this.player2.sprite, this.hitCallback, this.checkCooldown, this);
 		}
+
+    this.decrementRoundTimer(delta);
 		
 	}
 
@@ -239,13 +254,20 @@ export default class FightScene extends Phaser.Scene
 
     const moveType = player.action.split('/')[1];
 
-    if (moveType == 'crhook' && player.timer > 200) {
-      player.sprite.setOffset(30 * rangeMul + offset, 12);
-    } else if (moveType == 'roundhouse' && player.timer > 400) {
-      player.sprite.setOffset(30 * rangeMul + offset, 12);
-    } else if (moveType != 'crhook' && moveType != 'roundhouse') {
-      player.sprite.setOffset(30 * rangeMul + offset, 12);
+    if(!player.hitstun) {
+      if (moveType === 'crhook' && player.timer > 200) {
+        player.action = "attack/" + moveType;
+        player.sprite.setOffset(30 * rangeMul + offset, 12);
+      } else if (moveType === 'roundhouse' && player.timer > 400) {
+        player.action = "attack/" + moveType;
+        player.sprite.setOffset(30 * rangeMul + offset, 12);
+      } else if (moveType !== 'crhook' && moveType !== 'roundhouse') {
+        player.action = "attack/" + moveType;
+        player.sprite.setOffset(30 * rangeMul + offset, 12);
+      }
     }
+
+
   }
 
   private handleCollectCoin(
@@ -282,7 +304,7 @@ export default class FightScene extends Phaser.Scene
 		const targetSprite  = target as Phaser.Physics.Arcade.Sprite;
 		
 		if(this.player1 && this.player2) {
-			if(this.player1.action.startsWith("attack") && this.player1.cooldown) {
+			if(this.player1.action.startsWith("attack") && this.player1.cooldown && !this.player1.hitstun) {
 				this.player1.setCooldown(false);
 				this.player2.setHitstun(true);
 				this.player2.sprite.setTint(0xff0000);
@@ -336,7 +358,7 @@ export default class FightScene extends Phaser.Scene
 					child.enableBody(true, child.x, 0, true, true);
 				})
 			}
-			if(this.player2.action.startsWith("attack")) {
+			if(this.player2.action.startsWith("attack") && this.player2.cooldown && !this.player2.hitstun) {
 				this.player2.setCooldown(false);
 				this.player1.setHitstun(true);
 				this.player1.sprite.setTint(0xff0000);
@@ -388,6 +410,30 @@ export default class FightScene extends Phaser.Scene
           child.enableBody(true, child.x, 0, true, true);
         });
       }
+    }
+  }
+
+  decrementRoundTimer(delta: number) {
+    this.roundTimerdelta += delta;
+
+    if(this.roundTimerdelta > 900) {
+      this.roundTimerdelta = 0;
+      this.roundTimer--;
+      this.timerText?.setText(`Time: ${this.roundTimer}`);
+    }
+
+    if(this.roundTimer <= 0) {
+      let winner = "RedBeard";
+
+      if(this.player1 && this.player2) {
+        if(this.player1?.health < this.player2?.health) winner = "BluBeard";
+      }
+
+      this.scene.start('ResultScene', {
+        p1_understandAmt: this.p1_understandAmt,
+        p2_understandAmt: this.p2_understandAmt,
+        who_won: winner
+      });
     }
   }
 

@@ -75,6 +75,9 @@ export default class InputScene extends Phaser.Scene {
     submitButton.on('pointerdown', () => {
       this.saveInput();
     });
+
+    this.p1_understandAmt = 0;
+    this.p2_understandAmt = 0;
   }
 
   saveInput() {

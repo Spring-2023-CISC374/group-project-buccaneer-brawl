@@ -98,6 +98,8 @@ export default class Player {
 			return;
 		}
         this.action = "attack/" + moveType;
+		if(moveType==='crhook' || moveType==='uppercut' || moveType === 'roundhouse') this.action = "startup/" + moveType;
+		
 		switch(moveType){
 			case 'punch':
 				this.damage = 5;
@@ -126,13 +128,18 @@ export default class Player {
     }
     performNextAction(delta: number) {
 		if(this.action != "nothing") this.timer += delta;
+
+		//const moveType = this.action.split('/')[1];
+		let nextMoveTime = 500;
+        //if(moveType === "punch" || moveType ==="kick" || moveType === "hook") nextMoveTime = 250;
 		
-		while (this.timer > 500) {  	
+		while (this.timer > nextMoveTime) {  	
 			//this.timer -= 1000;
 			this.timer = 0;
 
-      this.action = 'nothing';
-      this.sprite.anims.play('turn', true);
-    }
+			this.action = 'nothing';
+			this.sprite.anims.play('turn', true);
+    	}
+
   }
 }
