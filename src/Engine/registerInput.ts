@@ -17,7 +17,15 @@ export default class registerInput extends Phaser.Scene{
         //Check if the input is considered a non-fighting move for loop, reset to start!!!
         this.key_timer += delta;
 
-        while(this.key_timer > 500 && !gameOver) {
+        let nextMoveTime = 500;
+        if(player?.action === "attack/punch" || input[this.key_index]=== "attack/kick" || input[this.key_index] === "attack/hook") nextMoveTime = 250;
+
+        while(this.key_timer > nextMoveTime) {
+
+            if(player) {
+                player.action = "nothing";
+            }
+
             this.key_timer = 0;
             if(input[this.key_index] === "random") {
                 const randomIndex = Math.floor(Math.random() * (available_moves.length));
@@ -28,6 +36,7 @@ export default class registerInput extends Phaser.Scene{
                 player?.movePlayer(260, input[this.key_index], opponent);
             }
             else{
+                console.log("going to attack ", input[this.key_index]);
                 player?.playerAttack(input[this.key_index]);
             }
             this.key_index++;
@@ -38,8 +47,6 @@ export default class registerInput extends Phaser.Scene{
         }
 
     }
-    
-
     
 
 }

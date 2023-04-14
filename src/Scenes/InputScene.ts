@@ -7,6 +7,8 @@ export default class InputScene extends Phaser.Scene {
   private savedTextP2: string;
   private p1_responseText: string[];
   private p2_responseText: string[];
+  private p1_understandAmt: number;
+  private p2_understandAmt: number;
   private moveMap: Map<string, string>;
 
   constructor() {
@@ -15,6 +17,9 @@ export default class InputScene extends Phaser.Scene {
     this.savedTextP2 = '';
     this.p1_responseText = ['random'];
     this.p2_responseText = ['random'];
+
+    this.p1_understandAmt = 0;
+    this.p2_understandAmt = 0;
 
     this.moveMap = available_moves.reduce((accumulator, curr) => {
       accumulator.set(curr, 'true');
@@ -70,6 +75,9 @@ export default class InputScene extends Phaser.Scene {
     submitButton.on('pointerdown', () => {
       this.saveInput();
     });
+
+    this.p1_understandAmt = 0;
+    this.p2_understandAmt = 0;
   }
 
   saveInput() {
@@ -83,10 +91,8 @@ export default class InputScene extends Phaser.Scene {
     this.savedTextP1 = inputElement1.value;
     this.savedTextP2 = inputElement2.value;
 
-    console.log('Saved text Player 1: ', this.savedTextP1);
-    console.log('Saved text Player 2: ', this.savedTextP2);
-
-    this.p2_responseText = [inputElement2.value];
+    //console.log('Saved text Player 1: ', this.savedTextP1);
+    //console.log('Saved text Player 2: ', this.savedTextP2);
 
     inputElement1.remove();
     inputElement2.remove();
@@ -107,9 +113,13 @@ export default class InputScene extends Phaser.Scene {
       console.log(this.p1_responseText);
       console.log(this.p2_responseText);
 
+      this.checkPlayerUnderstanding();
+
       this.scene.start('FightScene', {
         p1_responseText: this.p1_responseText,
         p2_responseText: this.p2_responseText,
+        p1_understandAmt: this.p1_understandAmt,
+        p2_understandAmt: this.p2_understandAmt
       });
     });
   }
@@ -128,7 +138,7 @@ export default class InputScene extends Phaser.Scene {
 
     const subText = resposneText.substring(beginSubstring + 1, endSubstring);
     const map = this.moveMap;
-    console.log('map', map);
+    //console.log('map', map);
 
     const splitText = subText.split(',').map(function (item) {
       if (map.has(item.trim())) {
@@ -136,7 +146,30 @@ export default class InputScene extends Phaser.Scene {
       }
       return 'random';
     });
-    console.log('splitText', splitText);
+   // console.log('splitText', splitText);
     return splitText;
+  }
+
+  checkPlayerUnderstanding() {
+    this.p1_responseText.forEach((s:string)=> {
+      if(s !== "random") {
+        console.log("understood a command!");
+        this.p1_understandAmt++;
+      }
+    });
+
+    this.p2_responseText.forEach((s:string)=> {
+      if(s !== "random") {
+        console.log("understood a command!");
+        this.p2_understandAmt++;
+      }
+    });
+
+    this.p1_understandAmt = (this.p1_understandAmt / this.p1_responseText.length) * 100;
+    this.p2_understandAmt = (this.p2_understandAmt / this.p2_responseText.length) * 100;
+
+    console.log("understandAmount: ", this.p1_understandAmt + "%");
+    console.log("understandAmount: ", this.p2_understandAmt + "%");
+
   }
 }

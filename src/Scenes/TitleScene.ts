@@ -13,12 +13,11 @@ export default class TitleScene extends Phaser.Scene {
     const bg = this.add.image(width / 2, height / 2, 'background');
     bg.setScale(2);
 
-   
-
     const titlescreen = this.add.sprite(400, 330, 'titlescreen');
     titlescreen.scaleX = 2.5;
     titlescreen.scaleY = 1.5
     
+    this.sound.stopAll();
     const music = this.sound.add('piratemusic');
 
     music.play();
