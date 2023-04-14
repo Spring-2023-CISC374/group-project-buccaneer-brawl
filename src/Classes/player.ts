@@ -92,7 +92,7 @@ export default class Player {
 			this.action = "jumping";
 		}
     }
- 	playerAttack(moveType: string){
+    playerAttack(moveType: string){
 		if (this.hitstun){
 			console.log("in hitstun");
 			return;
