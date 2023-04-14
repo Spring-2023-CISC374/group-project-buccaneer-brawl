@@ -25,9 +25,6 @@ export default class FightScene extends Phaser.Scene {
   private roundTimerdelta = 0;
   private timerText?: Phaser.GameObjects.Text;
 
-  private timeoutStorage?: NodeJS.Timeout;
-  private timeoutStorage2?: NodeJS.Timeout;
-
   private gameOver = false;
 
   init(data: {
@@ -147,6 +144,8 @@ export default class FightScene extends Phaser.Scene {
     if (this.p1_responseText === undefined) {
       this.p1_responseText = ["random"];
     }
+
+    
     this.registerOne?.validInput(
       this.p1_responseText,
       delta,
@@ -164,6 +163,13 @@ export default class FightScene extends Phaser.Scene {
       this.player2,
       this.player1
     );
+    
+      /*
+    if(this.player1 && this.player2) {
+      this.handleKeyboardInput(this.player1, this.player2);
+    }
+    */
+
 
     //Alter both player's traction and fall speed.
     this.player1?.setPlayerTraction();
@@ -199,46 +205,80 @@ export default class FightScene extends Phaser.Scene {
         this.attackRanges(this.player2, true);
       }
     }
+
+    if(this.player1) {
+      this.player1.fallCounter += delta;
+    }
+
+    if(this.player2) {
+      this.player2.fallCounter += delta;
+    }
+
+    if(this.player1 && this.player2) {
+
+      console.log(this.player2.fallCounter);
+
+      if(this.player1.fallCounter >= this.player1.fallTime) {
+        if (this.player1.fallen) {
+          this.player1.sprite.anims.play("turn");
+          this.player1.sprite.clearTint();
+          this.player1.setHitstun(false);
+          this.player1.fallen = false;
+  
+          this.player1.action = "nothing";
+          this.player1.fallCounter = 0;
+        }   
+   
+      }
+
+      if (this.player2.fallCounter >= this.player2.fallTime) {
+        if(this.player2.fallen) {
+          this.player2.sprite.anims.play("turn");
+          this.player2.sprite.setTint(0x0096ff);
+          this.player2.setHitstun(false);
+          this.player2.fallen = false;
+  
+          this.player2.action = "nothing";
+          this.player2.fallCounter = 0;
+
+        }
+
+      }
+
+    }
+
     //land check
     if (this.player1?.hitstun || this.player2?.hitstun) {
       if (this.player1?.hitstun && this.player1.sprite.body.touching.down) {
-        //console.log("p1 touched ground");
+        if(!this.player1.fallen) {
+                  //console.log("p1 touched ground");
         //if the player is still touching the ground after a half second, get back up
 
         this.player1.sprite.anims.play("fall");
 
-        this.timeoutStorage2 = setTimeout(() => {
-          if (this.player1?.hitstun && this.player1.sprite.body.touching.down) {
-            //console.log("out of hitstun");
-            this.player1.sprite.anims.play("turn");
-            this.player1.sprite.clearTint();
-            this.player1.setHitstun(false);
+        this.player1.fallCounter = 0;
+        this.player1.fallen = true;
 
-            if (this.player1) {
-              this.player1.action = "nothing";
-            }
-          }
-        }, 500);
+        }
+
       }
+
       if (this.player2?.hitstun && this.player2.sprite.body.touching.down) {
-        //console.log("p2 touched ground");
+        if(!this.player2.fallen) {
+                  //console.log("p1 touched ground");
         //if the player is still touching the ground after a half second, get back up
+   
         this.player2.sprite.anims.play("fall");
 
-        this.timeoutStorage2 = setTimeout(() => {
-          if (this.player2?.hitstun && this.player2.sprite.body.touching.down) {
-            //console.log("out of hitstun");
-            this.player2.sprite.anims.play("turn");
-            this.player2.sprite.setTint(0x0096ff);
-            this.player2.setHitstun(false);
+        this.player2.fallCounter = 0;
+        this.player2.fallen = true;
 
-            if (this.player2) {
-              this.player2.action = "nothing";
-            }
-          }
-        }, 500);
+        }
+
       }
+
     }
+
     //Continously see if player1 is colliding with player2
     if (this.player1 && this.player2) {
       this.physics.overlap(
@@ -252,7 +292,7 @@ export default class FightScene extends Phaser.Scene {
 
     this.decrementRoundTimer(delta);
 
-    console.log("p1action:", this.player1?.action);
+    //console.log("p1action:", this.player1?.action);
     // console.log("p2action:", this.player2?.action);
   }
 
@@ -268,6 +308,9 @@ export default class FightScene extends Phaser.Scene {
       if(moveType === "crhook" && player.timer > 200 && moveType !== undefined) {
         player.action = "attack/" + moveType;
       } else if (moveType === "roundhouse" && player.timer > 400 && moveType !== undefined) {
+        player.action = "attack/" + moveType;
+      }
+      else if (moveType === "uppercut" && player.timer > 50 && moveType !== undefined) {
         player.action = "attack/" + moveType;
       }
 
@@ -342,9 +385,10 @@ export default class FightScene extends Phaser.Scene {
         this.P2_HPText?.setText(`Player 2 HP: ${this.player2.health}`);
 
         //This makes it so that a hit only damages a player once every 0.3 seconds
-        if(this.timeoutStorage !== undefined) window.clearTimeout(this.timeoutStorage);
-        this.timeoutStorage = setTimeout(() => {
-          this.player1?.setCooldown(true);
+        setTimeout(() => {
+          if(this.player1) {
+            this.player1?.setCooldown(true);
+          }
           //console.log("attack ready!");
         }, 300);
 
@@ -399,10 +443,10 @@ export default class FightScene extends Phaser.Scene {
         this.P1_HPText?.setText(`Player 1 HP: ${this.player1.health}`);
 
         //This makes it so that a hit only damages a player once every 0.3 seconds
-
-        if(this.timeoutStorage !== undefined) window.clearTimeout(this.timeoutStorage);
-        this.timeoutStorage = setTimeout(() => {
-          this.player2?.setCooldown(true);
+        setTimeout(() => {
+          if(this.player2) {
+            this.player2?.setCooldown(true);
+          }
           //console.log("attack ready!");
         }, 300);
 

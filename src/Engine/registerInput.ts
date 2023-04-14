@@ -49,6 +49,4 @@ export default class registerInput extends Phaser.Scene{
     }
     
 
-    
-
 }

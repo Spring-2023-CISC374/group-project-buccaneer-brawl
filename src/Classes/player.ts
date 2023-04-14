@@ -10,6 +10,9 @@ export default class Player {
   damage: number; //Damage of the player intended action
   knockbackX: number;
   knockbackY: number;
+  fallTime: number;
+  fallCounter: number;
+  fallen: boolean;
 
   constructor(sprite: Phaser.Physics.Arcade.Sprite, tint?: number) {
     this.sprite = sprite;
@@ -21,8 +24,12 @@ export default class Player {
     this.cooldown = true;
     this.hitstun = false;
     this.damage = 0;
-	this.knockbackX = 260;
-	this.knockbackY = 460;
+    this.knockbackX = 260;
+    this.knockbackY = 460;
+    this.fallTime = 800;
+    this.fallCounter = 0;
+    this.fallen = false;
+  
 
     if (tint) {
       this.sprite.setTint(tint);
