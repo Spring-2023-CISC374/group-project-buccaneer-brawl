@@ -140,11 +140,10 @@ export default class FightScene extends Phaser.Scene {
     if (!this.cursors) {
       return;
     }
-
+  
     if (this.p1_responseText === undefined) {
       this.p1_responseText = ["random"];
     }
-
     
     this.registerOne?.validInput(
       this.p1_responseText,
@@ -345,11 +344,7 @@ export default class FightScene extends Phaser.Scene {
     //this.score += 10;
     //this.scoreText?.setText(`Score: ${this.score}`);
   }
-
-  private checkCooldown() {
-    return this.player1?.cooldown && this.player2?.cooldown;
-  }
-
+  
   private hitCallback(
     user: Phaser.GameObjects.GameObject,
     target: Phaser.GameObjects.GameObject
