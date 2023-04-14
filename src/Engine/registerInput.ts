@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import Player from "./player";
+import Player from "../Classes/player";
 import available_moves from "../Types/available_moves";
 
 export default class registerInput extends Phaser.Scene{
@@ -13,14 +13,20 @@ export default class registerInput extends Phaser.Scene{
 
 
     //Calls the players registers input first
-    public validInput(input: string[], spaces: number, delta: number, player?: Player, opponent?: Player){
+    public validInput(input: string[], delta: number, gameOver: boolean, player?: Player, opponent?: Player){
         //Check if the input is considered a non-fighting move for loop, reset to start!!!
         this.key_timer += delta;
 
-        while(this.key_timer > 500) {
-            this.key_timer = 0;
-            console.log(input[this.key_index]);
+        let nextMoveTime = 500;
+        if(player?.action === "attack/punch" || input[this.key_index]=== "attack/kick" || input[this.key_index] === "attack/hook") nextMoveTime = 250;
 
+        while(this.key_timer > nextMoveTime) {
+
+            if(player) {
+                player.action = "nothing";
+            }
+
+            this.key_timer = 0;
             if(input[this.key_index] === "random") {
                 const randomIndex = Math.floor(Math.random() * (available_moves.length));
                 input[this.key_index] = available_moves[randomIndex];
@@ -30,7 +36,8 @@ export default class registerInput extends Phaser.Scene{
                 player?.movePlayer(260, input[this.key_index], opponent);
             }
             else{
-                player?.playerAttack(spaces, input[this.key_index]);
+                console.log("going to attack ", input[this.key_index]);
+                player?.playerAttack(input[this.key_index]);
             }
             this.key_index++;
             if(this.key_index === input.length){
@@ -40,8 +47,6 @@ export default class registerInput extends Phaser.Scene{
         }
 
     }
-    
-
     
 
 }
