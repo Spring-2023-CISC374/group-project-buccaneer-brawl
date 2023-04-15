@@ -22,6 +22,7 @@ export default class InstructionScene extends Phaser.Scene{
         color: '#ffffff',
         backgroundColor: '#000000',
       });
+      instructionsTitle.setOrigin(0.5, -4);
       //Includes information from the instructions
       const instructionsInfo = this.add.text(width / 2, height / 2, 'Ahoy, today in the game the pirates need your input.', {
         fontSize: '16px',
