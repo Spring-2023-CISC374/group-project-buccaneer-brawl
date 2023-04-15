@@ -16,13 +16,13 @@ export default class InstructionScene extends Phaser.Scene{
        titlescreen.scaleX = 2.5;
        titlescreen.scaleY = 1.5
        //Adds instructions title
-       const instructionsTitle = this.add.text(width / 4, height / 4, 'Instructions', {
+       const instructionsTitle = this.add.text(width / 2, height / 2, 'Instructions', {
         fontSize: '64px',
         fontFamily: 'Arial',
         color: '#ffffff',
         backgroundColor: '#000000',
       });
-      instructionsTitle.setOrigin(0.5, -4);
+      instructionsTitle.setOrigin(0.675, 2);
       //Includes information from the instructions
       const instructionsInfo = this.add.text(width / 2, height / 2, 'Ahoy, today in the game the pirates need your input.', {
         fontSize: '16px',
@@ -81,7 +81,7 @@ export default class InstructionScene extends Phaser.Scene{
       });
       backToStartButton.setInteractive({ useHandCursor: true });
       backToStartButton.on("pointerdown", ()=>{
-      this.scene.start("TitleScene");
+      this.scene.start("InputScene");
     })
     }
 }
