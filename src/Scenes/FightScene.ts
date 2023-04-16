@@ -12,7 +12,6 @@ export default class FightScene extends Phaser.Scene {
   private player1?: Player;
   private player2?: Player;
   private coins?: Phaser.Physics.Arcade.Group;
-  private extraStars?: Phaser.Physics.Arcade.Group;
   private registerOne?: RegisterInput;
   private registerTwo?: RegisterInput;
   private P1_HPText?: Phaser.GameObjects.Text;
@@ -25,7 +24,6 @@ export default class FightScene extends Phaser.Scene {
   private roundTimerdelta = 0;
   private timerText?: Phaser.GameObjects.Text;
 
-  private gameOver = false;
 
   init(data: {
     p1_responseText: string[] | undefined;
@@ -47,7 +45,7 @@ export default class FightScene extends Phaser.Scene {
     const music = this.sound.add("battlemusic");
 
     music.play();
-    music.setLoop(true);
+    //music.setLoop(true);
 
     this.platforms = this.physics.add.staticGroup();
     const ground = this.platforms.create(
@@ -140,15 +138,15 @@ export default class FightScene extends Phaser.Scene {
     if (!this.cursors) {
       return;
     }
-  
+
     if (this.p1_responseText === undefined) {
       this.p1_responseText = ["random"];
+      console.log(time);
     }
-    
+
     this.registerOne?.validInput(
       this.p1_responseText,
       delta,
-      this.gameOver,
       this.player1,
       this.player2
     );
@@ -158,17 +156,15 @@ export default class FightScene extends Phaser.Scene {
     this.registerTwo?.validInput(
       this.p2_responseText,
       delta,
-      this.gameOver,
       this.player2,
       this.player1
     );
-    
-      /*
+
+    /*
     if(this.player1 && this.player2) {
       this.handleKeyboardInput(this.player1, this.player2);
     }
     */
-
 
     //Alter both player's traction and fall speed.
     this.player1?.setPlayerTraction();
@@ -205,77 +201,67 @@ export default class FightScene extends Phaser.Scene {
       }
     }
 
-    if(this.player1) {
+    if (this.player1) {
       this.player1.fallCounter += delta;
     }
 
-    if(this.player2) {
+    if (this.player2) {
       this.player2.fallCounter += delta;
     }
 
-    if(this.player1 && this.player2) {
-
+    if (this.player1 && this.player2) {
       console.log(this.player2.fallCounter);
 
-      if(this.player1.fallCounter >= this.player1.fallTime) {
+      if (this.player1.fallCounter >= this.player1.fallTime) {
         if (this.player1.fallen) {
           this.player1.sprite.anims.play("turn");
           this.player1.sprite.clearTint();
           this.player1.setHitstun(false);
           this.player1.fallen = false;
-  
+
           this.player1.action = "nothing";
           this.player1.fallCounter = 0;
-        }   
-   
+        }
       }
 
       if (this.player2.fallCounter >= this.player2.fallTime) {
-        if(this.player2.fallen) {
+        if (this.player2.fallen) {
           this.player2.sprite.anims.play("turn");
           this.player2.sprite.setTint(0x0096ff);
           this.player2.setHitstun(false);
           this.player2.fallen = false;
-  
+
           this.player2.action = "nothing";
           this.player2.fallCounter = 0;
-
         }
-
       }
-
     }
 
     //land check
     if (this.player1?.hitstun || this.player2?.hitstun) {
       if (this.player1?.hitstun && this.player1.sprite.body.touching.down) {
-        if(!this.player1.fallen) {
-                  //console.log("p1 touched ground");
-        //if the player is still touching the ground after a half second, get back up
+        if (!this.player1.fallen) {
+          //console.log("p1 touched ground");
+          //if the player is still touching the ground after a half second, get back up
 
-        this.player1.sprite.anims.play("fall");
+          this.player1.sprite.anims.play("fall");
 
-        this.player1.fallCounter = 0;
-        this.player1.fallen = true;
-
+          this.player1.fallCounter = 0;
+          this.player1.fallen = true;
         }
-
       }
 
       if (this.player2?.hitstun && this.player2.sprite.body.touching.down) {
-        if(!this.player2.fallen) {
-                  //console.log("p1 touched ground");
-        //if the player is still touching the ground after a half second, get back up
-   
-        this.player2.sprite.anims.play("fall");
+        if (!this.player2.fallen) {
+          //console.log("p1 touched ground");
+          //if the player is still touching the ground after a half second, get back up
 
-        this.player2.fallCounter = 0;
-        this.player2.fallen = true;
+          this.player2.sprite.anims.play("fall");
 
+          this.player2.fallCounter = 0;
+          this.player2.fallen = true;
         }
-
       }
-
     }
 
     //Continously see if player1 is colliding with player2
@@ -284,7 +270,7 @@ export default class FightScene extends Phaser.Scene {
         this.player1.sprite,
         this.player2.sprite,
         this.hitCallback,
-        this.checkCooldown,
+        undefined,
         this
       );
     }
@@ -301,15 +287,24 @@ export default class FightScene extends Phaser.Scene {
 
     const moveType = player.action.split("/")[1];
 
-    
     if (!player.hitstun) {
-
-      if(moveType === "crhook" && player.timer > 200 && moveType !== undefined) {
+      if (
+        moveType === "crhook" &&
+        player.timer > 200 &&
+        moveType !== undefined
+      ) {
         player.action = "attack/" + moveType;
-      } else if (moveType === "roundhouse" && player.timer > 400 && moveType !== undefined) {
+      } else if (
+        moveType === "roundhouse" &&
+        player.timer > 400 &&
+        moveType !== undefined
+      ) {
         player.action = "attack/" + moveType;
-      }
-      else if (moveType === "uppercut" && player.timer > 50 && moveType !== undefined) {
+      } else if (
+        moveType === "uppercut" &&
+        player.timer > 50 &&
+        moveType !== undefined
+      ) {
         player.action = "attack/" + moveType;
       }
 
@@ -321,7 +316,6 @@ export default class FightScene extends Phaser.Scene {
         player.sprite.setOffset(30 * rangeMul + offset, 12);
       }
     }
-    
   }
 
   private handleCollectCoin(
@@ -331,20 +325,18 @@ export default class FightScene extends Phaser.Scene {
     const star = s as Phaser.Physics.Arcade.Image;
     star.disableBody(true, true);
 
-    /*
-    if(this.player1 && this.player2) {
-      if(this.player1.sprite===player) {
+    if (this.player1 && this.player2) {
+      if (this.player1.sprite === player) {
         this.player1.health++;
       } else {
         this.player2.health++;
       }
     }
-    */
 
     //this.score += 10;
     //this.scoreText?.setText(`Score: ${this.score}`);
   }
-  
+
   private hitCallback(
     user: Phaser.GameObjects.GameObject,
     target: Phaser.GameObjects.GameObject
@@ -364,7 +356,6 @@ export default class FightScene extends Phaser.Scene {
         //console.log("attack successful!");
         //console.log(this.player2.hitstun);
         if (this.player1.sprite.body.x < this.player2.sprite.body.x) {
-
           userSprite.setVelocityX(-260);
           targetSprite.setVelocityX(this.player1.knockbackX);
           targetSprite.setVelocityY(-this.player1.knockbackY);
@@ -381,7 +372,7 @@ export default class FightScene extends Phaser.Scene {
 
         //This makes it so that a hit only damages a player once every 0.3 seconds
         setTimeout(() => {
-          if(this.player1) {
+          if (this.player1) {
             this.player1?.setCooldown(true);
           }
           //console.log("attack ready!");
@@ -390,7 +381,6 @@ export default class FightScene extends Phaser.Scene {
         //Game over placeholder
         if (this.player2.health <= 0) {
           this.player2.health = 0;
-          this.gameOver = true;
           this.physics.pause();
           this.scene.start("ResultScene", {
             p1_understandAmt: this.p1_understandAmt,
@@ -399,7 +389,7 @@ export default class FightScene extends Phaser.Scene {
           });
         }
 
-        this.extraStars = this.physics.add.group({
+        this.physics.add.group({
           key: "star",
           repeat: 12,
           setXY: {
@@ -439,18 +429,15 @@ export default class FightScene extends Phaser.Scene {
 
         //This makes it so that a hit only damages a player once every 0.3 seconds
         setTimeout(() => {
-          if(this.player2) {
+          if (this.player2) {
             this.player2?.setCooldown(true);
           }
           //console.log("attack ready!");
         }, 300);
 
-        
-
         //Game over placeholder
         if (this.player1.health <= 0) {
           this.player1.health = 0;
-          this.gameOver = true;
           this.physics.pause();
           this.scene.start("ResultScene", {
             p1_understandAmt: this.p1_understandAmt,
@@ -459,7 +446,7 @@ export default class FightScene extends Phaser.Scene {
           });
         }
 
-        this.extraStars = this.physics.add.group({
+        this.physics.add.group({
           key: "star",
           repeat: 12,
           setXY: {
