@@ -13,12 +13,11 @@ export default class TitleScene extends Phaser.Scene {
     const bg = this.add.image(width / 2, height / 2, 'background');
     bg.setScale(2);
 
-   
-
     const titlescreen = this.add.sprite(400, 330, 'titlescreen');
     titlescreen.scaleX = 2.5;
     titlescreen.scaleY = 1.5
     
+    this.sound.stopAll();
     const music = this.sound.add('piratemusic');
 
     music.play();
@@ -47,11 +46,29 @@ export default class TitleScene extends Phaser.Scene {
       },
     });
 
+    const instructionsButton = this.add.text(width / 2, height / 2, 'Instructions', {
+      fontSize: '48px',
+      fontFamily: 'Arial',
+      color: '#ffffff',
+      backgroundColor: '#000000',
+      padding: {
+        x: 32,
+        y: 32,
+      },
+    });
+
+
     startButton.setOrigin(0.5);
     startButton.setInteractive({ useHandCursor: true });
     startButton.on('pointerdown', () => {
       this.scene.start('InputScene');
     });
+
+    instructionsButton.setOrigin(0.5, -0.5);
+    instructionsButton.setInteractive({ useHandCursor: true });
+    instructionsButton.on("pointerdown", ()=>{
+      this.scene.start("InstructionScene");
+    })
   }
 }
 
