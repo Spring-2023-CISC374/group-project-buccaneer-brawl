@@ -22,7 +22,7 @@ export default class TitleScene extends Phaser.Scene {
     const music = this.sound.add('piratemusic');
 
     music.play();
-    music.setLoop(true);
+    //music.setLoop(true);
     //titlescreen.setScale(2);
     
 
