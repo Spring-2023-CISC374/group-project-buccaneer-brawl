@@ -16,7 +16,7 @@ export default class InstructionScene extends Phaser.Scene{
        titlescreen.scaleX = 2.5;
        titlescreen.scaleY = 1.5
        //Adds instructions title
-       const instructionsTitle = this.add.text(width / 4, height / 4, 'Instructions', {
+       this.add.text(width / 4, height / 4, 'Instructions', {
         fontSize: '64px',
         fontFamily: 'Arial',
         color: '#ffffff',
