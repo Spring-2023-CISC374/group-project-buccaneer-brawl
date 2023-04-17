@@ -100,8 +100,8 @@ export default class InputScene extends Phaser.Scene {
     inputElement2.value = '';
 
 
-    this.p1_responseText = this.formatRequest(this.p1_responseText);
-    this.p2_responseText = this.formatRequest(this.p2_responseText);
+    this.p1_responseText = this.formatRequest(this.savedTextP1);
+    this.p2_responseText = this.formatRequest(this.savedTextP2);
 
       console.log(this.p1_responseText);
       console.log(this.p2_responseText);
@@ -116,12 +116,12 @@ export default class InputScene extends Phaser.Scene {
       });
   }
 
-  formatRequest(responseText: string[]): string[] {
+  formatRequest(responseText: string): string[] {
     
     const map = this.moveMap;
     //console.log('map', map);
 
-    const splitText = responseText.map(function (item) {
+    const splitText = responseText.split(',').map(function (item) {
       if (map.has(item.trim())) {
         return item.trim();
       }
