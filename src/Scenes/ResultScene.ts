@@ -38,7 +38,7 @@ export default class ResultScene extends Phaser.Scene {
 
     this.sound.stopAll();
     music.play();
-    music.setLoop(true);
+    //music.setLoop(true);
     //titlescreen.setScale(2);
 
     // Add title text

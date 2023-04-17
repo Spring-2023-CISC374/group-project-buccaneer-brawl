@@ -1,7 +1,5 @@
 
 
-import Phaser from 'phaser';
-import axios, { AxiosError } from 'axios';
 import chatGPTKey from '../secrets/secretkeys';
 
 import { OpenAIApi, Configuration, ChatCompletionResponseMessageRoleEnum } from "openai";
@@ -18,7 +16,6 @@ const configuration = new Configuration({
   
 const openai = new OpenAIApi(configuration);
 const conversationContext: string[][] = [];
-const currentMessages = [];
 
 
 export const generateResponse = async (prompt: string) => {
