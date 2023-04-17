@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import { generateResponse } from '../Classes/chatgptrequest';
 import available_moves from '../Types/available_moves';
 
 export default class InputScene extends Phaser.Scene {
@@ -179,15 +178,9 @@ export default class InputScene extends Phaser.Scene {
     inputElement1.value = '';
     inputElement2.value = '';
 
-    Promise.all([
-      generateResponse(this.savedTextP1),
-      generateResponse(this.savedTextP2),
-    ]).then(([generatedTextP1, generatedTextP2]) => {
-      console.log(generatedTextP1);
-      console.log(generatedTextP2);
 
-      this.p1_responseText = this.formatRequest(generatedTextP1);
-      this.p2_responseText = this.formatRequest(generatedTextP2);
+    this.p1_responseText = this.formatRequest(this.savedTextP1);
+    this.p2_responseText = this.formatRequest(this.savedTextP2);
 
       console.log(this.p1_responseText);
       console.log(this.p2_responseText);
@@ -200,26 +193,14 @@ export default class InputScene extends Phaser.Scene {
         p1_understandAmt: this.p1_understandAmt,
         p2_understandAmt: this.p2_understandAmt
       });
-    });
   }
 
-  formatRequest(resposneText: string | undefined): string[] {
-    if (resposneText == undefined) {
-      return ['random'];
-    }
-
-    const beginSubstring = resposneText.indexOf('[');
-    const endSubstring = resposneText.indexOf(']');
-
-    if (beginSubstring == undefined || endSubstring == undefined) {
-      return ['random'];
-    }
-
-    const subText = resposneText.substring(beginSubstring + 1, endSubstring);
+  formatRequest(responseText: string): string[] {
+    
     const map = this.moveMap;
     //console.log('map', map);
 
-    const splitText = subText.split(',').map(function (item) {
+    const splitText = responseText.split(',').map(function (item) {
       if (map.has(item.trim())) {
         return item.trim();
       }
