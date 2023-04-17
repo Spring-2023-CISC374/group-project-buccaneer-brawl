@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import { generateResponse } from '../Classes/chatgptrequest';
 import available_moves from '../Types/available_moves';
 
 export default class InputScene extends Phaser.Scene {
