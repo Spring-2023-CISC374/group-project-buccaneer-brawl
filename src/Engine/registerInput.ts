@@ -18,6 +18,7 @@ export default class registerInput extends Phaser.Scene{
         this.key_timer += delta;
 
         let nextMoveTime = 500;
+        console.log(nextMoveTime);
         if(player?.action === "attack/punch" || input[this.key_index]=== "attack/kick" || input[this.key_index] === "attack/hook") nextMoveTime = 250;
 
         while(this.key_timer > nextMoveTime) {
