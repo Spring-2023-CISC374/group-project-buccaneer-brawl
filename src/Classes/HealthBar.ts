@@ -1,8 +1,8 @@
 import Phaser from "phaser";
 
 enum HealthBarColor {
-        Green = 0,
-        Red = 1
+        Green = "green",
+        Red = "red"
 }
 
 export default class HealthBar {

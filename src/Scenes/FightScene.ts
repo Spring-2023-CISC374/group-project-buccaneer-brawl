@@ -146,7 +146,7 @@ export default class FightScene extends Phaser.Scene {
     if (this.p1_responseText === undefined) {
       this.p1_responseText = ["random"];
     }
-    /*
+    
     this.registerOne?.validInput(
       this.p1_responseText,
       delta,
@@ -161,12 +161,12 @@ export default class FightScene extends Phaser.Scene {
       delta,
       this.player2,
       this.player1
-    );*/
-
+    );
     
+    /*
     if(this.player1 && this.player2) {
       this.handleKeyboardInput(this.player1, this.player2);
-    }
+    }*/
     
 
     //Alter both player's traction and fall speed.
