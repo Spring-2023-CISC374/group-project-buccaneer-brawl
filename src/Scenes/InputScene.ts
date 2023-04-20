@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import available_moves from '../Types/available_moves';
 
+
 export default class InputScene extends Phaser.Scene {
   private savedTextP1: string;
   private savedTextP2: string;
@@ -129,28 +130,20 @@ export default class InputScene extends Phaser.Scene {
     inputElement1.value = '';
     inputElement2.value = '';
 
-    Promise.all([
-      generateResponse(this.savedTextP1),
-      generateResponse(this.savedTextP2),
-    ]).then(([generatedTextP1, generatedTextP2]) => {
-      console.log(generatedTextP1);
-      console.log(generatedTextP2);
-
-      this.p1_responseText = this.formatRequest(generatedTextP1);
-      this.p2_responseText = this.formatRequest(generatedTextP2);
+    this.p1_responseText = this.formatRequest(this.savedTextP1);
+    this.p2_responseText = this.formatRequest(this.savedTextP2);
 
       console.log(this.p1_responseText);
       console.log(this.p2_responseText);
 
       this.checkPlayerUnderstanding();
 
-      this.scene.start('FightScene', {
+      this.scene.start('InstructionScene', {
         p1_responseText: this.p1_responseText,
         p2_responseText: this.p2_responseText,
         p1_understandAmt: this.p1_understandAmt,
         p2_understandAmt: this.p2_understandAmt
       });
-    });
   }
 
 
