@@ -50,22 +50,22 @@ export default class InstructionScene extends Phaser.Scene{
         fontSize: '20px',
         fontFamily: 'Arial',
         color: '#ffffff',
-        backgroundColor: '#000000',}).setOrigin(0.5, -0.5);
+        backgroundColor: '#000000',}).setOrigin(0.62, -1);
         
        this.add.text(width / 2, height / 2, ' walk forward, walk back, jump forward,  kick, punch, uppercut, crhook, roundhouse',{
         fontSize: '18px',
         fontFamily: 'Arial',
         color: '#ffffff',
-        backgroundColor: '#000000',}).setOrigin(0.5, -2);
+        backgroundColor: '#000000',}).setOrigin(0.59, -2);
 
 
        this.add.text(width / 2, height / 2, 'For example.', {
             fontSize: '20px',
             fontFamily: 'Arial',
             color: '#ffffff',
-            backgroundColor: '#000000',}).setOrigin(3, -3);
+            backgroundColor: '#000000',}).setOrigin(3.3, -3);
 
-      this.add.text(width/2, height/2, "If you tell the player to walk forward the player will walk forward some amounts of spaces", {
+      this.add.text(width/2, height/2, "If the player is given walk forward, the player will walk forward some amounts of spaces", {
         fontSize: '20px',
         fontFamily: 'Arial',
         color: '#ffffff',
@@ -87,21 +87,21 @@ export default class InstructionScene extends Phaser.Scene{
       this.scene.start("TitleScene");
     })
 
-    // const demoButton = this.add.text(width / 4, height / 2, 'Demo', {
-    //   fontSize: "48px",
-    //   fontFamily: "Arial",
-    //   color: "#ffffff",
-    //   backgroundColor: "#000000",
-    //   padding : {
-    //     x: 16,
-    //     y: 8
-    //   }
-    // }).setOrigin(0.5, 5);
-    // demoButton.setScale(0.5, 1)
-    // demoButton.setInteractive({useHandCursor: true});
-    // demoButton.on("pointerdown", ()=>{
-    //   this.scene.start("DemoScene")
-    // })
+    const demoButton = this.add.text(width / 4, height / 2, 'Demo', {
+      fontSize: "48px",
+      fontFamily: "Arial",
+      color: "#ffffff",
+      backgroundColor: "#000000",
+      padding : {
+        x: 16,
+        y: 8
+      }
+    }).setOrigin(-0.5, -3);
+    demoButton.setScale(1, 1)
+    demoButton.setInteractive({useHandCursor: true});
+    demoButton.on("pointerdown", ()=>{
+      this.scene.start("DemoScene")
+    })
     
     }
 }
