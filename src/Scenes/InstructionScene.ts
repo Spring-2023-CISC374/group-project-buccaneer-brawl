@@ -13,6 +13,7 @@ export default class InstructionScene extends Phaser.Scene{
        const bg = this.add.image(width / 2, height / 2, 'background');
        bg.setScale(2);
        const titlescreen = this.add.sprite(400, 330, 'titlescreen');
+       console.log(titlescreen);
        titlescreen.scaleX = 2.5;
        titlescreen.scaleY = 1.5
        //Adds instructions title
@@ -71,7 +72,7 @@ export default class InstructionScene extends Phaser.Scene{
         color: '#ffffff',
         backgroundColor: '#000000',}).setOrigin(0.5, -4);
 
-      const backToStartButton = this.add.text(width / 4, height / 2, 'Return to start', {
+      const backToStartButton = this.add.text(width / 4, height / 2, 'Return to Input', {
         fontSize: '48px',
         fontFamily: 'Arial',
         color: '#ffffff',
@@ -84,7 +85,7 @@ export default class InstructionScene extends Phaser.Scene{
       backToStartButton.setScale(1, 1)
       backToStartButton.setInteractive({ useHandCursor: true });
       backToStartButton.on("pointerdown", ()=>{
-      this.scene.start("TitleScene");
+      this.scene.start("InputScene");
     })
 
     const demoButton = this.add.text(width / 4, height / 2, 'Demo', {
@@ -96,7 +97,7 @@ export default class InstructionScene extends Phaser.Scene{
         x: 16,
         y: 8
       }
-    }).setOrigin(-0.5, -3);
+    }).setOrigin(-0.5, -3.5);
     demoButton.setScale(1, 1)
     demoButton.setInteractive({useHandCursor: true});
     demoButton.on("pointerdown", ()=>{
