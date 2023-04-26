@@ -6,6 +6,7 @@ export default class Player {
   action: string; //Action that the player intends to do
   maxHealth: number; //The max amount of health the pirate can have (used for percentage checks etc). The pirate starts the game at this health
   health: number; //Pirate's health. This is the number that actually decreases/increases as a pirate fights
+  coins: number; //Amount of coins the pirate has. Having
   cooldown: boolean; //Handler for player collisions (one hit registering for 10+ hits); A player cannot hit another player while cooldown is false
   hitstun: boolean; //If hitstun is set to true, movePlayer and playerAttack cannot be called until the player hits the ground. A player is put into hitstun when an opposing character's attack damages them
   damage: number; //Damage of the player intended action
@@ -18,6 +19,7 @@ export default class Player {
   constructor(sprite: Phaser.Physics.Arcade.Sprite, health?: number, tint?: number) {
     this.sprite = sprite;
     this.health = 3;
+    this.coins = 0;
     this.sprite.setCollideWorldBounds(true);
     this.action = "nothing";
     this.timer = 0;

@@ -36,8 +36,7 @@ export default class InputScene extends Phaser.Scene {
     const inputElement2 = document.getElementById(
       'myText2'
     ) as HTMLInputElement;
-    console.log(inputElement1);
-    console.log(inputElement2)
+
     this.add.text(10, 10, 'Enter your text:', {
       fontSize: '32px',
       color: '#000',
