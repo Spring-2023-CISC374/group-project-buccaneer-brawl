@@ -8,8 +8,6 @@ export default class InputScene extends Phaser.Scene {
   private p2_responseText: string[];
   private p1_understandAmt: number;
   private p2_understandAmt: number;
-  private selectedMovement = "";
-  private selectedAttack = "";
   private moveMap: Map<string, string>;
 
 
@@ -149,27 +147,24 @@ export default class InputScene extends Phaser.Scene {
 
     console.log("understandAmount: ", this.p1_understandAmt + "%");
     console.log("understandAmount: ", this.p2_understandAmt + "%");
-    const movementSelect = document.getElementById("movement-select") as HTMLSelectElement;
-    const attackSelect = document.getElementById("attack-select") as HTMLSelectElement;
 
-    movementSelect.addEventListener("change", (event) => {
-      this.selectedMovement = (event.target as HTMLSelectElement).value;
+    const select = document.createElement('select');
+    const movements = ['wait', 'walk_forward', 'walk_back', 'jump', 'jump_forward', 'jump_back'];
+    movements.forEach((movement) => {
+      const option = document.createElement('option');
+      option.value = movement;
+      option.text = movement;
+      select.appendChild(option);
     });
-
-    attackSelect.addEventListener("change", (event) => {
-      this.selectedAttack = (event.target as HTMLSelectElement).value;
+    const player1Input = document.getElementById('player1') as HTMLInputElement;
+    const player2Input = document.getElementById('player2') as HTMLInputElement;
+    
+    select.addEventListener('change', () => {
+      const selectedMovement = select.value;
+      player1Input.value = `Player 1: ${selectedMovement}`;
+      player2Input.value = `Player 2: ${selectedMovement}`;
     });
-
-    const player1Input = document.getElementById("player1-input") as HTMLInputElement;
-    const player2Input = document.getElementById("player2-input") as HTMLInputElement;
-
-    const submitButton = document.getElementById("submit-button") as HTMLButtonElement;
-    submitButton.addEventListener("click", () => {
-      const selectedMovement = this.selectedMovement;
-      const selectedAttack = this.selectedAttack;
-      player1Input.value = `${selectedMovement} ${selectedAttack}`;
-      player2Input.value = `${selectedMovement} ${selectedAttack}`;
-    });
+        
 
   }
 }
