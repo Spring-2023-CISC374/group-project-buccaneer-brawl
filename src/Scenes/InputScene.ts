@@ -8,7 +8,10 @@ export default class InputScene extends Phaser.Scene {
   private p2_responseText: string[];
   private p1_understandAmt: number;
   private p2_understandAmt: number;
+  private selectedMovement = "";
+  private selectedAttack = "";
   private moveMap: Map<string, string>;
+
 
   constructor() {
     super({ key: 'InputScene' });
@@ -19,7 +22,7 @@ export default class InputScene extends Phaser.Scene {
 
     this.p1_understandAmt = 0;
     this.p2_understandAmt = 0;
-
+    
     this.moveMap = available_moves.reduce((accumulator, curr) => {
       accumulator.set(curr, 'true');
       return accumulator;
@@ -27,13 +30,7 @@ export default class InputScene extends Phaser.Scene {
   }
 
   create() {
-    this.cameras.main.setBackgroundColor('#ffffff');
-
-    this.add.text(10, 10, 'Enter your text:', {
-      fontSize: '32px',
-      color: '#000',
-    });
-
+    
     this.add.text(50, 60, 'Player 1', {
       fontSize: '24px',
       color: '#000',
@@ -61,13 +58,14 @@ export default class InputScene extends Phaser.Scene {
     inputP2.style.left = '350px';
     inputP2.style.top = '90px';
     document.body.appendChild(inputP2);
-
-    const submitButton = this.add.text(200, 200, 'Submit', {
+    
+    const submitButton = this.add.text(200, 700, 'Submit', {
       fontSize: '32px',
       color: '#000',
       backgroundColor: '#fff',
       padding: { left: 10, right: 10, top: 5, bottom: 5 },
     });
+ 
 
     submitButton.setInteractive({ useHandCursor: true });
 
@@ -151,6 +149,27 @@ export default class InputScene extends Phaser.Scene {
 
     console.log("understandAmount: ", this.p1_understandAmt + "%");
     console.log("understandAmount: ", this.p2_understandAmt + "%");
+    const movementSelect = document.getElementById("movement-select") as HTMLSelectElement;
+    const attackSelect = document.getElementById("attack-select") as HTMLSelectElement;
+
+    movementSelect.addEventListener("change", (event) => {
+      this.selectedMovement = (event.target as HTMLSelectElement).value;
+    });
+
+    attackSelect.addEventListener("change", (event) => {
+      this.selectedAttack = (event.target as HTMLSelectElement).value;
+    });
+
+    const player1Input = document.getElementById("player1-input") as HTMLInputElement;
+    const player2Input = document.getElementById("player2-input") as HTMLInputElement;
+
+    const submitButton = document.getElementById("submit-button") as HTMLButtonElement;
+    submitButton.addEventListener("click", () => {
+      const selectedMovement = this.selectedMovement;
+      const selectedAttack = this.selectedAttack;
+      player1Input.value = `${selectedMovement} ${selectedAttack}`;
+      player2Input.value = `${selectedMovement} ${selectedAttack}`;
+    });
 
   }
 }
