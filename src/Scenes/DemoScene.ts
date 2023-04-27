@@ -48,8 +48,7 @@ export default class DemoScene extends Phaser.Scene{
         waitButton.setScale(1, 1).setOrigin(1.9, -1)
         waitButton.setInteractive({ useHandCursor: true });
         waitButton.on("pointerdown", ()=>{
-          
-          return;
+          this.player2?.sprite.anims.play("wait");
         })
 
         const backToStartButton = this.add.text(width / 4, height / 2, 'Return to Input', {
@@ -68,5 +67,115 @@ export default class DemoScene extends Phaser.Scene{
           this.scene.start("InputScene");
         })
     
+    }
+
+    private animationHandler() {
+      this.anims.create({
+        key: "left",
+        frames: this.anims.generateFrameNumbers("dude", {
+          start: 3,
+          end: 5,
+        }),
+        frameRate: 20,
+        repeat: -1, //-1 for infinite repeats
+      });
+  
+      this.anims.create({
+        key: "turn",
+        frames: this.anims.generateFrameNumbers("dude", {
+          start: 0,
+          end: 3,
+        }),
+        frameRate: 10,
+        repeat: -1, //-1 f
+      });
+  
+      this.anims.create({
+        key: "right",
+        frames: this.anims.generateFrameNumbers("dude", {
+          start: 3,
+          end: 5,
+        }),
+        frameRate: 20,
+        repeat: -1,
+      });
+  
+      this.anims.create({
+        key: "punch",
+        frames: this.anims.generateFrameNumbers("dude", {
+          start: 9,
+          end: 10,
+        }),
+        frameRate: 10,
+        repeat: -1, //-1 for infinite repeats
+      });
+  
+      this.anims.create({
+        key: "hook",
+        frames: this.anims.generateFrameNumbers("dude", {
+          start: 11,
+          end: 12,
+        }),
+        frameRate: 10,
+        repeat: -1, //-1 for infinite repeats
+      });
+  
+      this.anims.create({
+        key: "kick",
+        frames: this.anims.generateFrameNumbers("dude", {
+          start: 13,
+          end: 14,
+        }),
+        frameRate: 10,
+        repeat: -1, //-1 for infinite repeats
+      });
+  
+      this.anims.create({
+        key: "uppercut",
+        frames: this.anims.generateFrameNumbers("dude", {
+          start: 20,
+          end: 24,
+        }),
+        frameRate: 10,
+        repeat: -1, //-1 for infinite repeats
+      });
+  
+      this.anims.create({
+        key: "crhook",
+        frames: this.anims.generateFrameNumbers("dude", {
+          start: 25,
+          end: 30,
+        }),
+        frameRate: 10,
+        repeat: -1, //-1 for infinite repeats
+      });
+  
+      this.anims.create({
+        key: "roundhouse",
+        frames: this.anims.generateFrameNumbers("dude", {
+          start: 14,
+          end: 19,
+        }),
+        frameRate: 10,
+        repeat: -1, //-1 for infinite repeats
+      });
+      this.anims.create({
+        key: "hit",
+        frames: this.anims.generateFrameNumbers("dude", {
+          start: 6,
+          end: 6,
+        }),
+        frameRate: 10,
+        repeat: -1, //-1 for infinite repeats
+      });
+      this.anims.create({
+        key: "fall",
+        frames: this.anims.generateFrameNumbers("dude", {
+          start: 7,
+          end: 7,
+        }),
+        frameRate: 10,
+        repeat: -1, //-1 for infinite repeats
+      });
     }
 }
