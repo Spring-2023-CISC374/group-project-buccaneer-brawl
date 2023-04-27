@@ -19,7 +19,7 @@ export default class Player {
   constructor(sprite: Phaser.Physics.Arcade.Sprite, health?: number, tint?: number) {
     this.sprite = sprite;
     this.health = 3;
-    this.coins = 0;
+    this.coins = 20;
     this.sprite.setCollideWorldBounds(true);
     this.action = "nothing";
     this.timer = 0;

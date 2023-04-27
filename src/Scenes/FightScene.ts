@@ -24,6 +24,8 @@ export default class FightScene extends Phaser.Scene {
   private p2_responseText?: string[];
   private p1_understandAmt?: number;
   private p2_understandAmt?: number;
+  private msgBox1?: Phaser.GameObjects.Text;
+  private msgBox2?: Phaser.GameObjects.Text;
   private roundTimer = 99;
   private roundTimerdelta = 0;
   private timerText?: Phaser.GameObjects.Text;
@@ -83,7 +85,16 @@ export default class FightScene extends Phaser.Scene {
       fontSize: "30px",
       color: "#000",
     });
-
+    this.msgBox1 = this.add.text(14, 80, "Player 1 Cannon Ready! Press Q", {
+      fontSize: "20px",
+      color: '#ffffff',
+      backgroundColor: '#000000',
+    });
+    this.msgBox2 = this.add.text(430, 80, "Player 2 Cannon Ready! Press P", {
+      fontSize: "20px",
+      color: '#ffffff',
+      backgroundColor: '#000000',
+    });
     this.makeHealthBar(14, 60, 300, true);
     this.makeHealthBar(450, 60, 300, false);
 
@@ -108,8 +119,13 @@ export default class FightScene extends Phaser.Scene {
       const child = c as Phaser.Physics.Arcade.Image;
       child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
     });
+
 		this.cannonballs = this.physics.add.group();
-    this.physics.add.collider(this.cannonballs, this.platforms);
+    this.physics.add.collider(this.cannonballs, this.platforms, (c, p) => {
+      const cannonball = c as Phaser.Physics.Arcade.Image;
+      cannonball.disableBody(true, true);
+      //sound effect for boom placeholder
+    }, undefined, this);
 		this.physics.add.collider(this.player1.sprite, this.cannonballs, this.handleHitCannonball, undefined, this);
 		this.physics.add.collider(this.player2.sprite, this.cannonballs, this.handleHitCannonball, undefined, this);
 
@@ -174,6 +190,7 @@ export default class FightScene extends Phaser.Scene {
     }
     
 
+
     //Alter both player's traction and fall speed.
     this.player1?.setPlayerTraction();
     this.player1?.setPlayerFallSpeed();
@@ -216,7 +233,20 @@ export default class FightScene extends Phaser.Scene {
     if (this.player2) {
       this.player2.fallCounter += delta;
     }
-
+    if (this.player1 && this.player2){
+      if (this.player1.coins >= 20){
+        this.msgBox1?.setVisible(true);
+      }
+      else{
+        this.msgBox1?.setVisible(false);
+      }
+      if (this.player2.coins >= 20){
+        this.msgBox2?.setVisible(true);
+      }
+      else{
+        this.msgBox2?.setVisible(false);
+      }
+    }
     if (this.player1 && this.player2) {
       if (this.player1.fallCounter >= this.player1.fallTime) {
         if (this.player1.fallen) {
@@ -548,10 +578,10 @@ export default class FightScene extends Phaser.Scene {
   handleKeyboardInput(player1: Player, player2: Player) {
     const keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     const keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+    const keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
     const keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
     const keyP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
-    const keyL = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L);
-
+    
     keyD.on("down", () => {
       if (player2.sprite.body.touching.down) {
         player2.movePlayer(260, "walk_back", this.player1);
@@ -562,16 +592,19 @@ export default class FightScene extends Phaser.Scene {
         player2.movePlayer(260, "walk_forward", this.player1);
       }
     });
-
+    keyF.on("down", () => {
+      if (this.player2 && player2.sprite.body.touching.down) {
+        this.player2.playerAttack("punch");
+      }
+    });
+    
     keyQ.on("down", () => {
       if (this.player1 && this.player2) this.fireCannon(this.player1, this.player2);
     });
     keyP.on("down", () => {
       if (this.player1 && this.player2) this.fireCannon(this.player2, this.player1);
     });
-    keyL.on("down", () => {
-      if (this.player1) console.log(this.player1.coins);
-    });
+
   }
 
   private animationHandler() {
