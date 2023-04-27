@@ -153,7 +153,7 @@ export default class FightScene extends Phaser.Scene {
     this.player2.sprite.anims.play("turn", true);
 
     this.registerOne = new RegisterInput();
-    //this.registerTwo = new RegisterInput();
+    this.registerTwo = new RegisterInput();
 
     this.roundTimer = 99;
     this.roundTimerdelta = 0;
@@ -574,30 +574,11 @@ export default class FightScene extends Phaser.Scene {
     }
   }
 
-  //for debugging purposes
   handleKeyboardInput(player1: Player, player2: Player) {
-    const keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-    const keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-    const keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
+
     const keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
     const keyP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
-    
-    keyD.on("down", () => {
-      if (player2.sprite.body.touching.down) {
-        player2.movePlayer(260, "walk_back", this.player1);
-      }
-    });
-    keyA.on("down", () => {
-      if (player2.sprite.body.touching.down) {
-        player2.movePlayer(260, "walk_forward", this.player1);
-      }
-    });
-    keyF.on("down", () => {
-      if (this.player2 && player2.sprite.body.touching.down) {
-        this.player2.playerAttack("punch");
-      }
-    });
-    
+
     keyQ.on("down", () => {
       if (this.player1 && this.player2) this.fireCannon(this.player1, this.player2);
     });
