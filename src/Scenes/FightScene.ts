@@ -26,6 +26,7 @@ export default class FightScene extends Phaser.Scene {
   private msgBox2?: Phaser.GameObjects.Text;
   private roundTimer = 99;
   private roundTimerdelta = 0;
+  private timeNumber?: number;
   private timerText?: Phaser.GameObjects.Text;
 
 
@@ -153,7 +154,9 @@ export default class FightScene extends Phaser.Scene {
     if (!this.cursors) {
       return;
     }
-    time++;
+    if(time > 0 && this.timeNumber) {
+      this.timeNumber++;
+    }
 
     if (this.p1_responseText === undefined) {
       this.p1_responseText = ["random"];
