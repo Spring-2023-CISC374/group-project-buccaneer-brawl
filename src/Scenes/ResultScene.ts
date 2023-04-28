@@ -40,6 +40,9 @@ export default class ResultScene extends Phaser.Scene {
     music.play();
     //music.setLoop(true);
     //titlescreen.setScale(2);
+    if(this.p1_understandAmt && this.p2_understandAmt) {
+      console.log("Pirate won");
+    }
 
     // Add title text
     const title = this.add.text(width / 2, height / 4, "Results:", {

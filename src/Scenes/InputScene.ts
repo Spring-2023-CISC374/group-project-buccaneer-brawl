@@ -34,10 +34,10 @@ export default class InputScene extends Phaser.Scene {
   create() {
     this.cameras.main.setBackgroundColor('#ffffff');
     const { width, height } = this.scale;
-    const inputElement1 = document.getElementById(
+    document.getElementById(
       'myText1'
     ) as HTMLInputElement;
-    const inputElement2 = document.getElementById(
+    document.getElementById(
       'myText2'
     ) as HTMLInputElement;
 
@@ -48,7 +48,7 @@ export default class InputScene extends Phaser.Scene {
 
     const movelist_text = available_moves.join('\n');
 
-    this.add.text(50, 300, `Available Moves:\n${movelist_text}`, {
+    this.add.text(240, 100, `Available Moves:\n${movelist_text}`, {
       fontSize: '10px',
       color: '#000',
     });
@@ -75,7 +75,7 @@ export default class InputScene extends Phaser.Scene {
     input.style.position = 'absolute';
     input.style.left = '50px';
     input.style.top = '90px';
-    input.style.width = '200px';
+    input.style.width = '150px';
     input.style.height = '200px';
     document.body.appendChild(input);
 
@@ -90,7 +90,7 @@ export default class InputScene extends Phaser.Scene {
     inputP2.style.position = 'absolute';
     inputP2.style.left = '350px';
     inputP2.style.top = '90px';
-    inputP2.style.width = '200px';
+    inputP2.style.width = '150px';
     inputP2.style.height = '200px';
     document.body.appendChild(inputP2);
 
