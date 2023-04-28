@@ -111,7 +111,7 @@ export default class FightScene extends Phaser.Scene {
     });
 
 		this.cannonballs = this.physics.add.group();
-    this.physics.add.collider(this.cannonballs, this.platforms, (c, p) => {
+    this.physics.add.collider(this.cannonballs, this.platforms, (c) => {
       const cannonball = c as Phaser.Physics.Arcade.Image;
       cannonball.disableBody(true, true);
       //sound effect for boom placeholder
@@ -151,9 +151,9 @@ export default class FightScene extends Phaser.Scene {
 
   update(time: number, delta: number) {
     if (!this.cursors) {
-      time++;
       return;
     }
+    time++;
 
     if (this.p1_responseText === undefined) {
       this.p1_responseText = ["random"];
