@@ -529,14 +529,14 @@ export default class FightScene extends Phaser.Scene {
           const cannonball: Phaser.Physics.Arcade.Image = this.cannonballs?.create(100, 0, "cannonball");
           cannonball.setScale(2, 2);
           cannonball.setCollideWorldBounds(true);
-          this.physics.moveTo(cannonball, target.sprite.x, target.sprite.y, undefined, 1000)
+          this.physics.moveTo(cannonball, target.sprite.x, target.sprite.y, 50, 1000)
         }
         else{
           //fire to the right
           const cannonball: Phaser.Physics.Arcade.Image = this.cannonballs?.create(700, 0, "cannonball");
           cannonball.setScale(2, 2);
           cannonball.setCollideWorldBounds(true);
-          this.physics.moveTo(cannonball, target.sprite.x, target.sprite.y, undefined, 1000)
+          this.physics.moveTo(cannonball, target.sprite.x, target.sprite.y, 50, 1000)
         }
       }
   }
