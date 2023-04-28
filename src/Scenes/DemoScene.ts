@@ -34,7 +34,7 @@ export default class DemoScene extends Phaser.Scene{
               .setScale(2),
             0x0096ff
           ); 
-          this.player2.sprite.setVelocityY(0);
+          
         const waitButton = this.add.text(width / 4, height / 4, available_moves[0], {
             fontSize: '21px',
             fontFamily: 'Arial',
@@ -48,7 +48,26 @@ export default class DemoScene extends Phaser.Scene{
         waitButton.setScale(1, 1).setOrigin(1.9, -1)
         waitButton.setInteractive({ useHandCursor: true });
         waitButton.on("pointerdown", ()=>{
-          this.player2?.sprite.anims.play("wait");
+          
+          this.player2?.sprite.anims.play("turn");
+          this.animationHandler();
+        })
+
+        const walk_forward_button = this.add.text(width / 4, height / 4, available_moves[1], {
+          fontSize: '21px',
+          fontFamily: 'Arial',
+          color: '#ffffff',
+          backgroundColor: '#000000',
+          padding: {
+          x: 16,
+          y: 8,
+          }
+        })
+        walk_forward_button.setScale(1, 1).setX(12).setY(235)
+        walk_forward_button.setInteractive({useHandCursor: true});
+        walk_forward_button.on("pointerdown", ()=>{
+          this.player2?.sprite.anims.play("left");
+          this.animationHandler();
         })
 
         const backToStartButton = this.add.text(width / 4, height / 2, 'Return to Input', {
