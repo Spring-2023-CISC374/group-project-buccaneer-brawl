@@ -6,7 +6,7 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
   constructor() {
     super({ key: 'SPFightSceneLevel1' });
   }
-  private aiMoves = ['kick', 'punch', 'move_forward'];
+  private aiMoves = ['kick', 'punch', 'walk_forward'];
 
   private getRandomMove() {
     const index = Math.floor(Math.random() * this.aiMoves.length);
@@ -162,12 +162,18 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
     if (this.p2_responseText === undefined) {
       this.p2_responseText = ['random'];
     }
-    this.aiMoveCounter += delta;
+    this.registerTwo?.validInput(
+      this.aiMoves,
+      delta,
+      this.player2,
+      this.player1
+    );
+    /*  this.aiMoveCounter += delta;
     if (this.aiMoveCounter >= this.aiMoveInterval) {
       this.aiMoveCounter = 0;
       const move = this.getRandomMove();
       this.registerTwo?.validInput([move], delta, this.player2, this.player1);
-    }
+    } */
 
     /*
     if(this.player1 && this.player2) {
@@ -219,8 +225,6 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
     }
 
     if (this.player1 && this.player2) {
-      console.log(this.player2.fallCounter);
-
       if (this.player1.fallCounter >= this.player1.fallTime) {
         if (this.player1.fallen) {
           this.player1.sprite.anims.play('turn');
@@ -391,7 +395,7 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
         if (this.player2.health <= 0) {
           this.player2.health = 0;
           this.physics.pause();
-          this.scene.start('ResultScene', {
+          this.scene.start('SPResultScene', {
             p1_understandAmt: this.p1_understandAmt,
             p2_understandAmt: this.p2_understandAmt,
             who_won: 'RedBeard',
@@ -448,7 +452,7 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
         if (this.player1.health <= 0) {
           this.player1.health = 0;
           this.physics.pause();
-          this.scene.start('ResultScene', {
+          this.scene.start('SPResultScene', {
             p1_understandAmt: this.p1_understandAmt,
             p2_understandAmt: this.p2_understandAmt,
             who_won: 'BluBeard',
@@ -489,7 +493,7 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
         if (this.player1?.health < this.player2?.health) winner = 'BluBeard';
       }
 
-      this.scene.start('ResultScene', {
+      this.scene.start('SPResultScene', {
         p1_understandAmt: this.p1_understandAmt,
         p2_understandAmt: this.p2_understandAmt,
         who_won: winner,

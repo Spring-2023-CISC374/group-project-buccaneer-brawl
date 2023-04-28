@@ -1,12 +1,12 @@
 import Phaser from 'phaser';
 
-export default class ResultScene extends Phaser.Scene {
+export default class SPResultScene extends Phaser.Scene {
   private p1_understandAmt: number;
   private p2_understandAmt: number;
   private who_won: string;
 
   constructor() {
-    super({ key: 'ResultScene' });
+    super({ key: 'SPResultScene' });
 
     this.p1_understandAmt = 0;
     this.p2_understandAmt = 0;
@@ -95,7 +95,7 @@ export default class ResultScene extends Phaser.Scene {
     startButton.setOrigin(0.5, 0.1);
     startButton.setInteractive({ useHandCursor: true });
     startButton.on('pointerdown', () => {
-      this.scene.start('InputScene');
+      this.scene.start('SPInputScene');
     });
   }
 }

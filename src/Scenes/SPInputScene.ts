@@ -1,14 +1,15 @@
 import Phaser from 'phaser';
 import available_moves from '../Types/available_moves';
 
-export default class InputScene extends Phaser.Scene {
+export default class SPInputScene extends Phaser.Scene {
   private savedTextP1: string;
   private p1_responseText: string[];
   private p1_understandAmt: number;
   private moveMap: Map<string, string>;
+  private currentLevel: number;
 
   constructor() {
-    super({ key: 'InputScene' });
+    super({ key: 'SPInputScene' });
     this.savedTextP1 = '';
     this.p1_responseText = ['random'];
     this.p1_understandAmt = 0;
@@ -17,6 +18,8 @@ export default class InputScene extends Phaser.Scene {
       accumulator.set(curr, 'true');
       return accumulator;
     }, new Map<string, string>());
+
+    this.currentLevel = 1;
   }
 
   create() {
@@ -73,7 +76,9 @@ export default class InputScene extends Phaser.Scene {
 
     this.checkPlayerUnderstanding();
 
-    this.scene.start('FightScene', {
+    this.incrementLevel();
+
+    this.scene.start(`SPFightSceneLevel${this.currentLevel}`, {
       p1_responseText: this.p1_responseText,
       p1_understandAmt: this.p1_understandAmt,
     });
@@ -104,5 +109,8 @@ export default class InputScene extends Phaser.Scene {
       (this.p1_understandAmt / this.p1_responseText.length) * 100;
 
     console.log('understandAmount: ', this.p1_understandAmt + '%');
+  }
+  incrementLevel() {
+    this.currentLevel++;
   }
 }

@@ -5,7 +5,6 @@ export default class TitleScene extends Phaser.Scene {
     super({ key: 'TitleScene' });
   }
 
-
   create() {
     const { width, height } = this.scale;
 
@@ -15,18 +14,17 @@ export default class TitleScene extends Phaser.Scene {
 
     const titlescreen = this.add.sprite(400, 330, 'titlescreen');
     titlescreen.scaleX = 2.5;
-    titlescreen.scaleY = 1.5
-    
+    titlescreen.scaleY = 1.5;
+
     this.sound.stopAll();
     const music = this.sound.add('piratemusic');
 
     music.play();
     //music.setLoop(true);
     //titlescreen.setScale(2);
-    
 
-     // Add title text
-     const title = this.add.text(width / 2, height / 4, 'Buccaneer Brawl', {
+    // Add title text
+    const title = this.add.text(width / 2, height / 4, 'Buccaneer Brawl', {
       fontSize: '64px',
       fontFamily: 'Arial',
       color: '#ffffff',
@@ -46,7 +44,23 @@ export default class TitleScene extends Phaser.Scene {
       },
     });
 
-    const instructionsButton = this.add.text(width / 2, height / 2, 'Instructions', {
+    const instructionsButton = this.add.text(
+      width / 2,
+      height / 2,
+      'Instructions',
+      {
+        fontSize: '48px',
+        fontFamily: 'Arial',
+        color: '#ffffff',
+        backgroundColor: '#000000',
+        padding: {
+          x: 32,
+          y: 32,
+        },
+      }
+    );
+
+    const SPButton = this.add.text(width / 2, height / 2, 'Single Player', {
       fontSize: '48px',
       fontFamily: 'Arial',
       color: '#ffffff',
@@ -57,18 +71,22 @@ export default class TitleScene extends Phaser.Scene {
       },
     });
 
-
     startButton.setOrigin(0.5);
     startButton.setInteractive({ useHandCursor: true });
     startButton.on('pointerdown', () => {
       this.scene.start('InputScene');
     });
 
+    SPButton.setOrigin(1.5);
+    SPButton.setInteractive({ useHandCursor: true });
+    SPButton.on('pointerdown', () => {
+      this.scene.start('SPInputScene');
+    });
+
     instructionsButton.setOrigin(0.5, -0.5);
     instructionsButton.setInteractive({ useHandCursor: true });
-    instructionsButton.on("pointerdown", ()=>{
-      this.scene.start("InstructionScene");
-    })
+    instructionsButton.on('pointerdown', () => {
+      this.scene.start('InstructionScene');
+    });
   }
 }
-
