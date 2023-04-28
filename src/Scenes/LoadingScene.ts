@@ -34,7 +34,7 @@ export default class LoadingScene extends Phaser.Scene {
     this.load.image('left-cap-shadow', 'assets/barHorizontal_shadow_left.png');
     this.load.image('middle-shadow', 'assets/barHorizontal_shadow_mid.png');
     this.load.image('right-cap-shadow', 'assets/barHorizontal_shadow_right.png');
-    this.load.image('bomb', 'assets/bomb.png');
+    this.load.image('cannonball', 'assets/bomb.png');
 
     //music
     this.load.audio('piratemusic', 'assets/audio/Drunken Sailor_ (String Orchestra).mp3');
