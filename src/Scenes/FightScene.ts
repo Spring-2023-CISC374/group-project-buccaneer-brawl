@@ -16,8 +16,6 @@ export default class FightScene extends Phaser.Scene {
   private cannonballs?: Phaser.Physics.Arcade.Group;
   private registerOne?: RegisterInput;
   private registerTwo?: RegisterInput;
-  private P1_HPText?: Phaser.GameObjects.Text;
-  private P2_HPText?: Phaser.GameObjects.Text;
   private p1_healthBar?: HealthBar;
   private p2_healthBar?: HealthBar;
   private p1_responseText?: string[];
@@ -51,7 +49,7 @@ export default class FightScene extends Phaser.Scene {
     const music = this.sound.add("battlemusic");
 
     music.play();
-    music.setLoop(true);
+    //music.setLoop(true);
 
     this.platforms = this.physics.add.staticGroup();
     const ground = this.platforms.create(
@@ -77,14 +75,6 @@ export default class FightScene extends Phaser.Scene {
       0x0096ff
     );
 
-    this.P1_HPText = this.add.text(16, 16, "RedBeard", {
-      fontSize: "30px",
-      color: "#000",
-    });
-    this.P2_HPText = this.add.text(610, 16, "BluBeard", {
-      fontSize: "30px",
-      color: "#000",
-    });
     this.msgBox1 = this.add.text(14, 80, "Player 1 Cannon Ready! Press Q", {
       fontSize: "20px",
       color: '#ffffff',
@@ -161,6 +151,7 @@ export default class FightScene extends Phaser.Scene {
 
   update(time: number, delta: number) {
     if (!this.cursors) {
+      time++;
       return;
     }
 
@@ -186,7 +177,7 @@ export default class FightScene extends Phaser.Scene {
     
     
     if(this.player1 && this.player2) {
-      this.handleKeyboardInput(this.player1, this.player2);
+      this.handleKeyboardInput();
     }
     
 
@@ -344,7 +335,7 @@ export default class FightScene extends Phaser.Scene {
   }
   //Creates a health bar at x,y with a lenght of fullWidth. The created health bar will be treated as player1/player2's health bar when p1 is true/false respectively
   private makeHealthBar(x: number, y: number, fullWidth: number, p1: boolean){
-    	// background shadow
+    // background shadow
       const leftShadowCap = this.add.image(x, y, 'left-cap-shadow')
         .setOrigin(0, 0.5);
 
@@ -574,7 +565,7 @@ export default class FightScene extends Phaser.Scene {
     }
   }
 
-  handleKeyboardInput(player1: Player, player2: Player) {
+  handleKeyboardInput() {
 
     const keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
     const keyP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
