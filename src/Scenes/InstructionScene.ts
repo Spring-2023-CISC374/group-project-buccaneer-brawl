@@ -13,6 +13,7 @@ export default class InstructionScene extends Phaser.Scene{
        const bg = this.add.image(width / 2, height / 2, 'background');
        bg.setScale(2);
        const titlescreen = this.add.sprite(400, 330, 'titlescreen');
+       console.log(titlescreen);
        titlescreen.scaleX = 2.5;
        titlescreen.scaleY = 1.5
        //Adds instructions title
@@ -23,52 +24,55 @@ export default class InstructionScene extends Phaser.Scene{
         backgroundColor: '#000000',
       });
       //Includes information from the instructions
-      const instructionsInfo = this.add.text(width / 2, height / 2, 'Ahoy, today in the game the pirates need your input.', {
-        fontSize: '16px',
+      this.add.text(width / 2, height / 2, 'Ahoy, today in the game the pirates need your input.', {
+        fontSize: '20px',
         fontFamily: 'Arial',
         color: '#ffffff',
         backgroundColor: '#000000',
-      });
-      instructionsInfo.setOrigin(0.5, -5);
-
-      const instructionsInfoPt2 = this.add.text(width / 2, height / 2, 'Given two players, feed them string input whether a word or a sentence and it will command the player!', {
-        fontSize: '16px',
+      }).setOrigin(0.5, 3);
+      
+      //More descriptions
+      this.add.text(width / 2, height / 2, 'Given two players, feed them string input (word or sentence)', {
+        fontSize: '20px',
         fontFamily: 'Arial',
         color: '#ffffff',
         backgroundColor: '#000000',
-      });
-      instructionsInfoPt2.setOrigin(0.5, -6);
-      const twist = this.add.text(width / 2, height / 2, 'Be careful, only one winner will come out given the commands listed', {
-        fontSize: '16px',
+      }).setOrigin(0.5, 1);
+      //this.add.text("whether a word or a sentence and it will command the player!")
+      this.add.text(width / 2, height / 2, 'Be careful, only one winner will come out given the commands listed from you!', {
+        fontSize: '20px',
         fontFamily: 'Arial',
         color: '#ffffff',
         backgroundColor: '#000000',
-      });
-      twist.setOrigin(0.5, -7);
+      }).setOrigin(0.5, 2);
+      
 
-      const cmdDescription = this.add.text(width / 2, height / 2, 'Here are the commands described: ', {
-        fontSize: '16px',
+      this.add.text(width / 2, height / 2, 'Here are the commands listed below: ', {
+        fontSize: '20px',
         fontFamily: 'Arial',
         color: '#ffffff',
-        backgroundColor: '#000000',});
-        cmdDescription.setOrigin(0.5, -8);
-
-        const cmdList = this.add.text(width / 2, height / 2, ' walk forward, walk back, jump forward,  kick, punch, uppercut, crhook, roundhouse',{
-        fontSize: '16px',
+        backgroundColor: '#000000',}).setOrigin(0.62, -1);
+        
+       this.add.text(width / 2, height / 2, ' walk forward, walk back, jump forward,  kick, punch, uppercut, crhook, roundhouse',{
+        fontSize: '18px',
         fontFamily: 'Arial',
         color: '#ffffff',
-        backgroundColor: '#000000',});
+        backgroundColor: '#000000',}).setOrigin(0.59, -2);
 
-        cmdList.setOrigin(0.5, -9);
 
-        const example = this.add.text(width / 2, height / 2, 'For example if you tell the player to "walk forward" the player will walk forward some amounts of spaces.', {
-            fontSize: '16px',
+       this.add.text(width / 2, height / 2, 'For example.', {
+            fontSize: '20px',
             fontFamily: 'Arial',
             color: '#ffffff',
-            backgroundColor: '#000000',});
-            example.setOrigin(0.5, -10);
-            
-      const backToStartButton = this.add.text(width / 4, height / 2, 'Return to start', {
+            backgroundColor: '#000000',}).setOrigin(3.3, -3);
+
+      this.add.text(width/2, height/2, "If the player is given walk forward, the player will walk forward some amounts of spaces", {
+        fontSize: '20px',
+        fontFamily: 'Arial',
+        color: '#ffffff',
+        backgroundColor: '#000000',}).setOrigin(0.5, -4);
+
+      const backToStartButton = this.add.text(width / 4, height / 2, 'Return to Input', {
         fontSize: '48px',
         fontFamily: 'Arial',
         color: '#ffffff',
@@ -77,10 +81,28 @@ export default class InstructionScene extends Phaser.Scene{
           x: 16,
           y: 8,
         },
-      });
+      }).setOrigin(0, -2);
+      backToStartButton.setScale(1, 1)
       backToStartButton.setInteractive({ useHandCursor: true });
       backToStartButton.on("pointerdown", ()=>{
-      this.scene.start("TitleScene");
+      this.scene.start("InputScene");
     })
+
+    const demoButton = this.add.text(width / 4, height / 2, 'Demo', {
+      fontSize: "48px",
+      fontFamily: "Arial",
+      color: "#ffffff",
+      backgroundColor: "#000000",
+      padding : {
+        x: 16,
+        y: 8
+      }
+    }).setOrigin(-0.5, -3.5);
+    demoButton.setScale(1, 1)
+    demoButton.setInteractive({useHandCursor: true});
+    demoButton.on("pointerdown", ()=>{
+      this.scene.start("DemoScene")
+    })
+    
     }
 }
