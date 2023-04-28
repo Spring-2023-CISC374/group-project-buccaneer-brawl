@@ -2,6 +2,7 @@ import Phaser, { Physics } from "phaser";
 import Player from "../Classes/player";
 import RegisterInput from "../Engine/registerInput";
 import HealthBar from "../Classes/HealthBar";
+import Cannonball from "../Classes/cannonball";
 
 export default class FightScene extends Phaser.Scene {
   constructor() {
@@ -13,7 +14,8 @@ export default class FightScene extends Phaser.Scene {
   private player1?: Player;
   private player2?: Player;
   private coins?: Phaser.Physics.Arcade.Group;
-  private cannonballs?: Phaser.Physics.Arcade.Group;
+  private p1cannonballs?: Phaser.Physics.Arcade.Group;
+  private p2cannonballs?: Phaser.Physics.Arcade.Group;
   private registerOne?: RegisterInput;
   private registerTwo?: RegisterInput;
   private p1_healthBar?: HealthBar;
@@ -110,14 +112,21 @@ export default class FightScene extends Phaser.Scene {
       child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
     });
 
-		this.cannonballs = this.physics.add.group();
-    this.physics.add.collider(this.cannonballs, this.platforms, (c) => {
+		this.p1cannonballs = this.physics.add.group();
+    this.p2cannonballs = this.physics.add.group();
+    this.physics.add.collider(this.p1cannonballs, this.platforms, (c) => {
       const cannonball = c as Phaser.Physics.Arcade.Image;
       cannonball.disableBody(true, true);
       //sound effect for boom placeholder
     }, undefined, this);
-		this.physics.add.collider(this.player1.sprite, this.cannonballs, this.handleHitCannonball, undefined, this);
-		this.physics.add.collider(this.player2.sprite, this.cannonballs, this.handleHitCannonball, undefined, this);
+    this.physics.add.collider(this.p2cannonballs, this.platforms, (c) => {
+      const cannonball = c as Phaser.Physics.Arcade.Image;
+      cannonball.disableBody(true, true);
+      //sound effect for boom placeholder
+    }, undefined, this);
+
+		this.physics.add.collider(this.player1.sprite, this.p2cannonballs, this.handleHitCannonball, undefined, this);
+		this.physics.add.collider(this.player2.sprite, this.p1cannonballs, this.handleHitCannonball, undefined, this);
 
     this.physics.add.collider(this.coins, this.platforms);
     this.physics.add.overlap(
@@ -154,10 +163,10 @@ export default class FightScene extends Phaser.Scene {
       return;
     }
     time++;
-
+/*
     if (this.p1_responseText === undefined) {
       this.p1_responseText = ["random"];
-    }
+    }*/
     
     this.registerOne?.validInput(
       this.p1_responseText,
@@ -524,22 +533,36 @@ export default class FightScene extends Phaser.Scene {
       }
       else{
         user.coins -= 20;
+        let cannonball: Phaser.Physics.Arcade.Image, x: number, y: number;
+
         if (user.sprite.x < target.sprite.x){
           //fire to the left
-          const cannonball: Phaser.Physics.Arcade.Image = this.cannonballs?.create(100, 0, "cannonball");
-          cannonball.setScale(2, 2);
-          cannonball.setCollideWorldBounds(true);
-          this.physics.moveTo(cannonball, target.sprite.x, target.sprite.y, 50, 1000)
+          x = 10
+          y = 0
         }
         else{
           //fire to the right
-          const cannonball: Phaser.Physics.Arcade.Image = this.cannonballs?.create(700, 0, "cannonball");
-          cannonball.setScale(2, 2);
-          cannonball.setCollideWorldBounds(true);
-          this.physics.moveTo(cannonball, target.sprite.x, target.sprite.y, 50, 1000)
+          x = 700;
+          y = 0;
+        } 
+        //differentiate between p1 and p2
+        if (this.player1 && this.player2){
+          if (user.sprite === this.player1.sprite){
+            cannonball = this.p1cannonballs?.create(x, y, "cannonball");
+            cannonball.setScale(2, 2);
+            cannonball.setCollideWorldBounds(true);
+            this.physics.moveTo(cannonball, target.sprite.x, target.sprite.y, 1000)
+        }
+          else{
+            cannonball = this.p2cannonballs?.create(x, y, "cannonball");
+            cannonball.setScale(2, 2);
+            cannonball.setCollideWorldBounds(true);
+            this.physics.moveTo(cannonball, target.sprite.x, target.sprite.y, 1000)
         }
       }
+    }
   }
+        
 
   decrementRoundTimer(delta: number) {
     this.roundTimerdelta += delta;
