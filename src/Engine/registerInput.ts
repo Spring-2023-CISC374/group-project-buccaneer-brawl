@@ -19,6 +19,7 @@ export default class registerInput extends Phaser.Scene {
     opponent?: Player
   ) {
     console.log(input[this.key_index]);
+    console.log(this.key_index);
     //Check if the input is considered a non-fighting move for loop, reset to start!!!
     this.key_timer += delta;
 

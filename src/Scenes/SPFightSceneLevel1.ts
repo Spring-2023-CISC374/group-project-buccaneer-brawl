@@ -6,7 +6,7 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
   constructor() {
     super({ key: 'SPFightSceneLevel1' });
   }
-  private aiMoves = ['kick', 'punch', 'walk_forward'];
+  private aiMoves = ['jump', 'punch'];
 
   private getRandomMove() {
     const index = Math.floor(Math.random() * this.aiMoves.length);
@@ -15,6 +15,7 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
 
   private aiMoveCounter = 0;
   private aiMoveInterval = 1000;
+  private levels = 1;
 
   private platforms?: Phaser.Physics.Arcade.StaticGroup;
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -26,7 +27,6 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
   private P1_HPText?: Phaser.GameObjects.Text;
   private P2_HPText?: Phaser.GameObjects.Text;
   private p1_responseText?: string[];
-  private p2_responseText?: string[];
   private p1_understandAmt?: number;
   private p2_understandAmt?: number;
   private roundTimer = 99;
@@ -35,17 +35,14 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
 
   init(data: {
     p1_responseText: string[] | undefined;
-    p2_responseText: string[] | undefined;
     p1_understandAmtt: number;
-    p2_understandAmt: number;
   }) {
     this.p1_responseText = data.p1_responseText;
-    this.p2_responseText = data.p2_responseText;
     this.p1_understandAmt = data.p1_understandAmtt;
-    this.p2_understandAmt = data.p2_understandAmt;
   }
 
   create() {
+    console.log('hey levle1');
     this.add.image(400, 300, 'pirateship').setScale(2);
 
     this.game.sound.stopAll();
@@ -159,17 +156,15 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
       this.player1,
       this.player2
     );
-    if (this.p2_responseText === undefined) {
-      this.p2_responseText = ['random'];
-    }
+
     this.registerTwo?.validInput(
       this.aiMoves,
       delta,
       this.player2,
       this.player1
     );
-    /*  this.aiMoveCounter += delta;
-    if (this.aiMoveCounter >= this.aiMoveInterval) {
+    this.aiMoveCounter += delta;
+    /*  if (this.aiMoveCounter >= this.aiMoveInterval) {
       this.aiMoveCounter = 0;
       const move = this.getRandomMove();
       this.registerTwo?.validInput([move], delta, this.player2, this.player1);
@@ -395,7 +390,9 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
         if (this.player2.health <= 0) {
           this.player2.health = 0;
           this.physics.pause();
+          this.levels++;
           this.scene.start('SPResultScene', {
+            levels: this.levels,
             p1_understandAmt: this.p1_understandAmt,
             p2_understandAmt: this.p2_understandAmt,
             who_won: 'RedBeard',

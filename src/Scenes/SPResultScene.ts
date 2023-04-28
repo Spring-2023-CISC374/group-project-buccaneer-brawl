@@ -4,6 +4,7 @@ export default class SPResultScene extends Phaser.Scene {
   private p1_understandAmt: number;
   private p2_understandAmt: number;
   private who_won: string;
+  private levels: number;
 
   constructor() {
     super({ key: 'SPResultScene' });
@@ -11,13 +12,16 @@ export default class SPResultScene extends Phaser.Scene {
     this.p1_understandAmt = 0;
     this.p2_understandAmt = 0;
     this.who_won = 'RedBeard';
+    this.levels = 1;
   }
 
   init(data: {
     p1_understandAmtt: number;
     p2_understandAmt: number;
     who_won: string;
+    levels: number;
   }) {
+    this.levels = data.levels;
     this.p1_understandAmt = data.p1_understandAmtt;
     this.p2_understandAmt = data.p2_understandAmt;
     this.who_won = data.who_won;

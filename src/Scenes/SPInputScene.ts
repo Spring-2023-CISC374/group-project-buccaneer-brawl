@@ -19,9 +19,11 @@ export default class SPInputScene extends Phaser.Scene {
       return accumulator;
     }, new Map<string, string>());
 
-    this.currentLevel = 1;
+    this.currentLevel = 0;
   }
-
+  init(data: { levels: number }) {
+    this.currentLevel = data.levels;
+  }
   create() {
     this.cameras.main.setBackgroundColor('#ffffff');
 
@@ -76,8 +78,6 @@ export default class SPInputScene extends Phaser.Scene {
 
     this.checkPlayerUnderstanding();
 
-    this.incrementLevel();
-
     this.scene.start(`SPFightSceneLevel${this.currentLevel}`, {
       p1_responseText: this.p1_responseText,
       p1_understandAmt: this.p1_understandAmt,
@@ -109,8 +109,5 @@ export default class SPInputScene extends Phaser.Scene {
       (this.p1_understandAmt / this.p1_responseText.length) * 100;
 
     console.log('understandAmount: ', this.p1_understandAmt + '%');
-  }
-  incrementLevel() {
-    this.currentLevel++;
   }
 }
