@@ -16,8 +16,6 @@ export default class FightScene extends Phaser.Scene {
   private cannonballs?: Phaser.Physics.Arcade.Group;
   private registerOne?: RegisterInput;
   private registerTwo?: RegisterInput;
-  private P1_HPText?: Phaser.GameObjects.Text;
-  private P2_HPText?: Phaser.GameObjects.Text;
   private p1_healthBar?: HealthBar;
   private p2_healthBar?: HealthBar;
   private p1_responseText?: string[];
@@ -51,7 +49,7 @@ export default class FightScene extends Phaser.Scene {
     const music = this.sound.add("battlemusic");
 
     music.play();
-    music.setLoop(true);
+    //music.setLoop(true);
 
     this.platforms = this.physics.add.staticGroup();
     const ground = this.platforms.create(
@@ -77,14 +75,6 @@ export default class FightScene extends Phaser.Scene {
       0x0096ff
     );
 
-    this.P1_HPText = this.add.text(16, 16, "RedBeard", {
-      fontSize: "30px",
-      color: "#000",
-    });
-    this.P2_HPText = this.add.text(610, 16, "BluBeard", {
-      fontSize: "30px",
-      color: "#000",
-    });
     this.msgBox1 = this.add.text(14, 80, "Player 1 Cannon Ready! Press Q", {
       fontSize: "20px",
       color: '#ffffff',
@@ -121,7 +111,7 @@ export default class FightScene extends Phaser.Scene {
     });
 
 		this.cannonballs = this.physics.add.group();
-    this.physics.add.collider(this.cannonballs, this.platforms, (c, p) => {
+    this.physics.add.collider(this.cannonballs, this.platforms, (c) => {
       const cannonball = c as Phaser.Physics.Arcade.Image;
       cannonball.disableBody(true, true);
       //sound effect for boom placeholder
@@ -163,6 +153,7 @@ export default class FightScene extends Phaser.Scene {
     if (!this.cursors) {
       return;
     }
+    time++;
 
     if (this.p1_responseText === undefined) {
       this.p1_responseText = ["random"];
@@ -186,7 +177,7 @@ export default class FightScene extends Phaser.Scene {
     
     
     if(this.player1 && this.player2) {
-      this.handleKeyboardInput(this.player1, this.player2);
+      this.handleKeyboardInput();
     }
     
 
@@ -344,7 +335,7 @@ export default class FightScene extends Phaser.Scene {
   }
   //Creates a health bar at x,y with a lenght of fullWidth. The created health bar will be treated as player1/player2's health bar when p1 is true/false respectively
   private makeHealthBar(x: number, y: number, fullWidth: number, p1: boolean){
-    	// background shadow
+    // background shadow
       const leftShadowCap = this.add.image(x, y, 'left-cap-shadow')
         .setOrigin(0, 0.5);
 
@@ -411,7 +402,7 @@ export default class FightScene extends Phaser.Scene {
       if (
         this.player1.action.startsWith("attack") &&
         this.player1.cooldown &&
-        !this.player1.hitstun
+        !this.player1.hitstun && !this.player2.invulnerable
       ) {
         this.player1.setCooldown(false);
         this.player2.setHitstun(true);
@@ -468,11 +459,11 @@ export default class FightScene extends Phaser.Scene {
       if (
         this.player2.action.startsWith("attack") &&
         this.player2.cooldown &&
-        !this.player2.hitstun
+        !this.player2.hitstun && !this.player1.invulnerable
       ) {
         this.player2.setCooldown(false);
         this.player1.setHitstun(true);
-        this.player1.sprite.setTint(0xff0000);
+        this.player1.sprite.setTint(0x0fffcb);
         if (this.player1.sprite.body.x > this.player2.sprite.body.x) {
           targetSprite.setVelocityX(-260);
           userSprite.setVelocityX(this.player2.knockbackX);
@@ -574,7 +565,7 @@ export default class FightScene extends Phaser.Scene {
     }
   }
 
-  handleKeyboardInput(player1: Player, player2: Player) {
+  handleKeyboardInput() {
 
     const keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
     const keyP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
@@ -696,5 +687,37 @@ export default class FightScene extends Phaser.Scene {
       frameRate: 10,
       repeat: -1, //-1 for infinite repeats
     });
+    this.anims.create({
+      key:"roll_forward",
+      frames: this.anims.generateFrameNumbers("roll", {
+        start: 0,
+        end: 10,
+      }),
+      frameRate: 20,
+      repeat: -1 
+    }
+    )
+
+    this.anims.create({
+      key:"roll_back",
+      frames: this.anims.generateFrameNumbers("roll", {
+        start: 10,
+        end: 0,
+      }),
+      frameRate: 20,
+      repeat: -1 
+    }
+    )
+
+    this.anims.create({
+      key:"dodge",
+      frames: this.anims.generateFrameNumbers("roll", {
+        start: 0,
+        end: 3,
+      }),
+      frameRate: 10,
+      repeat: -1 
+    }
+    )
   }
 }
