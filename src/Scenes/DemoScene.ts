@@ -66,6 +66,8 @@ export default class DemoScene extends Phaser.Scene{
           backToStartButton.on("pointerdown", ()=>{
           this.scene.start("InputScene");
         })
+
+        this.animationHandler();
     
     }
 
