@@ -385,10 +385,12 @@ export default class FightScene extends Phaser.Scene {
       if (this.player1.sprite === player) {
         console.log("cannon hit");
           this.player1.health -= 10;
+          this.player1.sprite.setVelocityY(-780);
           this.p1_healthBar?.animate(this.player1.health / this.player1.maxHealth);
       } else {
         console.log("cannon hit");
         this.player2.health -= 10;
+        this.player2.sprite.setVelocityY(-780);
         this.p2_healthBar?.animate(this.player2.health / this.player2.maxHealth);        
       }
     }
