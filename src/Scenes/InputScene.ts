@@ -47,16 +47,14 @@ export default class InputScene extends Phaser.Scene {
       color: '#000',
     });
     
-    const instructionsButton = this.add.text(width / 2, height / 2, 'Instructions', {
+    const instructionsButton = this.add.text(width / 2, (height / 5), 'Instructions', {
       fontSize: '48px',
       fontFamily: 'Arial',
       color: '#ffffff',
       backgroundColor: '#000000',
-      padding: {
-        x: 32,
-        y: 32,
-      },
+      padding: { left: 10, right: 10, top: 5, bottom: 5 },
     });
+    instructionsButton.setScale(0.5, 0.5);
 
     const input = document.createElement('input');
     input.id = 'myText1';
@@ -81,13 +79,15 @@ export default class InputScene extends Phaser.Scene {
     inputP2.style.top = '90px';
     document.body.appendChild(inputP2);
 
-    const submitButton = this.add.text(200, 200, 'Submit', {
-      fontSize: '32px',
-      color: '#000',
-      backgroundColor: '#fff',
+    const submitButton = this.add.text(300, 300, 'Submit', {
+      fontSize: '48px',
+      fontFamily: 'Arial',
+      color: '#ffffff',
+      backgroundColor: '#000000',
       padding: { left: 10, right: 10, top: 5, bottom: 5 },
     });
-
+    submitButton.setX(200)
+    submitButton.setY(150)
     submitButton.setInteractive({ useHandCursor: true });
 
     submitButton.on('pointerdown', () => {
@@ -97,7 +97,8 @@ export default class InputScene extends Phaser.Scene {
     this.p1_understandAmt = 0;
     this.p2_understandAmt = 0;
 
-    instructionsButton.setOrigin(0.5, -0.5);
+    instructionsButton.setX(200)
+    submitButton.setY(350)
     instructionsButton.setInteractive({ useHandCursor: true });
     instructionsButton.on("pointerdown", ()=>{
       this.transitionToInstructions();
