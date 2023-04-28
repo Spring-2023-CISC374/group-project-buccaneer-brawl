@@ -20,6 +20,9 @@ export default class LoadingScene extends Phaser.Scene {
     this.load.spritesheet('dude', 'assets/dude.png', {
 			frameWidth: 128, frameHeight: 128
 		});
+    this.load.spritesheet('roll', 'assets/PirateRoll.png', {
+			frameWidth: 128, frameHeight: 128
+		});
     this.load.spritesheet('titlescreen', 'assets/piratetitlescreen.png', {
 			frameWidth: 400, frameHeight: 400
 		});

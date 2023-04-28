@@ -209,7 +209,7 @@ export default class FightScene extends Phaser.Scene {
     }
 
     if (this.player1 && this.player2) {
-      console.log(this.player2.fallCounter);
+      //console.log(this.player2.fallCounter);
 
       if (this.player1.fallCounter >= this.player1.fallTime) {
         if (this.player1.fallen) {
@@ -327,8 +327,13 @@ export default class FightScene extends Phaser.Scene {
     if (this.player1 && this.player2) {
       if (this.player1.sprite === player) {
         this.player1.health++;
+        if(this.player1.health > 100) this.player1.health = 100;
+        this.P1_HPText?.setText(`Player 1 HP: ${this.player1.health}`);
+
       } else {
         this.player2.health++;
+        if(this.player2.health > 100) this.player2.health = 100;
+        this.P2_HPText?.setText(`Player 2 HP: ${this.player2.health}`);
       }
     }
 
@@ -347,11 +352,11 @@ export default class FightScene extends Phaser.Scene {
       if (
         this.player1.action.startsWith("attack") &&
         this.player1.cooldown &&
-        !this.player1.hitstun
+        !this.player1.hitstun && !this.player2.invulnerable
       ) {
         this.player1.setCooldown(false);
         this.player2.setHitstun(true);
-        this.player2.sprite.setTint(0xff0000);
+        this.player2.sprite.setTint(0xa1ffeb);
         //console.log("attack successful!");
         //console.log(this.player2.hitstun);
         if (this.player1.sprite.body.x < this.player2.sprite.body.x) {
@@ -406,11 +411,11 @@ export default class FightScene extends Phaser.Scene {
       if (
         this.player2.action.startsWith("attack") &&
         this.player2.cooldown &&
-        !this.player2.hitstun
+        !this.player2.hitstun && !this.player1.invulnerable
       ) {
         this.player2.setCooldown(false);
         this.player1.setHitstun(true);
-        this.player1.sprite.setTint(0xff0000);
+        this.player1.sprite.setTint(0x0fffcb);
         if (this.player1.sprite.body.x > this.player2.sprite.body.x) {
           targetSprite.setVelocityX(-260);
           userSprite.setVelocityX(this.player2.knockbackX);
@@ -740,5 +745,37 @@ export default class FightScene extends Phaser.Scene {
       frameRate: 10,
       repeat: -1, //-1 for infinite repeats
     });
+    this.anims.create({
+      key:"roll_forward",
+      frames: this.anims.generateFrameNumbers("roll", {
+        start: 0,
+        end: 10,
+      }),
+      frameRate: 20,
+      repeat: -1 
+    }
+    )
+
+    this.anims.create({
+      key:"roll_back",
+      frames: this.anims.generateFrameNumbers("roll", {
+        start: 10,
+        end: 0,
+      }),
+      frameRate: 20,
+      repeat: -1 
+    }
+    )
+
+    this.anims.create({
+      key:"dodge",
+      frames: this.anims.generateFrameNumbers("roll", {
+        start: 0,
+        end: 3,
+      }),
+      frameRate: 10,
+      repeat: -1 
+    }
+    )
   }
 }

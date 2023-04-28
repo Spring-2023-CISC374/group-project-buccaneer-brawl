@@ -8,11 +8,13 @@ export default class Player {
   cooldown: boolean; //Handler for player collisions (one hit registering for 10+ hits); A player cannot hit another player while cooldown is false
   hitstun: boolean; //If hitstun is set to true, movePlayer and playerAttack cannot be called until the player hits the ground. A player is put into hitstun when an opposing character's attack damages them
   damage: number; //Damage of the player intended action
+  invulnerable: boolean;
   knockbackX: number;
   knockbackY: number;
   fallTime: number;
   fallCounter: number;
   fallen: boolean;
+  player1: boolean;
 
   constructor(sprite: Phaser.Physics.Arcade.Sprite, tint?: number) {
     this.sprite = sprite;
@@ -24,15 +26,18 @@ export default class Player {
     this.cooldown = true;
     this.hitstun = false;
     this.damage = 0;
+    this.invulnerable = false;
     this.knockbackX = 260;
     this.knockbackY = 460;
     this.fallTime = 800;
     this.fallCounter = 0;
     this.fallen = false;
+    this.player1 = true;
   
 
     if (tint) {
       this.sprite.setTint(tint);
+      this.player1 = false;
     }
   }
   setHitstun(b: boolean) {
@@ -70,6 +75,13 @@ export default class Player {
     }
     //console.log(moveType);
     if (opponent === undefined) return;
+
+    if(this.player1) {
+      this.sprite.setTint(0xffffff);
+    } else {
+      this.sprite.setTint(0x0096ff);
+    }
+
     const dist =
       this.sprite.body.x > opponent.sprite.body.x ? -distance : distance;
     if (moveType === "walk_forward") {
@@ -100,7 +112,50 @@ export default class Player {
       this.sprite.setVelocityX(-dist);
       this.sprite.anims.play("right", true);
       this.action = "jumping";
-    } else {
+    } else if(moveType === "dodge") {
+      this.sprite.setVelocityX(0);
+      this.sprite.setVelocityX(0);
+      this.sprite.anims.play("dodge", true);
+      this.action = "dodge";
+      this.invulnerable = true;
+      
+      const rng = Phaser.Math.Between(0, 1);
+      console.log(rng);
+      if(rng==1) {
+        this.invulnerable = false;
+        this.sprite.setTint(0x000000);
+      }
+
+    }
+    else if(moveType === "roll_forward") {
+      this.sprite.setVelocityX(0);
+      this.sprite.setVelocityX(dist/2);
+      this.sprite.anims.play("roll_forward", true);
+      this.action = "roll_forward";
+      this.invulnerable = true;
+
+      const rng = Phaser.Math.Between(0, 1);
+      console.log(rng);
+      if(rng==1) {
+        this.invulnerable = false;
+        this.sprite.setTint(0x000000);
+      }
+    }
+    else if(moveType === "roll_back") {
+      this.sprite.setVelocityX(0);
+      this.sprite.setVelocityX(-dist/2);
+      this.sprite.anims.play("roll_back", true);
+      this.action = "roll_back";
+      this.invulnerable = true;
+
+      const rng = Phaser.Math.Between(0, 1);
+      console.log(rng);
+      if(rng==1) {
+        this.invulnerable = false;
+        this.sprite.setTint(0x000000);
+      }
+    }
+     else {
 		this.action = "waiting";
 	}
   }
@@ -109,6 +164,12 @@ export default class Player {
     if (this.hitstun) {
       console.log("in hitstun");
       return;
+    }
+
+    if(this.player1) {
+      this.sprite.setTint(0xffffff);
+    } else {
+      this.sprite.setTint(0x0096ff);
     }
 
 	this.action = "attack/" + moveType;	
