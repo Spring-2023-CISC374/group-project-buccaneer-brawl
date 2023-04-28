@@ -1,6 +1,7 @@
 import Phaser, { Physics } from "phaser";
 import Player from "../Classes/player";
 import RegisterInput from "../Engine/registerInput";
+import HealthBar from "../Classes/HealthBar";
 
 export default class FightScene extends Phaser.Scene {
   constructor() {
@@ -12,14 +13,19 @@ export default class FightScene extends Phaser.Scene {
   private player1?: Player;
   private player2?: Player;
   private coins?: Phaser.Physics.Arcade.Group;
+  private cannonballs?: Phaser.Physics.Arcade.Group;
   private registerOne?: RegisterInput;
   private registerTwo?: RegisterInput;
   private P1_HPText?: Phaser.GameObjects.Text;
   private P2_HPText?: Phaser.GameObjects.Text;
+  private p1_healthBar?: HealthBar;
+  private p2_healthBar?: HealthBar;
   private p1_responseText?: string[];
   private p2_responseText?: string[];
   private p1_understandAmt?: number;
   private p2_understandAmt?: number;
+  private msgBox1?: Phaser.GameObjects.Text;
+  private msgBox2?: Phaser.GameObjects.Text;
   private roundTimer = 99;
   private roundTimerdelta = 0;
   private timerText?: Phaser.GameObjects.Text;
@@ -45,7 +51,7 @@ export default class FightScene extends Phaser.Scene {
     const music = this.sound.add("battlemusic");
 
     music.play();
-    //music.setLoop(true);
+    music.setLoop(true);
 
     this.platforms = this.physics.add.staticGroup();
     const ground = this.platforms.create(
@@ -67,8 +73,31 @@ export default class FightScene extends Phaser.Scene {
         .setSize(54, 108)
         .setOffset(70, 12)
         .setScale(2),
+        undefined,
       0x0096ff
     );
+
+    this.P1_HPText = this.add.text(16, 16, "RedBeard", {
+      fontSize: "30px",
+      color: "#000",
+    });
+    this.P2_HPText = this.add.text(610, 16, "BluBeard", {
+      fontSize: "30px",
+      color: "#000",
+    });
+    this.msgBox1 = this.add.text(14, 80, "Player 1 Cannon Ready! Press Q", {
+      fontSize: "20px",
+      color: '#ffffff',
+      backgroundColor: '#000000',
+    });
+    this.msgBox2 = this.add.text(430, 80, "Player 2 Cannon Ready! Press P", {
+      fontSize: "20px",
+      color: '#ffffff',
+      backgroundColor: '#000000',
+    });
+    this.makeHealthBar(14, 60, 300, true);
+    this.makeHealthBar(450, 60, 300, false);
+
     this.animationHandler();
 
     //Collisions for physics objects
@@ -91,6 +120,15 @@ export default class FightScene extends Phaser.Scene {
       child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
     });
 
+		this.cannonballs = this.physics.add.group();
+    this.physics.add.collider(this.cannonballs, this.platforms, (c, p) => {
+      const cannonball = c as Phaser.Physics.Arcade.Image;
+      cannonball.disableBody(true, true);
+      //sound effect for boom placeholder
+    }, undefined, this);
+		this.physics.add.collider(this.player1.sprite, this.cannonballs, this.handleHitCannonball, undefined, this);
+		this.physics.add.collider(this.player2.sprite, this.cannonballs, this.handleHitCannonball, undefined, this);
+
     this.physics.add.collider(this.coins, this.platforms);
     this.physics.add.overlap(
       this.player1.sprite,
@@ -106,23 +144,10 @@ export default class FightScene extends Phaser.Scene {
       undefined,
       this
     );
-
-    this.P1_HPText = this.add.text(16, 16, "Player 1 HP: 0", {
-      fontSize: "30px",
-      color: "#000",
-    });
-    this.P2_HPText = this.add.text(510, 16, "Player 2 HP: 0", {
-      fontSize: "30px",
-      color: "#000",
-    });
-
     this.timerText = this.add.text(316, 16, "Time: 99", {
       fontSize: "30px",
       color: "#000",
     });
-
-    this.P1_HPText?.setText(`Player 1 HP: ${this.player1.health}`);
-    this.P2_HPText?.setText(`Player 2 HP: ${this.player2.health}`);
 
     this.player1.sprite.anims.play("turn", true);
     this.player2.sprite.anims.play("turn", true);
@@ -141,8 +166,8 @@ export default class FightScene extends Phaser.Scene {
 
     if (this.p1_responseText === undefined) {
       this.p1_responseText = ["random"];
-      console.log(time);
     }
+    
     this.registerOne?.validInput(
       this.p1_responseText,
       delta,
@@ -158,12 +183,13 @@ export default class FightScene extends Phaser.Scene {
       this.player2,
       this.player1
     );
-
-    /*
+    
+    
     if(this.player1 && this.player2) {
       this.handleKeyboardInput(this.player1, this.player2);
     }
-    */
+    
+
 
     //Alter both player's traction and fall speed.
     this.player1?.setPlayerTraction();
@@ -207,10 +233,21 @@ export default class FightScene extends Phaser.Scene {
     if (this.player2) {
       this.player2.fallCounter += delta;
     }
-
+    if (this.player1 && this.player2){
+      if (this.player1.coins >= 20){
+        this.msgBox1?.setVisible(true);
+      }
+      else{
+        this.msgBox1?.setVisible(false);
+      }
+      if (this.player2.coins >= 20){
+        this.msgBox2?.setVisible(true);
+      }
+      else{
+        this.msgBox2?.setVisible(false);
+      }
+    }
     if (this.player1 && this.player2) {
-      //console.log(this.player2.fallCounter);
-
       if (this.player1.fallCounter >= this.player1.fallTime) {
         if (this.player1.fallen) {
           this.player1.sprite.anims.play("turn");
@@ -240,11 +277,7 @@ export default class FightScene extends Phaser.Scene {
     if (this.player1?.hitstun || this.player2?.hitstun) {
       if (this.player1?.hitstun && this.player1.sprite.body.touching.down) {
         if (!this.player1.fallen) {
-          //console.log("p1 touched ground");
-          //if the player is still touching the ground after a half second, get back up
-
           this.player1.sprite.anims.play("fall");
-
           this.player1.fallCounter = 0;
           this.player1.fallen = true;
         }
@@ -252,11 +285,7 @@ export default class FightScene extends Phaser.Scene {
 
       if (this.player2?.hitstun && this.player2.sprite.body.touching.down) {
         if (!this.player2.fallen) {
-          //console.log("p1 touched ground");
-          //if the player is still touching the ground after a half second, get back up
-
           this.player2.sprite.anims.play("fall");
-
           this.player2.fallCounter = 0;
           this.player2.fallen = true;
         }
@@ -275,9 +304,6 @@ export default class FightScene extends Phaser.Scene {
     }
 
     this.decrementRoundTimer(delta);
-
-    //console.log("p1action:", this.player1?.action);
-    // console.log("p2action:", this.player2?.action);
   }
 
   private attackRanges(player: Player, leftside: boolean) {
@@ -316,6 +342,32 @@ export default class FightScene extends Phaser.Scene {
       }
     }
   }
+  //Creates a health bar at x,y with a lenght of fullWidth. The created health bar will be treated as player1/player2's health bar when p1 is true/false respectively
+  private makeHealthBar(x: number, y: number, fullWidth: number, p1: boolean){
+    	// background shadow
+      const leftShadowCap = this.add.image(x, y, 'left-cap-shadow')
+        .setOrigin(0, 0.5);
+
+      const middleShaddowCap = this.add.image(leftShadowCap.x + leftShadowCap.width, y, 'middle-shadow')
+        .setOrigin(0, 0.5);
+      middleShaddowCap.displayWidth = fullWidth
+
+      this.add.image(middleShaddowCap.x + middleShaddowCap.displayWidth, y, 'right-cap-shadow')
+        .setOrigin(0, 0.5)
+      if (p1){
+        this.p1_healthBar = new HealthBar(this, x, y, fullWidth)
+        .withLeftCap(this.add.image(0, 0, 'left-cap-green'))
+        .withMiddle(this.add.image(0, 0, 'middle-green'))
+        .withRightCap(this.add.image(0, 0,'right-cap-green')).layout()
+      }
+      else{
+        this.p2_healthBar = new HealthBar(this, x, y, fullWidth)
+        .withLeftCap(this.add.image(0, 0, 'left-cap-green'))
+        .withMiddle(this.add.image(0, 0, 'middle-green'))
+        .withRightCap(this.add.image(0, 0,'right-cap-green')).layout()
+      }
+      
+  }
 
   private handleCollectCoin(
     player: Phaser.GameObjects.GameObject,
@@ -326,20 +378,27 @@ export default class FightScene extends Phaser.Scene {
 
     if (this.player1 && this.player2) {
       if (this.player1.sprite === player) {
-        this.player1.health++;
-        if(this.player1.health > 100) this.player1.health = 100;
-        this.P1_HPText?.setText(`Player 1 HP: ${this.player1.health}`);
-
+          this.player1.coins++;
       } else {
-        this.player2.health++;
-        if(this.player2.health > 100) this.player2.health = 100;
-        this.P2_HPText?.setText(`Player 2 HP: ${this.player2.health}`);
+          this.player2.coins++;        
       }
     }
-
-    //this.score += 10;
-    //this.scoreText?.setText(`Score: ${this.score}`);
   }
+	private handleHitCannonball(player: Phaser.GameObjects.GameObject, b: Phaser.GameObjects.GameObject){
+		const cannonball = b as Phaser.Physics.Arcade.Image
+		cannonball.disableBody(true, true);
+    if (this.player1 && this.player2) {
+      if (this.player1.sprite === player) {
+        console.log("cannon hit");
+          this.player1.health -= 10;
+          this.p1_healthBar?.animate(this.player1.health / this.player1.maxHealth);
+      } else {
+        console.log("cannon hit");
+        this.player2.health -= 10;
+        this.p2_healthBar?.animate(this.player2.health / this.player2.maxHealth);        
+      }
+    }
+	}
 
   private hitCallback(
     user: Phaser.GameObjects.GameObject,
@@ -356,9 +415,7 @@ export default class FightScene extends Phaser.Scene {
       ) {
         this.player1.setCooldown(false);
         this.player2.setHitstun(true);
-        this.player2.sprite.setTint(0xa1ffeb);
-        //console.log("attack successful!");
-        //console.log(this.player2.hitstun);
+        this.player2.sprite.setTint(0xff0000);
         if (this.player1.sprite.body.x < this.player2.sprite.body.x) {
           userSprite.setVelocityX(-260);
           targetSprite.setVelocityX(this.player1.knockbackX);
@@ -370,16 +427,16 @@ export default class FightScene extends Phaser.Scene {
           targetSprite.setVelocityY(-this.player1.knockbackY);
           targetSprite.anims.play("hit", true);
         }
-        //console.log(this.player1.damage);
         this.player2.health -= this.player1.damage;
-        this.P2_HPText?.setText(`Player 2 HP: ${this.player2.health}`);
+        //HP bar drops to percentage of max HP
+        this.p2_healthBar?.animate(this.player2.health / this.player2.maxHealth);
+
 
         //This makes it so that a hit only damages a player once every 0.3 seconds
         setTimeout(() => {
           if (this.player1) {
             this.player1?.setCooldown(true);
           }
-          //console.log("attack ready!");
         }, 300);
 
         //Game over placeholder
@@ -423,20 +480,21 @@ export default class FightScene extends Phaser.Scene {
           userSprite.anims.play("hit", true);
         } else {
           targetSprite.setVelocityX(260);
+
           userSprite.setVelocityX(-this.player2.knockbackX);
           userSprite.setVelocityY(-this.player2.knockbackY);
           userSprite.anims.play("hit", true);
         }
 
         this.player1.health -= this.player2.damage;
-        this.P1_HPText?.setText(`Player 1 HP: ${this.player1.health}`);
+        //HP bar drops to percentage of max HP
+        this.p1_healthBar?.animate(this.player1.health / this.player1.maxHealth);
 
         //This makes it so that a hit only damages a player once every 0.3 seconds
         setTimeout(() => {
           if (this.player2) {
             this.player2?.setCooldown(true);
           }
-          //console.log("attack ready!");
         }, 300);
 
         //Game over placeholder
@@ -468,6 +526,30 @@ export default class FightScene extends Phaser.Scene {
     }
   }
 
+  private fireCannon(user: Player, target: Player){
+      if (user.coins < 20){
+        console.log("not enough coins");
+        return;
+      }
+      else{
+        user.coins -= 20;
+        if (user.sprite.x < target.sprite.x){
+          //fire to the left
+          const cannonball: Phaser.Physics.Arcade.Image = this.cannonballs?.create(100, 0, "cannonball");
+          cannonball.setScale(2, 2);
+          cannonball.setCollideWorldBounds(true);
+          this.physics.moveTo(cannonball, target.sprite.x, target.sprite.y, undefined, 1000)
+        }
+        else{
+          //fire to the right
+          const cannonball: Phaser.Physics.Arcade.Image = this.cannonballs?.create(700, 0, "cannonball");
+          cannonball.setScale(2, 2);
+          cannonball.setCollideWorldBounds(true);
+          this.physics.moveTo(cannonball, target.sprite.x, target.sprite.y, undefined, 1000)
+        }
+      }
+  }
+
   decrementRoundTimer(delta: number) {
     this.roundTimerdelta += delta;
 
@@ -492,149 +574,18 @@ export default class FightScene extends Phaser.Scene {
     }
   }
 
-  //for debugging purposes
   handleKeyboardInput(player1: Player, player2: Player) {
-    const keyLeft = this.input.keyboard.addKey(
-      Phaser.Input.Keyboard.KeyCodes.LEFT
-    );
-    const keyRight = this.input.keyboard.addKey(
-      Phaser.Input.Keyboard.KeyCodes.RIGHT
-    );
-    const keyUp = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
 
-    const keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-    const keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-    const keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-
-    const keyI = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.I);
-    const keyO = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.O);
+    const keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
     const keyP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
 
-    const keyJ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
-    const keyK = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.K);
-    const keyL = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L);
-
-    const keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
-    const keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
-    const keyT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T);
-
-    const keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
-    const keyG = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G);
-    const keyH = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.H);
-
-    const keyZ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
-
-    keyLeft.on("down", () => {
-      if (player1.sprite.body.touching.down) {
-        player1.movePlayer(260, "walk_back", this.player2);
-      }
+    keyQ.on("down", () => {
+      if (this.player1 && this.player2) this.fireCannon(this.player1, this.player2);
     });
-
-    keyA.on("down", () => {
-      if (player2.sprite.body.touching.down) {
-        player2.movePlayer(260, "walk_forward", this.player1);
-      }
-    });
-
-    keyRight.on("down", () => {
-      if (player1.sprite.body.touching.down) {
-        player1.movePlayer(260, "walk_forward", this.player2);
-      }
-    });
-    keyD.on("down", () => {
-      if (player2.sprite.body.touching.down) {
-        player2.movePlayer(260, "walk_back", this.player1);
-      }
-    });
-
-    keyUp.on("down", () => {
-      if (player1.sprite.body.touching.down) {
-        player1.movePlayer(-580, "jump", this.player2);
-      }
-    });
-
-    keyW.on("down", () => {
-      if (player2.sprite.body.touching.down) {
-        player2.movePlayer(-580, "jump", this.player1);
-      }
-    });
-
-    keyI.on("down", () => {
-      if (player1) {
-        player1.playerAttack("punch");
-      }
-    });
-
-    keyE.on("down", () => {
-      if (player2) {
-        player2.playerAttack("punch");
-      }
-    });
-
-    keyO.on("down", () => {
-      if (player1) {
-        player1.playerAttack("hook");
-      }
-    });
-
-    keyR.on("down", () => {
-      if (player2) {
-        player2.playerAttack("hook");
-      }
-    });
-
     keyP.on("down", () => {
-      if (player1) {
-        player1.playerAttack("kick");
-      }
+      if (this.player1 && this.player2) this.fireCannon(this.player2, this.player1);
     });
 
-    keyT.on("down", () => {
-      if (player2) {
-        player2.playerAttack("kick");
-      }
-    });
-
-    keyJ.on("down", () => {
-      if (player1) {
-        player1.playerAttack("uppercut");
-      }
-    });
-
-    keyF.on("down", () => {
-      if (player2) {
-        player2.playerAttack("uppercut");
-      }
-    });
-
-    keyK.on("down", () => {
-      if (player1) {
-        player1.playerAttack("crhook");
-      }
-    });
-
-    keyG.on("down", () => {
-      if (player2) {
-        player2.playerAttack("crhook");
-      }
-    });
-
-    keyL.on("down", () => {
-      if (player1) {
-        player1.playerAttack("roundhouse");
-      }
-    });
-
-    keyH.on("down", () => {
-      if (player2) {
-        player2.playerAttack("roundhouse");
-      }
-    });
-    keyZ.on("down", () => {
-      if (player2) {
-        player2.sprite.anims.play("fall");
-      }
-    });
   }
 
   private animationHandler() {

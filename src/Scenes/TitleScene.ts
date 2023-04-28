@@ -46,16 +46,6 @@ export default class TitleScene extends Phaser.Scene {
       },
     });
 
-    const instructionsButton = this.add.text(width / 2, height / 2, 'Instructions', {
-      fontSize: '48px',
-      fontFamily: 'Arial',
-      color: '#ffffff',
-      backgroundColor: '#000000',
-      padding: {
-        x: 32,
-        y: 32,
-      },
-    });
 
 
     startButton.setOrigin(0.5);
@@ -64,11 +54,7 @@ export default class TitleScene extends Phaser.Scene {
       this.scene.start('InputScene');
     });
 
-    instructionsButton.setOrigin(0.5, -0.5);
-    instructionsButton.setInteractive({ useHandCursor: true });
-    instructionsButton.on("pointerdown", ()=>{
-      this.scene.start("InstructionScene");
-    })
+    
   }
 }
 

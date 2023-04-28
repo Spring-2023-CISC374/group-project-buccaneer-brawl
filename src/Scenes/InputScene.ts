@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import available_moves from '../Types/available_moves';
 
+
 export default class InputScene extends Phaser.Scene {
   private savedTextP1: string;
   private savedTextP2: string;
@@ -28,6 +29,13 @@ export default class InputScene extends Phaser.Scene {
 
   create() {
     this.cameras.main.setBackgroundColor('#ffffff');
+    const { width, height } = this.scale;
+    const inputElement1 = document.getElementById(
+      'myText1'
+    ) as HTMLInputElement;
+    const inputElement2 = document.getElementById(
+      'myText2'
+    ) as HTMLInputElement;
 
     this.add.text(10, 10, 'Enter your text:', {
       fontSize: '32px',
@@ -37,6 +45,17 @@ export default class InputScene extends Phaser.Scene {
     this.add.text(50, 60, 'Player 1', {
       fontSize: '24px',
       color: '#000',
+    });
+    
+    const instructionsButton = this.add.text(width / 2, height / 2, 'Instructions', {
+      fontSize: '48px',
+      fontFamily: 'Arial',
+      color: '#ffffff',
+      backgroundColor: '#000000',
+      padding: {
+        x: 32,
+        y: 32,
+      },
     });
 
     const input = document.createElement('input');
@@ -77,7 +96,58 @@ export default class InputScene extends Phaser.Scene {
 
     this.p1_understandAmt = 0;
     this.p2_understandAmt = 0;
+
+    instructionsButton.setOrigin(0.5, -0.5);
+    instructionsButton.setInteractive({ useHandCursor: true });
+    instructionsButton.on("pointerdown", ()=>{
+      this.transitionToInstructions();
+      this.scene.start("InstructionScene");
+    })
+
+    
+
   }
+
+  transitionToInstructions(){
+    const inputElement1 = document.getElementById(
+      'myText1'
+    ) as HTMLInputElement;
+    const inputElement2 = document.getElementById(
+      'myText2'
+    ) as HTMLInputElement;
+
+    this.savedTextP1 = inputElement1.value;
+    this.savedTextP2 = inputElement2.value;
+
+    //console.log('Saved text Player 1: ', this.savedTextP1);
+    //console.log('Saved text Player 2: ', this.savedTextP2);
+    
+
+    inputElement1.remove();
+    inputElement2.remove();
+
+    inputElement1.value = '';
+    inputElement2.value = '';
+
+    this.p1_responseText = this.formatRequest(this.savedTextP1);
+    this.p2_responseText = this.formatRequest(this.savedTextP2);
+
+      console.log(this.p1_responseText);
+      console.log(this.p2_responseText);
+
+      this.checkPlayerUnderstanding();
+
+      this.scene.start('InstructionScene', {
+        p1_responseText: this.p1_responseText,
+        p2_responseText: this.p2_responseText,
+        p1_understandAmt: this.p1_understandAmt,
+        p2_understandAmt: this.p2_understandAmt
+      });
+  }
+
+
+
+  
 
   saveInput() {
     const inputElement1 = document.getElementById(
@@ -92,6 +162,7 @@ export default class InputScene extends Phaser.Scene {
 
     //console.log('Saved text Player 1: ', this.savedTextP1);
     //console.log('Saved text Player 2: ', this.savedTextP2);
+    
 
     inputElement1.remove();
     inputElement2.remove();

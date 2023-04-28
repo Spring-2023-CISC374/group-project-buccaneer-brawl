@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-
+import DemoScene from './Scenes/DemoScene';
 import FightScene from './Scenes/FightScene';
 import InputScene from './Scenes/InputScene';
 import LoadingScene from './Scenes/LoadingScene';
@@ -15,10 +15,11 @@ const config: Phaser.Types.Core.GameConfig = {
   physics: {
     default: 'arcade',
     arcade: {
-      gravity: { y: 1200 },
+      gravity: { y: 1200 }
+      debug: false,
     },
   },
-  scene: [LoadingScene, TitleScene, InputScene, InstructionScene, FightScene, ResultScene],
+  scene: [LoadingScene, TitleScene, InputScene, InstructionScene, FightScene, ResultScene, DemoScene],
 };
 
 export default new Phaser.Game(config)

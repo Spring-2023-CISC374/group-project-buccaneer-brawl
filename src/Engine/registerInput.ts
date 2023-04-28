@@ -39,7 +39,6 @@ export default class registerInput extends Phaser.Scene{
                 player?.movePlayer(260, input[this.key_index], opponent);
             }
             else{
-                console.log("going to attack ", input[this.key_index]);
                 player?.playerAttack(input[this.key_index]);
             }
             this.key_index++;
