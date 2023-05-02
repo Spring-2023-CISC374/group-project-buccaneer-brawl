@@ -16,8 +16,8 @@ export default class DemoScene extends Phaser.Scene{
         console.log(titlescreen)
         console.log("Now on to demostrations within each move");
         const { width, height } = this.scale;
-        const bg = this.add.image(width / 2, height / 2, 'background');
-        bg.setScale(2);
+        // const bg = this.add.image(width / 2, height / 2, 'background');
+        // bg.setScale(2);
         this.add.text(width / 4, height / 4, 'Examples', {
             fontSize: '64px',
             fontFamily: 'Arial',
@@ -35,7 +35,7 @@ export default class DemoScene extends Phaser.Scene{
             0x0096ff
           ); 
           
-        const waitButton = this.add.text(width / 4, height / 4, available_moves[0], {
+        const waitButton = this.add.text(width / 4, height / 4, available_moves[0].toUpperCase(), {
             fontSize: '21px',
             fontFamily: 'Arial',
             color: '#ffffff',
@@ -53,7 +53,7 @@ export default class DemoScene extends Phaser.Scene{
           this.animationHandler();
         })
 
-        const walk_forward_button = this.add.text(width / 4, height / 4, available_moves[1], {
+        const walk_forward_button = this.add.text(width / 4, height / 4, available_moves[1].toUpperCase(), {
           fontSize: '21px',
           fontFamily: 'Arial',
           color: '#ffffff',
@@ -69,6 +69,67 @@ export default class DemoScene extends Phaser.Scene{
           this.player2?.sprite.anims.play("left");
           this.animationHandler();
         })
+        const walk_back_button = this.add.text(width / 4, height / 4, available_moves[2].toUpperCase(), {
+          fontSize: '21px',
+          fontFamily: 'Arial',
+          color: '#ffffff',
+          backgroundColor: '#000000',
+          padding: {
+          x: 16,
+          y: 8,
+          }
+        })
+        walk_back_button.setScale(1, 1).setX(12).setY(285)
+        walk_back_button.setInteractive({useHandCursor: true})
+        walk_back_button.on("pointerdown", ()=>{
+          this.player2?.sprite.anims.play("right")
+          this.animationHandler();
+        })
+        //Need to figure out jumping issue, might want to ask Chris regarding the jumping move
+        // const jump_button = this.add.text(width /4, height /2, available_moves[3].toUpperCase(), {
+        //   fontSize: '21px',
+        //   fontFamily: 'Arial',
+        //   color: '#ffffff',
+        //   backgroundColor: '#000000',
+        //   padding: {
+        //   x: 16,
+        //   y: 8,
+        //   }
+        // })
+        // jump_button.setScale(1, 1).setX(12).setY(335)
+        // jump_button.setInteractive({useHandCursor: true})
+        // jump_button.on("pointerdown", ()=>{
+        //   this.player2?.sprite.anims.play("jump")
+        //   this.animationHandler();
+        // })
+
+        const kick_button = this.add.text(width / 4, height / 4, available_moves[6].toUpperCase(), {
+          fontSize: '21px',
+          fontFamily: 'Arial',
+          color: '#ffffff',
+          backgroundColor: '#000000',
+          padding: {
+          x: 16,
+          y: 8,
+          }
+        })
+        kick_button.setScale(1, 1).setX(12).setY(375)
+        kick_button.setInteractive({useHandCursor: true})
+        kick_button.on("pointerdown", ()=>{
+            this.player2?.sprite.anims.play("kick")
+            this.animationHandler();
+          })
+        const punch_button = this.add.text(width / 4, height / 4, available_moves[7].toUpperCase(), {
+            fontSize: '21px',
+            fontFamily: 'Arial',
+            color: '#ffffff',
+            backgroundColor: '#000000',
+            padding: {
+            x: 16,
+            y: 8,
+            }
+          })  
+
 
         const backToStartButton = this.add.text(width / 4, height / 2, 'Return to Input', {
             fontSize: '48px',
@@ -85,7 +146,6 @@ export default class DemoScene extends Phaser.Scene{
           backToStartButton.on("pointerdown", ()=>{
           this.scene.start("InputScene");
         })
-
         this.animationHandler();
     
     }
@@ -198,5 +258,14 @@ export default class DemoScene extends Phaser.Scene{
         frameRate: 10,
         repeat: -1, //-1 for infinite repeats
       });
+      this.anims.create({
+        key: "jump",
+        frames: this.anims.generateFrameNumbers("dude", {
+          start: 7,
+          end: 7,
+        }),
+        frameRate: 10,
+        repeat: -1,
+      })
     }
 }
