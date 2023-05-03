@@ -116,7 +116,7 @@ export default class DemoScene extends Phaser.Scene{
         kick_button.setScale(1, 1).setX(12).setY(375)
         kick_button.setInteractive({useHandCursor: true})
         kick_button.on("pointerdown", ()=>{
-            this.player2?.sprite.anims.play("kick")
+            this.player2?.sprite.anims.play("kick");
             this.animationHandler();
           })
         const punch_button = this.add.text(width / 4, height / 4, available_moves[7].toUpperCase(), {
@@ -129,7 +129,87 @@ export default class DemoScene extends Phaser.Scene{
             y: 8,
             }
           })  
+          punch_button.setScale(1, 1).setX(12).setY(415)
+          punch_button.setInteractive({useHandCursor: true})
+          punch_button.on("pointerdown", ()=>{
+            this.player2?.sprite.anims.play("punch");
+            this.animationHandler();
+          })
 
+          const hook_button = this.add.text(width / 4, height / 2, available_moves[8].toUpperCase(),{
+            fontSize: '21px',
+            fontFamily: 'Arial',
+            color: '#ffffff',
+            backgroundColor: '#000000',
+            padding: {
+            x: 16,
+            y: 8,
+            }
+          })
+          hook_button.setScale(1, 1).setX(12).setY(445)
+          hook_button.setInteractive({useHandCursor: true})
+          hook_button.on("pointerdown", ()=>{
+            this.player2?.sprite.anims.play("hook");
+            this.animationHandler();
+          })
+          const uppercut_button = this.add.text(width / 4, height / 2, available_moves[7].toUpperCase(), {
+            fontSize: '21px',
+            fontFamily: 'Arial',
+            color: '#ffffff',
+            backgroundColor: '#000000',
+            padding: {
+              x: 16,
+              y: 8,
+            }
+          })
+          uppercut_button.setScale(1, 1).setX(12).setY(485).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
+            this.player2?.sprite.anims.play("uppercut")
+            this.animationHandler();
+          })
+
+         const crhook_btn = this.add.text(width / 4, height / 2, available_moves[10].toUpperCase(), {
+            fontSize: '21px',
+            fontFamily: 'Arial',
+            color: '#ffffff',
+            backgroundColor: '#000000',
+            padding: {
+              x: 16,
+              y: 8,
+            }
+         })
+          crhook_btn.setScale(1, 1).setX(12).setY(515).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
+          this.player2?.sprite.anims.play("crhook")
+          this.animationHandler();
+         })
+
+         const roundhouse_btn = this.add.text(width / 4, height / 2, available_moves[11].toUpperCase(), {
+          fontSize: '21px',
+          fontFamily: 'Arial',
+          color: '#ffffff',
+          backgroundColor: '#000000',
+          padding: {
+            x: 16,
+            y: 8,
+          }
+       })
+        roundhouse_btn.setScale(1, 1).setX(12).setY(545).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
+        this.player2?.sprite.anims.play("roundhouse")
+        this.animationHandler();
+       })
+       const dodge_btn = this.add.text(width / 4, height / 2, available_moves[12].toUpperCase(), {
+        fontSize: '21px',
+        fontFamily: 'Arial',
+        color: '#ffffff',
+        backgroundColor: '#000000',
+        padding: {
+          x: 16,
+          y: 8,
+        }
+     })
+      dodge_btn.setScale(1, 1).setX(12).setY(575).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
+      this.player2?.sprite.anims.play("dodge")
+      this.animationHandler();
+     })
 
         const backToStartButton = this.add.text(width / 4, height / 2, 'Return to Input', {
             fontSize: '48px',
@@ -147,7 +227,9 @@ export default class DemoScene extends Phaser.Scene{
           this.scene.start("InputScene");
         })
         this.animationHandler();
-    
+        
+
+        
     }
 
     private animationHandler() {
