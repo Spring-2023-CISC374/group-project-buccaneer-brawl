@@ -24,7 +24,7 @@ export default class InstructionScene extends Phaser.Scene{
         backgroundColor: '#000000',
       });
       //Includes information from the instructions
-      this.add.text(width / 2, height / 2, 'Ahoy, today in the game the pirates need your input.', {
+      this.add.text(width / 2, height / 2, 'Ahoy, the pirates need your input.', {
         fontSize: '20px',
         fontFamily: 'Arial',
         color: '#ffffff',
@@ -32,21 +32,23 @@ export default class InstructionScene extends Phaser.Scene{
       }).setOrigin(0.5, 3);
       
       //More descriptions
-      this.add.text(width / 2, height / 2, 'Given two players, feed them string input (word or sentence)', {
+            //this.add.text("whether a word or a sentence and it will command the player!")
+            this.add.text(width / 2, height / 2, 'RedBeard and BluBeard are fighting again. Pick a side and help them win!', {
+              fontSize: '20px',
+              fontFamily: 'Arial',
+              color: '#ffffff',
+              backgroundColor: '#000000',
+            }).setOrigin(0.5, 2);
+
+      this.add.text(width / 2, height / 2, 'Type in what you want the pirate to do, seperated by commas.', {
         fontSize: '20px',
         fontFamily: 'Arial',
         color: '#ffffff',
         backgroundColor: '#000000',
       }).setOrigin(0.5, 1);
-      //this.add.text("whether a word or a sentence and it will command the player!")
-      this.add.text(width / 2, height / 2, 'Be careful, only one winner will come out given the commands listed from you!', {
-        fontSize: '20px',
-        fontFamily: 'Arial',
-        color: '#ffffff',
-        backgroundColor: '#000000',
-      }).setOrigin(0.5, 2);
-      
 
+      
+      /*
       this.add.text(width / 2, height / 2, 'Here are the commands listed below: ', {
         fontSize: '20px',
         fontFamily: 'Arial',
@@ -58,15 +60,16 @@ export default class InstructionScene extends Phaser.Scene{
         fontFamily: 'Arial',
         color: '#ffffff',
         backgroundColor: '#000000',}).setOrigin(0.59, -2);
+        */
 
 
        this.add.text(width / 2, height / 2, 'For example.', {
             fontSize: '20px',
             fontFamily: 'Arial',
             color: '#ffffff',
-            backgroundColor: '#000000',}).setOrigin(3.3, -3);
+            backgroundColor: '#000000',}).setOrigin(3.0, -3);
 
-      this.add.text(width/2, height/2, "If the player is given walk forward, the player will walk forward some amounts of spaces", {
+      this.add.text(width/2, height/2, "walk_forward, roundhouse, uppercut", {
         fontSize: '20px',
         fontFamily: 'Arial',
         color: '#ffffff',
