@@ -10,8 +10,7 @@ export default class InstructionScene extends Phaser.Scene{
     create(){
        console.log("Instructions added");
        const { width, height } = this.scale;
-       const bg = this.add.image(width / 2, height / 2, 'background');
-       bg.setScale(2);
+      
        const titlescreen = this.add.sprite(400, 330, 'titlescreen');
        console.log(titlescreen);
        titlescreen.scaleX = 2.5;
