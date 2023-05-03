@@ -23,7 +23,7 @@ export default class DemoScene extends Phaser.Scene{
             fontFamily: 'Arial',
             color: '#ffffff',
             backgroundColor: '#000000',
-          }).setOrigin();
+          }).setOrigin(0, 0);
 
 
           this.player2 = new Player(
@@ -86,22 +86,22 @@ export default class DemoScene extends Phaser.Scene{
           this.animationHandler();
         })
         //Need to figure out jumping issue, might want to ask Chris regarding the jumping move
-        // const jump_button = this.add.text(width /4, height /2, available_moves[3].toUpperCase(), {
-        //   fontSize: '21px',
-        //   fontFamily: 'Arial',
-        //   color: '#ffffff',
-        //   backgroundColor: '#000000',
-        //   padding: {
-        //   x: 16,
-        //   y: 8,
-        //   }
-        // })
-        // jump_button.setScale(1, 1).setX(12).setY(335)
-        // jump_button.setInteractive({useHandCursor: true})
-        // jump_button.on("pointerdown", ()=>{
-        //   this.player2?.sprite.anims.play("jump")
-        //   this.animationHandler();
-        // })
+        const jump_button = this.add.text(width /4, height /2, available_moves[3].toUpperCase(), {
+          fontSize: '21px',
+          fontFamily: 'Arial',
+          color: '#ffffff',
+          backgroundColor: '#000000',
+          padding: {
+          x: 16,
+          y: 8,
+          }
+        })
+        jump_button.setScale(1, 1).setX(12).setY(335).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
+          this.player2?.sprite.setVelocityY(-500);
+          this.player2?.sprite.anims.play("turn")
+          // this.player2?.sprite.anims.play("jump")
+          this.animationHandler();
+        })
 
         const kick_button = this.add.text(width / 4, height / 4, available_moves[6].toUpperCase(), {
           fontSize: '21px',
@@ -167,7 +167,7 @@ export default class DemoScene extends Phaser.Scene{
             this.animationHandler();
           })
 
-         const crhook_btn = this.add.text(width / 4, height / 2, available_moves[10].toUpperCase(), {
+         const crhook_btn = this.add.text(width / 4, height / 2, available_moves[9].toUpperCase(), {
             fontSize: '21px',
             fontFamily: 'Arial',
             color: '#ffffff',
