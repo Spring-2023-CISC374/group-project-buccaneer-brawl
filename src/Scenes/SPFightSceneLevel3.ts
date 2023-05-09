@@ -6,7 +6,14 @@ export default class SPFightSceneLevel3 extends Phaser.Scene {
   constructor() {
     super({ key: 'SPFightSceneLevel3' });
   }
-  private aiMoves = ['kick', 'punch', 'walk_forward', 'walk_backward', 'jump'];
+  private aiMoves = [
+    'kick',
+    'punch',
+    'walk_forward',
+    'walk_backward',
+    'jump',
+    'block',
+  ];
 
   private getRandomMove() {
     const index = Math.floor(Math.random() * this.aiMoves.length);
@@ -72,7 +79,7 @@ export default class SPFightSceneLevel3 extends Phaser.Scene {
     this.player2 = new Player(
       this.physics.add
         .sprite(700, 350, 'dude')
-        .setSize(72, 124)
+        .setSize(54, 108)
         .setOffset(70, 12)
         .setScale(2),
       0x0096ff

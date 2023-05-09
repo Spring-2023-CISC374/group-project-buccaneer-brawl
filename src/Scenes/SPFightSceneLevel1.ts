@@ -6,7 +6,7 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
   constructor() {
     super({ key: 'SPFightSceneLevel1' });
   }
-  private aiMoves = ['jump', 'punch'];
+  private aiMoves = ['jump', 'punch', 'walk_forward'];
 
   private getRandomMove() {
     const index = Math.floor(Math.random() * this.aiMoves.length);
@@ -392,7 +392,7 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
           this.physics.pause();
           this.levels++;
           this.scene.start('SPResultScene', {
-            levels: this.levels,
+            levels: this.levels == 2,
             p1_understandAmt: this.p1_understandAmt,
             p2_understandAmt: this.p2_understandAmt,
             who_won: 'RedBeard',

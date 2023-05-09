@@ -22,6 +22,7 @@ export default class SPInputScene extends Phaser.Scene {
     this.currentLevel = 0;
   }
   init(data: { levels: number }) {
+    data.levels = 1;
     this.currentLevel = data.levels;
   }
   create() {

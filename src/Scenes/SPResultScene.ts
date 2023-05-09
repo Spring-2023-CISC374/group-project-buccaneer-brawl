@@ -100,6 +100,7 @@ export default class SPResultScene extends Phaser.Scene {
     startButton.setInteractive({ useHandCursor: true });
     startButton.on('pointerdown', () => {
       this.scene.start('SPInputScene');
+      this.levels;
     });
   }
 }

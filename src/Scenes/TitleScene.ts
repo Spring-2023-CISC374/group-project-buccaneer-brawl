@@ -60,16 +60,21 @@ export default class TitleScene extends Phaser.Scene {
       }
     );
 
-    const SPButton = this.add.text(width / 2, height / 2, 'Single Player', {
-      fontSize: '48px',
-      fontFamily: 'Arial',
-      color: '#ffffff',
-      backgroundColor: '#000000',
-      padding: {
-        x: 32,
-        y: 32,
-      },
-    });
+    const SPButton = this.add.text(
+      width / 2,
+      height / 2 + 200,
+      'Single Player',
+      {
+        fontSize: '48px',
+        fontFamily: 'Arial',
+        color: '#ffffff',
+        backgroundColor: '#000000',
+        padding: {
+          x: 32,
+          y: 32,
+        },
+      }
+    );
 
     startButton.setOrigin(0.5);
     startButton.setInteractive({ useHandCursor: true });
@@ -77,7 +82,7 @@ export default class TitleScene extends Phaser.Scene {
       this.scene.start('InputScene');
     });
 
-    SPButton.setOrigin(1.5);
+    SPButton.setOrigin(0.5);
     SPButton.setInteractive({ useHandCursor: true });
     SPButton.on('pointerdown', () => {
       this.scene.start('SPInputScene');
