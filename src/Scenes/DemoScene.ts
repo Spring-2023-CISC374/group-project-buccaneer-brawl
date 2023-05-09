@@ -5,10 +5,21 @@ import available_moves from '../Types/available_moves';
 export default class DemoScene extends Phaser.Scene{
     constructor(){
         super({key: 'DemoScene'});
+        this.savedTextP1 = '';
+        this.savedTextP2 = '';
     }
+
+    private savedTextP1: string;
+    private savedTextP2: string;
     private player2?: Player;
     
-
+    init(data: {
+      savedTextP1: string;
+      savedTextP2: string;
+    }) {
+      this.savedTextP1 = data.savedTextP1;
+      this.savedTextP2 = data.savedTextP2;
+    }
     create(){
         const titlescreen = this.add.sprite(400, 330, 'titlescreen');
         titlescreen.scaleX = 2.5;
@@ -224,7 +235,10 @@ export default class DemoScene extends Phaser.Scene{
           backToStartButton.setScale(1, 1)
           backToStartButton.setInteractive({ useHandCursor: true });
           backToStartButton.on("pointerdown", ()=>{
-          this.scene.start("InputScene");
+            this.scene.start('InputScene', {
+            savedTextP1: this.savedTextP1,
+            savedTextP2: this.savedTextP2,
+        });
         })
         this.animationHandler();
         

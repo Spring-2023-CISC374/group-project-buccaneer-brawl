@@ -16,8 +16,6 @@ export default class registerInput extends Phaser.Scene{
     public validInput(input: string[], delta: number, player?: Player, opponent?: Player){
         //Check if the input is considered a non-fighting move for loop, reset to start!!!
         this.key_timer += delta;
-        console.log("playerName", player?.invulnerable);
-
         let nextMoveTime = 500;
         if(player?.action === "attack/punch" || input[this.key_index]=== "attack/kick" || input[this.key_index] === "attack/hook") nextMoveTime = 250;
 

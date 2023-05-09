@@ -1,14 +1,25 @@
 import Phaser from "phaser";
 
 export default class InstructionScene extends Phaser.Scene{
+    private savedTextP1?: string;
+    private savedTextP2?: string;
+
     constructor(){
         super({ key: 'InstructionScene' });
     }
 
-
+    init(data: {
+      savedTextP1: string;
+      savedTextP2: string;
+    }) {
+      this.savedTextP1 = data.savedTextP1;
+      this.savedTextP2 = data.savedTextP2;
+    }
     //Setting up instructions
     create(){
        console.log("Instructions added");
+       console.log(this.savedTextP1);
+       console.log(this.savedTextP2);
        const { width, height } = this.scale;
       
        const titlescreen = this.add.sprite(400, 330, 'titlescreen');
@@ -87,7 +98,10 @@ export default class InstructionScene extends Phaser.Scene{
       backToStartButton.setScale(1, 1)
       backToStartButton.setInteractive({ useHandCursor: true });
       backToStartButton.on("pointerdown", ()=>{
-      this.scene.start("InputScene");
+        this.scene.start('InputScene', {
+          savedTextP1: this.savedTextP1,
+          savedTextP2: this.savedTextP2,
+        });
     })
 
     const demoButton = this.add.text(width / 4, height / 2, 'Demo', {
@@ -103,8 +117,10 @@ export default class InstructionScene extends Phaser.Scene{
     demoButton.setScale(1, 1)
     demoButton.setInteractive({useHandCursor: true});
     demoButton.on("pointerdown", ()=>{
-      this.scene.start("DemoScene")
+      this.scene.start("DemoScene", {
+        savedTextP1: this.savedTextP1,
+        savedTextP2: this.savedTextP2,
+      })
     })
-    
-    }
+  }
 }
