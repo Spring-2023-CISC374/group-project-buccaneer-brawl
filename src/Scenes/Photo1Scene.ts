@@ -6,7 +6,7 @@ export default class Photo1Scene extends Phaser.Scene {
       }
       preload() {
         //Photo 1
-        this.load.image('Photo 1', 'assets/InstructionPhotos/Photo 1.jpg');
+        this.load.image('Photo 1', 'assets/InstructionPhotos/Photo1.png');
       }
       create() {
         const { width, height } = this.scale;
@@ -21,9 +21,6 @@ export default class Photo1Scene extends Phaser.Scene {
             y: 8,
           },
         });
-    
-    
-    
         NextButton.setOrigin(0.5);
         NextButton.setInteractive({ useHandCursor: true });
         NextButton.on('pointerdown', () => {
