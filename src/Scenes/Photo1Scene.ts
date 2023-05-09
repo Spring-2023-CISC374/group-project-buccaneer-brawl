@@ -1,14 +1,14 @@
 import Phaser from 'phaser';
-
 export default class Photo1Scene extends Phaser.Scene {
     constructor() {
         super({ key: 'Photo1Scene' });
-      }
-      preload() {
+    }
+        preload() {
         //Photo 1
-        this.load.image('Photo 1', 'assets/InstructionPhotos/Photo1.png');
+        this.load.image('Photo1', 'assets/InstructionPhotos/Photo1.png');
       }
       create() {
+        this.add.image(0, 0, 'Photo1');
         const { width, height } = this.scale;
         // Add Next Button
         const NextButton = this.add.text(width / 2, height / 2, 'Next', {
