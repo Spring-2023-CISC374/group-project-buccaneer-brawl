@@ -15,7 +15,7 @@ export default class Photo1Scene extends Phaser.Scene {
         fontSize: '48px',
         fontFamily: 'Arial',
         color: '#ffffff',
-        backgroundColor: '#000000',
+        backgroundColor: '#FFFFFF',
         padding: {
           x: 16,
           y: 8,
