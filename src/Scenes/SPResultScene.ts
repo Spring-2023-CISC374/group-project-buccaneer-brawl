@@ -1,30 +1,25 @@
 import Phaser from 'phaser';
 
 export default class SPResultScene extends Phaser.Scene {
-  private p1_understandAmt: number;
-  private p2_understandAmt: number;
   private who_won: string;
   private levels: number;
+  private savedTextP1: string;
 
   constructor() {
     super({ key: 'SPResultScene' });
-
-    this.p1_understandAmt = 0;
-    this.p2_understandAmt = 0;
     this.who_won = 'RedBeard';
     this.levels = 1;
+    this.savedTextP1 = '';
   }
 
   init(data: {
-    p1_understandAmtt: number;
-    p2_understandAmt: number;
     who_won: string;
     levels: number;
+    savedTextP1: string;
   }) {
-    this.levels = data.levels;
-    this.p1_understandAmt = data.p1_understandAmtt;
-    this.p2_understandAmt = data.p2_understandAmt;
+    this.levels = data.levels + 1;
     this.who_won = data.who_won;
+    this.savedTextP1 = data.savedTextP1;
   }
 
   create() {
@@ -57,9 +52,7 @@ export default class SPResultScene extends Phaser.Scene {
     const pirate1Text = this.add.text(
       width / 1.2,
       height / 2.5,
-      `RedBeard: ${this.who_won === 'RedBeard' ? 'W' : 'L'} ${
-        this.p1_understandAmt
-      }% understanding`,
+      `RedBeard: ${this.who_won === "RedBeard" ? "W" : "L"} BluBeard has scurvy.    '`,
       {
         fontSize: '32px',
         fontFamily: 'Arial',
@@ -72,9 +65,7 @@ export default class SPResultScene extends Phaser.Scene {
     const pirate2Text = this.add.text(
       width / 1.2,
       height / 2,
-      `BluBeard: ${this.who_won === 'BluBeard' ? 'W' : 'L'} ${
-        this.p2_understandAmt
-      }% understanding`,
+      `BluBeard: ${this.who_won === "BluBeard" ? "W" : "L"} RedBeard walked the plank.`,
       {
         fontSize: '32px',
         fontFamily: 'Arial',
@@ -99,8 +90,11 @@ export default class SPResultScene extends Phaser.Scene {
     startButton.setOrigin(0.5, 0.1);
     startButton.setInteractive({ useHandCursor: true });
     startButton.on('pointerdown', () => {
-      this.scene.start('SPInputScene');
-      this.levels;
+      this.scene.start('SPInputScene', {
+        levels: this.levels,
+        savedTextP1: this.savedTextP1,
+      });
+      
     });
   }
 }

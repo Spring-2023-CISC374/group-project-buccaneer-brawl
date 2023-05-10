@@ -139,6 +139,15 @@ export default class FightScene extends Phaser.Scene {
       undefined,
       this
     );
+    this.add.text(16, 16, 'Player 1 HP: 0', {
+      fontSize: '30px',
+      color: '#000',
+    });
+    this.add.text(510, 16, 'Player 2 HP: 0', {
+      fontSize: '30px',
+      color: '#000',
+    });
+
     this.timerText = this.add.text(316, 16, "Time: 99", {
       fontSize: "30px",
       color: "#000",
