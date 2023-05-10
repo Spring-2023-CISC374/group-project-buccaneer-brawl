@@ -107,6 +107,8 @@ export default class SPInputScene extends Phaser.Scene {
       this.transitionToInstructions();
     })
 
+    if(this.levels===undefined) this.levels = 0;
+    console.log(this.levels);
   }
 
   saveInput() {
@@ -126,7 +128,8 @@ export default class SPInputScene extends Phaser.Scene {
 
     this.scene.start("SPFightSceneLevel1", {
       p1_responseText: this.p1_responseText,
-      levels: this.levels
+      levels: this.levels,
+      savedTextP1: this.savedTextP1
     });
   }
 

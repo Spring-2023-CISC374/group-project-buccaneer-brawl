@@ -37,6 +37,7 @@ export default class LoadingScene extends Phaser.Scene {
     
     //images
     this.load.image('pirateship', 'assets/pirateship.png');
+    this.load.image('winpic', 'assets/WinPicture.png');
     this.load.image('ground', 'assets/platform.png');
     this.load.image('sky.png','assets/sky.png');
     this.load.image('star', 'assets/star.png');

@@ -8,7 +8,7 @@ export default class SPResultScene extends Phaser.Scene {
   constructor() {
     super({ key: 'SPResultScene' });
     this.who_won = 'RedBeard';
-    this.levels = 1;
+    this.levels = 0;
     this.savedTextP1 = '';
   }
 
@@ -17,7 +17,7 @@ export default class SPResultScene extends Phaser.Scene {
     levels: number;
     savedTextP1: string;
   }) {
-    this.levels = data.levels + 1;
+    this.levels = data.levels;
     this.who_won = data.who_won;
     this.savedTextP1 = data.savedTextP1;
   }
@@ -89,11 +89,18 @@ export default class SPResultScene extends Phaser.Scene {
     startButton.setScale(0.5);
     startButton.setOrigin(0.5, 0.1);
     startButton.setInteractive({ useHandCursor: true });
+
+
     startButton.on('pointerdown', () => {
-      this.scene.start('SPInputScene', {
-        levels: this.levels,
-        savedTextP1: this.savedTextP1,
-      });
+      if(this.levels < 3) {
+        this.scene.start('SPInputScene', {
+          levels: this.levels,
+          savedTextP1: this.savedTextP1,
+        });
+
+      } else {
+        this.scene.start('WinScene');
+      }
       
     });
   }

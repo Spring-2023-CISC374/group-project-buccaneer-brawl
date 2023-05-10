@@ -15,6 +15,7 @@ import Photo1Scene from './Scenes/Photo1Scene';
 import Photo2Scene from './Scenes/Photo2Scene';
 import Photo3Scene from './Scenes/Photo3Scene';
 import Photo4Scene from './Scenes/Photo4Scene';
+import WinScene from './Scenes/WinScene';
 
 
 const config: Phaser.Types.Core.GameConfig = {
@@ -30,7 +31,7 @@ const config: Phaser.Types.Core.GameConfig = {
     },
   },
 
-  scene: [LoadingScene, TitleScene, InputScene, GamemodeScene, InstructionScene, FightScene, ResultScene, DemoScene, Photo1Scene, Photo2Scene, Photo3Scene, Photo4Scene, SPFightSceneLevel1, SPResultScene, SPInputScene,],
+  scene: [LoadingScene, TitleScene, InputScene, GamemodeScene, InstructionScene, FightScene, ResultScene, DemoScene, Photo1Scene, Photo2Scene, Photo3Scene, Photo4Scene, SPFightSceneLevel1, SPResultScene, SPInputScene,WinScene],
 };
 
 export default new Phaser.Game(config);

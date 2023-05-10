@@ -2,14 +2,14 @@ import Phaser, { Physics } from 'phaser';
 import Player from '../Classes/player';
 import RegisterInput from '../Engine/registerInput';
 import HealthBar from "../Classes/HealthBar";
+import available_moves from '../Types/available_moves';
 
 export default class SPFightSceneLevel1 extends Phaser.Scene {
   constructor() {
     super({ key: 'SPFightSceneLevel1' });
   }
-  private aiMoves = ['jump', 'punch', 'walk_forward'];
-  private levels = 1;
-
+  private aiMoves?: string[];
+  private levels?: number;
   private platforms?: Phaser.Physics.Arcade.StaticGroup;
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
   private player1?: Player;
@@ -40,6 +40,8 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
 
   create() {
     console.log("level: ", this.levels);
+    if(this.levels !== undefined) this.levels++;
+    console.log("level: ", this.levels);
     this.add.image(400, 300, "pirateship").setScale(2);
 
     this.game.sound.stopAll();
@@ -62,15 +64,21 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
         .setOffset(0, 12)
         .setScale(2)
     );
-    this.player2 = new Player(
-      this.physics.add
-        .sprite(700, 350, "dude")
-        .setSize(54, 108)
-        .setOffset(70, 12)
-        .setScale(2),
-      undefined,
-      0x0096ff
-    );
+
+    if(this.levels === undefined) this.levels = 1;
+    const bossScale = this.levels <= 1 ? 1: this.levels * 0.8;
+      this.player2 = new Player(
+        this.physics.add
+          .sprite(700, 350, "dude")
+          .setSize(54, 108)
+          .setOffset(70, 12)
+          .setScale(2 * bossScale),
+        undefined,
+        0x0096ff
+      );
+      this.player2.health *= this.levels;
+    
+
 
     this.makeHealthBar(14, 60, 300, true);
     this.makeHealthBar(450, 60, 300, false);
@@ -163,6 +171,13 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
 
     this.roundTimer = 99;
     this.roundTimerdelta = 0;
+
+    this.aiMoves = []
+    const rng = Phaser.Math.Between(3, 12);
+    for(let i = 0; i < rng; i++) {
+      this.aiMoves.push(this.getRandomMove());
+    }  
+
   }
 
   update(time: number, delta: number) {
@@ -185,12 +200,16 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
       this.player2
     );
 
-    this.registerTwo?.validInput(
-      this.aiMoves,
-      delta,
-      this.player2,
-      this.player1
-    );
+    if(this.aiMoves !== undefined) {
+      this.registerTwo?.validInput(
+        this.aiMoves,
+        delta,
+        this.player2,
+        this.player1
+      );
+
+    }
+
     
     if (this.player1 && this.player2) {
       if(this.player1.action === "attack/fire_cannon" && this.player1.timer < 10 && !this.player2.invulnerable) {
@@ -308,6 +327,12 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
     this.decrementRoundTimer(delta);
   }
 
+  
+  private getRandomMove(): string {
+    const index = Math.floor(Math.random() * available_moves.length);
+    return available_moves[index];
+  }
+
   private attackRanges(player: Player, leftside: boolean) {
     const offset = leftside ? 0 : 80;
     const rangeMul = leftside ? 1 : -1;
@@ -404,7 +429,6 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
     cannonball.setVelocity(0,0);
     if (this.player1 && this.player2) {
       if (this.player1.sprite === player) {
-        console.log("cannon hit");
           this.player1.health -= 10;
           if(this.player1.sprite.x < this.player2.sprite.x) {
             this.player1.sprite.setVelocityX(200)
@@ -516,8 +540,6 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
             savedTextP1: this.savedTextP1
           });
         }
-        console.log(this.player1.spamQueue);
-        console.log("damage", this.player1.damage);
 
         this.player2.health -= this.player1.damage;
         //HP bar drops to percentage of max HP

@@ -89,7 +89,6 @@ export default class Player {
 
   movePlayer(distance: number, moveType: string, opponent?: Player) {
     if (this.hitstun) {
-      console.log("in hitstun");
       return;
     }
     //console.log(moveType);
@@ -154,7 +153,7 @@ export default class Player {
       this.invulnerable = true;
 
       const rng = Phaser.Math.Between(0, 1);
-      console.log(rng);
+  
       if (rng == 1) {
         this.invulnerable = false;
         this.sprite.setTint(0x000000);
@@ -167,7 +166,6 @@ export default class Player {
       this.invulnerable = true;
 
       const rng = Phaser.Math.Between(0, 1);
-      console.log(rng);
       if (rng == 1) {
         this.invulnerable = false;
         this.sprite.setTint(0x000000);
@@ -180,7 +178,6 @@ export default class Player {
       this.invulnerable = true;
 
       const rng = Phaser.Math.Between(0, 1);
-      console.log(rng);
       if (rng == 1) {
         this.invulnerable = false;
         this.sprite.setTint(0x000000);
@@ -192,7 +189,6 @@ export default class Player {
 
   playerAttack(moveType: string, opponent?: Player) {
     if (this.hitstun) {
-      console.log("in hitstun");
       return;
     }
 
