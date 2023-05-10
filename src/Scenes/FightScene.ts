@@ -443,7 +443,6 @@ export default class FightScene extends Phaser.Scene {
       }
       cannonball.destroy(true);
     }
-    console.log("swag");
   }
 
   private hitCallback(
