@@ -121,6 +121,7 @@ const submitButton = this.add.text(300, 300, 'Submit', {
   backgroundColor: '#000000',
   padding: { left: 10, right: 10, top: 5, bottom: 5 },
 });
+submitButton.setVisible(false);
 submitButton.setX(200)
 submitButton.setY(350)
 
@@ -134,7 +135,13 @@ submitButton.setY(350)
     p1DoneButton.setInteractive({ useHandCursor: true });
 
     p1DoneButton.on('pointerdown', () => {
+      this.player1Ready = true;
       this.saveInputP1();
+      if(this.player1Ready && this.player2Ready){
+        console.log("You can start the game!")
+        submitButton.setVisible(true);
+        submitButton.setInteractive({useHandCursor: true});
+      }
     });
 
     const p2DoneButton = this.add.text(380, 300, 'Ready?', {
@@ -145,13 +152,17 @@ submitButton.setY(350)
     });
     p2DoneButton.setInteractive({ useHandCursor: true });
     
-    if(p1DoneButton.setInteractive({useHandCursor: true}) && p2DoneButton.setInteractive({ useHandCursor: true })){
-      console.log("You can start the game!")
-      submitButton.setInteractive({ useHandCursor: true });
-    }
     p2DoneButton.on('pointerdown', () => {
+      this.player2Ready = true;
       this.saveInputP2();
+      if(this.player1Ready && this.player2Ready){
+        console.log("You can start the game!")
+        submitButton.setVisible(true);
+        submitButton.setInteractive({useHandCursor: true});
+      }
     });
+    //Button finally appears goshdanit
+    console.log(this.player1Ready && this.player2Ready)
     
    
 
@@ -208,7 +219,7 @@ submitButton.setY(350)
     this.p1_responseText = this.formatRequest(this.savedTextP1);
 
     this.player1Ready = true;
-
+    
   }
 
   saveInputP2() {
