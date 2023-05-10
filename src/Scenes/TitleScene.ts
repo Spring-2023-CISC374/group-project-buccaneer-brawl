@@ -15,7 +15,6 @@ export default class TitleScene extends Phaser.Scene {
     const titlescreen = this.add.sprite(400, 330, 'titlescreen');
     titlescreen.scaleX = 2.5;
     titlescreen.scaleY = 1.5;
-
     this.sound.stopAll();
     const music = this.sound.add('piratemusic');
 
@@ -33,7 +32,7 @@ export default class TitleScene extends Phaser.Scene {
     title.setOrigin(0.5);
 
     // Add start button
-    const startButton = this.add.text(width / 2, height / 2, 'Start', {
+    const startButton = this.add.text(width / 2, height / 2, 'View Instructions', {
       fontSize: '48px',
       fontFamily: 'Arial',
       color: '#ffffff',
@@ -79,7 +78,8 @@ export default class TitleScene extends Phaser.Scene {
     startButton.setOrigin(0.5);
     startButton.setInteractive({ useHandCursor: true });
     startButton.on('pointerdown', () => {
-      this.scene.start('InputScene');
+      this.scene.start('Photo1Scene');
+      
     });
 
     SPButton.setOrigin(0.5);

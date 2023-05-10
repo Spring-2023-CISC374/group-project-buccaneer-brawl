@@ -1,14 +1,15 @@
 import Phaser from 'phaser';
 import available_moves from '../Types/available_moves';
 
+
 export default class InputScene extends Phaser.Scene {
   private savedTextP1: string;
   private savedTextP2: string;
   private p1_responseText: string[];
   private p2_responseText: string[];
-  private p1_understandAmt: number;
-  private p2_understandAmt: number;
   private moveMap: Map<string, string>;
+  private player1Ready: boolean;
+  private player2Ready: boolean;
 
   constructor() {
     super({ key: 'InputScene' });
@@ -16,9 +17,8 @@ export default class InputScene extends Phaser.Scene {
     this.savedTextP2 = '';
     this.p1_responseText = ['random'];
     this.p2_responseText = ['random'];
-
-    this.p1_understandAmt = 0;
-    this.p2_understandAmt = 0;
+    this.player1Ready = false;
+    this.player2Ready = false;
 
     this.moveMap = available_moves.reduce((accumulator, curr) => {
       accumulator.set(curr, 'true');
@@ -26,60 +26,161 @@ export default class InputScene extends Phaser.Scene {
     }, new Map<string, string>());
   }
 
-  create() {
-    this.cameras.main.setBackgroundColor('#ffffff');
+  init(data: {
+    savedTextP1: string;
+    savedTextP2: string;
+  }) {
+    this.savedTextP1 = data.savedTextP1;
+    this.savedTextP2 = data.savedTextP2;
+  }
 
-    this.add.text(10, 10, 'Enter your text:', {
+  create() {
+    //this.cameras.main.setBackgroundColor('#ffffff');
+    const { width, height } = this.scale;
+    const titlescreen = this.add.sprite(400, 330, 'titlescreen');
+    
+    titlescreen.scaleX = 3.5;
+    titlescreen.scaleY = 1.5;
+    document.getElementById(
+      'myText1'
+    ) as HTMLInputElement;
+    document.getElementById(
+      'myText2'
+    ) as HTMLInputElement;
+
+    this.add.text(10, 10, 'Enter your PirateScript:', {
       fontSize: '32px',
-      color: '#000',
+      color: '#ffffff',
+      backgroundColor: '#000000',
+    });
+
+    const movelist_text = available_moves.join('\n');
+
+    this.add.text(240, 100, `Available Moves:\n${movelist_text}`, {
+      fontSize: '10px',
+      color: '#ffffff',
+      backgroundColor: '#000000',
     });
 
     this.add.text(50, 60, 'Player 1', {
       fontSize: '24px',
-      color: '#000',
+      color: '#ffffff',
+      backgroundColor: '#000000',
     });
+    
+    const instructionsButton = this.add.text(width / 2, (height / 5), 'Instructions', {
+      fontSize: '48px',
+      fontFamily: 'Arial',
+      color: '#ffffff',
+      backgroundColor: '#000000',
+      padding: { left: 10, right: 10, top: 5, bottom: 5 },
+    });
+    instructionsButton.setScale(0.5, 0.5);
 
-    const input = document.createElement('input');
+    this.input.keyboard.clearCaptures();
+
+    const input = document.createElement('textarea');
     input.id = 'myText1';
-    input.type = 'text';
     input.className = 'css-class-name';
     input.style.position = 'absolute';
     input.style.left = '50px';
     input.style.top = '90px';
+    input.style.width = '150px';
+    input.style.height = '200px';
+    input.style.backgroundColor = "black";
+    input.style.color = "white";
     document.body.appendChild(input);
-
+    if (this.savedTextP1 != undefined){
+      input.innerText = this.savedTextP1;
+    }
     this.add.text(350, 60, 'Player 2', {
       fontSize: '24px',
-      color: '#000',
+      color: '#ffffff',
+      backgroundColor: '#000000',
     });
 
-    const inputP2 = document.createElement('input');
+    const inputP2 = document.createElement('textarea');
     inputP2.id = 'myText2';
-    inputP2.type = 'text';
     inputP2.className = 'css-class-name';
     inputP2.style.position = 'absolute';
     inputP2.style.left = '350px';
     inputP2.style.top = '90px';
+    inputP2.style.width = '150px';
+    inputP2.style.height = '200px';
+    inputP2.style.backgroundColor = "black";
+    inputP2.style.color = "white";
     document.body.appendChild(inputP2);
+    if (this.savedTextP2 != undefined){
+      inputP2.innerText = this.savedTextP2;
+    }
 
-    const submitButton = this.add.text(200, 200, 'Submit', {
+const submitButton = this.add.text(300, 300, 'Submit', {
+  fontSize: '48px',
+  fontFamily: 'Arial',
+  color: '#ffffff',
+  backgroundColor: '#000000',
+  padding: { left: 10, right: 10, top: 5, bottom: 5 },
+});
+submitButton.setVisible(false);
+submitButton.setX(200)
+submitButton.setY(350)
+
+    const p1DoneButton = this.add.text(70, 300, 'Ready?', {
       fontSize: '32px',
-      color: '#000',
-      backgroundColor: '#fff',
+      color: 'white',
+      backgroundColor: '#00000',
       padding: { left: 10, right: 10, top: 5, bottom: 5 },
     });
+    
+    p1DoneButton.setInteractive({ useHandCursor: true });
 
-    submitButton.setInteractive({ useHandCursor: true });
-
-    submitButton.on('pointerdown', () => {
-      this.saveInput();
+    p1DoneButton.on('pointerdown', () => {
+      this.player1Ready = true;
+      this.saveInputP1();
+      if(this.player1Ready && this.player2Ready){
+        console.log("You can start the game!")
+        submitButton.setVisible(true);
+        submitButton.setInteractive({useHandCursor: true});
+      }
     });
 
-    this.p1_understandAmt = 0;
-    this.p2_understandAmt = 0;
+    const p2DoneButton = this.add.text(380, 300, 'Ready?', {
+      fontSize: '32px',
+      color: '#ffffff',
+      backgroundColor: '#00000',
+      padding: { left: 10, right: 10, top: 5, bottom: 5 },
+    });
+    p2DoneButton.setInteractive({ useHandCursor: true });
+    
+    p2DoneButton.on('pointerdown', () => {
+      this.player2Ready = true;
+      this.saveInputP2();
+      if(this.player1Ready && this.player2Ready){
+        console.log("You can start the game!")
+        submitButton.setVisible(true);
+        submitButton.setInteractive({useHandCursor: true});
+      }
+    });
+    //Button finally appears goshdanit
+    console.log(this.player1Ready && this.player2Ready)
+    
+   
+
+    submitButton.on('pointerdown', () => {
+      this.startGame();
+    });
+
+    instructionsButton.setOrigin(0.2, -0.5);
+    instructionsButton.setX(530)
+    instructionsButton.setY(0)
+    instructionsButton.setInteractive({ useHandCursor: true });
+    instructionsButton.on("pointerdown", ()=>{
+      this.transitionToInstructions();
+    })
+
   }
 
-  saveInput() {
+  transitionToInstructions(){
     const inputElement1 = document.getElementById(
       'myText1'
     ) as HTMLInputElement;
@@ -90,30 +191,63 @@ export default class InputScene extends Phaser.Scene {
     this.savedTextP1 = inputElement1.value;
     this.savedTextP2 = inputElement2.value;
 
-    //console.log('Saved text Player 1: ', this.savedTextP1);
-    //console.log('Saved text Player 2: ', this.savedTextP2);
-
     inputElement1.remove();
     inputElement2.remove();
 
     inputElement1.value = '';
     inputElement2.value = '';
 
+    this.scene.start('InstructionScene', {
+       savedTextP1: this.savedTextP1,
+       savedTextP2: this.savedTextP2,
+     });
+  }
+
+  
+
+  saveInputP1() {
+    const inputElement1 = document.getElementById(
+      'myText1'
+    ) as HTMLInputElement;
+
+    this.savedTextP1 = inputElement1.value;
+
+    inputElement1.remove();
+
+    inputElement1.value = '';
 
     this.p1_responseText = this.formatRequest(this.savedTextP1);
+
+    this.player1Ready = true;
+    
+  }
+
+  saveInputP2() {
+    const inputElement2 = document.getElementById(
+      'myText2'
+    ) as HTMLInputElement;
+
+    this.savedTextP2 = inputElement2.value;
+
+    inputElement2.remove();
+
+    inputElement2.value = '';
+
     this.p2_responseText = this.formatRequest(this.savedTextP2);
 
-      console.log(this.p1_responseText);
-      console.log(this.p2_responseText);
+    this.player2Ready = true;
 
-      this.checkPlayerUnderstanding();
+  }
 
+  startGame() {
+    if(this.player1Ready && this.player2Ready) {
       this.scene.start('FightScene', {
+        savedTextP1: this.savedTextP1,
+        savedTextP2: this.savedTextP2,
         p1_responseText: this.p1_responseText,
         p2_responseText: this.p2_responseText,
-        p1_understandAmt: this.p1_understandAmt,
-        p2_understandAmt: this.p2_understandAmt
       });
+    }
   }
 
   formatRequest(responseText: string): string[] {
@@ -129,28 +263,5 @@ export default class InputScene extends Phaser.Scene {
     });
    // console.log('splitText', splitText);
     return splitText;
-  }
-
-  checkPlayerUnderstanding() {
-    this.p1_responseText.forEach((s:string)=> {
-      if(s !== "random") {
-        console.log("understood a command!");
-        this.p1_understandAmt++;
-      }
-    });
-
-    this.p2_responseText.forEach((s:string)=> {
-      if(s !== "random") {
-        console.log("understood a command!");
-        this.p2_understandAmt++;
-      }
-    });
-
-    this.p1_understandAmt = (this.p1_understandAmt / this.p1_responseText.length) * 100;
-    this.p2_understandAmt = (this.p2_understandAmt / this.p2_responseText.length) * 100;
-
-    console.log("understandAmount: ", this.p1_understandAmt + "%");
-    console.log("understandAmount: ", this.p2_understandAmt + "%");
-
   }
 }

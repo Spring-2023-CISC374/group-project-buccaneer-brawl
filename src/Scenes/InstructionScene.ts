@@ -1,18 +1,29 @@
 import Phaser from "phaser";
 
 export default class InstructionScene extends Phaser.Scene{
+    private savedTextP1?: string;
+    private savedTextP2?: string;
+
     constructor(){
         super({ key: 'InstructionScene' });
     }
 
-
+    init(data: {
+      savedTextP1: string;
+      savedTextP2: string;
+    }) {
+      this.savedTextP1 = data.savedTextP1;
+      this.savedTextP2 = data.savedTextP2;
+    }
     //Setting up instructions
     create(){
        console.log("Instructions added");
+       console.log(this.savedTextP1);
+       console.log(this.savedTextP2);
        const { width, height } = this.scale;
-       const bg = this.add.image(width / 2, height / 2, 'background');
-       bg.setScale(2);
+      
        const titlescreen = this.add.sprite(400, 330, 'titlescreen');
+       console.log(titlescreen);
        titlescreen.scaleX = 2.5;
        titlescreen.scaleY = 1.5
        //Adds instructions title
@@ -23,52 +34,58 @@ export default class InstructionScene extends Phaser.Scene{
         backgroundColor: '#000000',
       });
       //Includes information from the instructions
-      const instructionsInfo = this.add.text(width / 2, height / 2, 'Ahoy, today in the game the pirates need your input.', {
-        fontSize: '16px',
+      this.add.text(width / 2, height / 2, 'Ahoy, the pirates need your input.', {
+        fontSize: '20px',
         fontFamily: 'Arial',
         color: '#ffffff',
         backgroundColor: '#000000',
-      });
-      instructionsInfo.setOrigin(0.5, -5);
+      }).setOrigin(0.5, 3);
+      
+      //More descriptions
+            //this.add.text("whether a word or a sentence and it will command the player!")
+            this.add.text(width / 2, height / 2, 'RedBeard and BluBeard are fighting again. Pick a side and help them win!', {
+              fontSize: '20px',
+              fontFamily: 'Arial',
+              color: '#ffffff',
+              backgroundColor: '#000000',
+            }).setOrigin(0.5, 2);
 
-      const instructionsInfoPt2 = this.add.text(width / 2, height / 2, 'Given two players, feed them string input whether a word or a sentence and it will command the player!', {
-        fontSize: '16px',
+      this.add.text(width / 2, height / 2, 'Type in what you want the pirate to do, seperated by commas.', {
+        fontSize: '20px',
         fontFamily: 'Arial',
         color: '#ffffff',
         backgroundColor: '#000000',
-      });
-      instructionsInfoPt2.setOrigin(0.5, -6);
-      const twist = this.add.text(width / 2, height / 2, 'Be careful, only one winner will come out given the commands listed', {
-        fontSize: '16px',
+      }).setOrigin(0.5, 1);
+
+      
+      /*
+      this.add.text(width / 2, height / 2, 'Here are the commands listed below: ', {
+        fontSize: '20px',
         fontFamily: 'Arial',
         color: '#ffffff',
-        backgroundColor: '#000000',
-      });
-      twist.setOrigin(0.5, -7);
-
-      const cmdDescription = this.add.text(width / 2, height / 2, 'Here are the commands described: ', {
-        fontSize: '16px',
+        backgroundColor: '#000000',}).setOrigin(0.62, -1);
+        
+       this.add.text(width / 2, height / 2, ' walk forward, walk back, jump forward,  kick, punch, uppercut, crhook, roundhouse',{
+        fontSize: '18px',
         fontFamily: 'Arial',
         color: '#ffffff',
-        backgroundColor: '#000000',});
-        cmdDescription.setOrigin(0.5, -8);
+        backgroundColor: '#000000',}).setOrigin(0.59, -2);
+        */
 
-        const cmdList = this.add.text(width / 2, height / 2, ' walk forward, walk back, jump forward,  kick, punch, uppercut, crhook, roundhouse',{
-        fontSize: '16px',
-        fontFamily: 'Arial',
-        color: '#ffffff',
-        backgroundColor: '#000000',});
 
-        cmdList.setOrigin(0.5, -9);
-
-        const example = this.add.text(width / 2, height / 2, 'For example if you tell the player to "walk forward" the player will walk forward some amounts of spaces.', {
-            fontSize: '16px',
+       this.add.text(width / 2, height / 2, 'For example.', {
+            fontSize: '20px',
             fontFamily: 'Arial',
             color: '#ffffff',
-            backgroundColor: '#000000',});
-            example.setOrigin(0.5, -10);
-            
-      const backToStartButton = this.add.text(width / 4, height / 2, 'Return to start', {
+            backgroundColor: '#000000',}).setOrigin(3.0, -3);
+
+      this.add.text(width/2, height/2, "walk_forward, roundhouse, uppercut", {
+        fontSize: '20px',
+        fontFamily: 'Arial',
+        color: '#ffffff',
+        backgroundColor: '#000000',}).setOrigin(0.5, -4);
+
+      const backToStartButton = this.add.text(width / 4, height / 2, 'Start', {
         fontSize: '48px',
         fontFamily: 'Arial',
         color: '#ffffff',
@@ -77,10 +94,33 @@ export default class InstructionScene extends Phaser.Scene{
           x: 16,
           y: 8,
         },
-      });
+      }).setOrigin(0, -2);
+      backToStartButton.setScale(1, 1)
       backToStartButton.setInteractive({ useHandCursor: true });
       backToStartButton.on("pointerdown", ()=>{
-      this.scene.start("TitleScene");
+        this.scene.start('InputScene', {
+          savedTextP1: this.savedTextP1,
+          savedTextP2: this.savedTextP2,
+        });
     })
-    }
+
+    const demoButton = this.add.text(width / 4, height / 2, 'Demo', {
+      fontSize: "48px",
+      fontFamily: "Arial",
+      color: "#ffffff",
+      backgroundColor: "#000000",
+      padding : {
+        x: 16,
+        y: 8
+      }
+    }).setOrigin(-0.5, -3.5);
+    demoButton.setScale(1, 1)
+    demoButton.setInteractive({useHandCursor: true});
+    demoButton.on("pointerdown", ()=>{
+      this.scene.start("DemoScene", {
+        savedTextP1: this.savedTextP1,
+        savedTextP2: this.savedTextP2,
+      })
+    })
+  }
 }

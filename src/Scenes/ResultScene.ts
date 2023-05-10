@@ -1,25 +1,23 @@
 import Phaser from 'phaser';
 
 export default class ResultScene extends Phaser.Scene {
-  private p1_understandAmt: number;
-  private p2_understandAmt: number;
   private who_won: string;
-
+  private savedTextP1: string;
+  private savedTextP2: string;
   constructor() {
-    super({ key: 'ResultScene' });
-
-    this.p1_understandAmt = 0;
-    this.p2_understandAmt = 0;
-    this.who_won = 'RedBeard';
+    super({ key: "ResultScene" });
+    this.savedTextP1 = "hi";
+    this.savedTextP2 = "hi";
+    this.who_won = "RedBeard";
   }
 
   init(data: {
-    p1_understandAmtt: number;
-    p2_understandAmt: number;
+    savedTextP1: string;
+    savedTextP2: string;
     who_won: string;
   }) {
-    this.p1_understandAmt = data.p1_understandAmtt;
-    this.p2_understandAmt = data.p2_understandAmt;
+    this.savedTextP1 = data.savedTextP1
+    this.savedTextP2 = data.savedTextP2
     this.who_won = data.who_won;
   }
 
@@ -40,7 +38,7 @@ export default class ResultScene extends Phaser.Scene {
     music.play();
     //music.setLoop(true);
     //titlescreen.setScale(2);
-
+    
     // Add title text
     const title = this.add.text(width / 2, height / 4, 'Results:', {
       fontSize: '64px',
@@ -53,9 +51,7 @@ export default class ResultScene extends Phaser.Scene {
     const pirate1Text = this.add.text(
       width / 1.2,
       height / 2.5,
-      `RedBeard: ${this.who_won === 'RedBeard' ? 'W' : 'L'} ${
-        this.p1_understandAmt
-      }% understanding`,
+      `RedBeard: ${this.who_won === "RedBeard" ? "W" : "L"} BluBeard has scurvy.    '`,
       {
         fontSize: '32px',
         fontFamily: 'Arial',
@@ -68,9 +64,7 @@ export default class ResultScene extends Phaser.Scene {
     const pirate2Text = this.add.text(
       width / 1.2,
       height / 2,
-      `BluBeard: ${this.who_won === 'BluBeard' ? 'W' : 'L'} ${
-        this.p2_understandAmt
-      }% understanding`,
+      `BluBeard: ${this.who_won === "BluBeard" ? "W" : "L"} RedBeard walked the plank.`,
       {
         fontSize: '32px',
         fontFamily: 'Arial',
@@ -94,8 +88,11 @@ export default class ResultScene extends Phaser.Scene {
     startButton.setScale(0.5);
     startButton.setOrigin(0.5, 0.1);
     startButton.setInteractive({ useHandCursor: true });
-    startButton.on('pointerdown', () => {
-      this.scene.start('InputScene');
+    startButton.on("pointerdown", () => {
+      this.scene.start('InputScene', {
+        savedTextP1: this.savedTextP1,
+        savedTextP2: this.savedTextP2,
+      });
     });
   }
 }
