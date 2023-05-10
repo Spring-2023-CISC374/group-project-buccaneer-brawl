@@ -52,6 +52,7 @@ export default class LoadingScene extends Phaser.Scene {
     this.load.audio('piratemusic', 'assets/audio/Drunken Sailor_ (String Orchestra).mp3');
     this.load.audio('battlemusic', 'assets/audio/battle-ship-111902.mp3');
     this.load.audio('resultmusic', 'assets/audio/Cooper Canell - Drunken Sailor no intro.mp3');
+    this.load.audio('piratelyrics', 'assets/audio/drunken_sailor_lyrics.mp3');
   }
 
   create() {

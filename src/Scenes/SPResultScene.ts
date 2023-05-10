@@ -92,14 +92,13 @@ export default class SPResultScene extends Phaser.Scene {
 
 
     startButton.on('pointerdown', () => {
-      if(this.levels < 3) {
+      if(this.levels >= 3 && this.who_won === "RedBeard") {
+        this.scene.start('WinScene');
+      } else {
         this.scene.start('SPInputScene', {
           levels: this.levels,
           savedTextP1: this.savedTextP1,
         });
-
-      } else {
-        this.scene.start('WinScene');
       }
       
     });

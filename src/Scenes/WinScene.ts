@@ -12,7 +12,8 @@ export default class WinScene extends Phaser.Scene {
     const bg = this.add.image(width / 2, height / 2, 'winpic');
     bg.setScale(1);
 
-    const music = this.sound.add('piratemusic');
+    this.sound.stopAll();
+    const music = this.sound.add('piratelyrics');
     music.play();
     //music.setLoop(true);
     //titlescreen.setScale(2);

@@ -15,10 +15,6 @@ export default class GamemodeScene extends Phaser.Scene {
     const titlescreen = this.add.sprite(400, 330, 'titlescreen');
     titlescreen.scaleX = 2.5;
     titlescreen.scaleY = 1.5;
-    this.sound.stopAll();
-    const music = this.sound.add('piratemusic');
-
-    music.play();
     //music.setLoop(true);
     //titlescreen.setScale(2);
 

@@ -41,6 +41,7 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
   create() {
     console.log("level: ", this.levels);
     if(this.levels !== undefined) this.levels++;
+    if(this.levels !== undefined && this.levels > 3) this.levels = 3;
     console.log("level: ", this.levels);
     this.add.image(400, 300, "pirateship").setScale(2);
 
@@ -587,6 +588,7 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
           if (this.player1.health <= 0) {
             this.player1.health = 0;
             this.physics.pause();
+            if(this.levels !== undefined) this.levels--;
             this.scene.start("SPResultScene", {
               who_won: "BluBeard",
               levels: this.levels,
@@ -626,6 +628,7 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
         if (this.player1.health <= 0) {
           this.player1.health = 0;
           this.physics.pause();
+          if(this.levels !== undefined) this.levels--;
           this.scene.start("SPResultScene", {
             who_won: "BluBeard",
             levels: this.levels,
@@ -672,7 +675,6 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
       }
   }
 
-
   decrementRoundTimer(delta: number) {
     this.roundTimerdelta += delta;
 
@@ -686,7 +688,10 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
       let winner = 'RedBeard';
 
       if (this.player1 && this.player2) {
-        if (this.player1?.health < this.player2?.health) winner = 'BluBeard';
+        if (this.player1?.health < this.player2?.health) {
+          winner = 'BluBeard';
+          if(this.levels !== undefined) this.levels--;
+        } 
       }
 
       this.scene.start('SPResultScene', {
