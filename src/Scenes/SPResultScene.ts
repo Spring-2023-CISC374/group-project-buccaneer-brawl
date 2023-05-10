@@ -1,24 +1,25 @@
 import Phaser from 'phaser';
 
-export default class ResultScene extends Phaser.Scene {
+export default class SPResultScene extends Phaser.Scene {
   private who_won: string;
+  private levels: number;
   private savedTextP1: string;
-  private savedTextP2: string;
+
   constructor() {
-    super({ key: "ResultScene" });
-    this.savedTextP1 = "hi";
-    this.savedTextP2 = "hi";
-    this.who_won = "RedBeard";
+    super({ key: 'SPResultScene' });
+    this.who_won = 'RedBeard';
+    this.levels = 0;
+    this.savedTextP1 = '';
   }
 
   init(data: {
-    savedTextP1: string;
-    savedTextP2: string;
     who_won: string;
+    levels: number;
+    savedTextP1: string;
   }) {
-    this.savedTextP1 = data.savedTextP1
-    this.savedTextP2 = data.savedTextP2
+    this.levels = data.levels;
     this.who_won = data.who_won;
+    this.savedTextP1 = data.savedTextP1;
   }
 
   create() {
@@ -38,7 +39,7 @@ export default class ResultScene extends Phaser.Scene {
     music.play();
     //music.setLoop(true);
     //titlescreen.setScale(2);
-    
+
     // Add title text
     const title = this.add.text(width / 2, height / 4, 'Results:', {
       fontSize: '64px',
@@ -88,11 +89,18 @@ export default class ResultScene extends Phaser.Scene {
     startButton.setScale(0.5);
     startButton.setOrigin(0.5, 0.1);
     startButton.setInteractive({ useHandCursor: true });
-    startButton.on("pointerdown", () => {
-      this.scene.start('InputScene', {
-        savedTextP1: this.savedTextP1,
-        savedTextP2: this.savedTextP2,
-      });
+
+
+    startButton.on('pointerdown', () => {
+      if(this.levels >= 3 && this.who_won === "RedBeard") {
+        this.scene.start('WinScene');
+      } else {
+        this.scene.start('SPInputScene', {
+          levels: this.levels,
+          savedTextP1: this.savedTextP1,
+        });
+      }
+      
     });
   }
 }

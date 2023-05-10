@@ -1,15 +1,15 @@
-import Phaser from "phaser";
-import Player from "../Classes/player";
-import available_moves from "../Types/available_moves";
+import Phaser from 'phaser';
+import Player from '../Classes/player';
+import available_moves from '../Types/available_moves';
 
-export default class registerInput extends Phaser.Scene{
-    private key_index = 0;
-    private key_timer = 0;
-    constructor(){
-        super("Input Registered")
-        this.key_index = 0;
-        this.key_timer = 0;
-    }
+export default class registerInput extends Phaser.Scene {
+  private key_index = 0;
+  private key_timer = 0;
+  constructor() {
+    super('Input Registered');
+    this.key_index = 0;
+    this.key_timer = 0;
+  }
 
 
     //Calls the players registers input first

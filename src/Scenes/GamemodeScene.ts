@@ -1,8 +1,8 @@
 import Phaser from 'phaser';
 
-export default class TitleScene extends Phaser.Scene {
+export default class GamemodeScene extends Phaser.Scene {
   constructor() {
-    super({ key: 'TitleScene' });
+    super({ key: 'GamemodeScene' });
   }
 
   create() {
@@ -15,10 +15,6 @@ export default class TitleScene extends Phaser.Scene {
     const titlescreen = this.add.sprite(400, 330, 'titlescreen');
     titlescreen.scaleX = 2.5;
     titlescreen.scaleY = 1.5;
-    this.sound.stopAll();
-    const music = this.sound.add('piratemusic');
-
-    music.play();
     //music.setLoop(true);
     //titlescreen.setScale(2);
 
@@ -32,7 +28,7 @@ export default class TitleScene extends Phaser.Scene {
     title.setOrigin(0.5);
 
     // Add start button
-    const startButton = this.add.text(width / 2, height / 2, 'Start Brawl', {
+    const startButton = this.add.text(width / 2, height / 2 + 100, '2-Player', {
       fontSize: '48px',
       fontFamily: 'Arial',
       color: '#ffffff',
@@ -43,12 +39,33 @@ export default class TitleScene extends Phaser.Scene {
       },
     });
 
+    const SPButton = this.add.text(
+      width / 2,
+      height / 2,
+      '1-Player',
+      {
+        fontSize: '48px',
+        fontFamily: 'Arial',
+        color: '#ffffff',
+        backgroundColor: '#000000',
+        padding: {
+          x: 16,
+          y: 8,
+        },
+      }
+    );
+
     startButton.setOrigin(0.5);
     startButton.setInteractive({ useHandCursor: true });
     startButton.on('pointerdown', () => {
-      this.scene.start('GamemodeScene');
+      this.scene.start('Photo1Scene');
       
     });
 
+    SPButton.setOrigin(0.5);
+    SPButton.setInteractive({ useHandCursor: true });
+    SPButton.on('pointerdown', () => {
+      this.scene.start('SPInputScene');
+    });
   }
 }
