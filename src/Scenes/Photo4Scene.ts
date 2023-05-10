@@ -1,14 +1,14 @@
 import Phaser from 'phaser';
-export default class Photo2Scene extends Phaser.Scene {
+export default class Photo4Scene extends Phaser.Scene {
     constructor() {
-        super({ key: 'Photo2Scene' });
+        super({ key: 'Photo4Scene' });
     }
         preload() {
         //Photo 1
-        this.load.image('Photo2', 'assets/InstructionPhotos/Photo2.png');
+        this.load.image('Photo4', 'assets/InstructionPhotos/Photo4.png');
       }
       create() {
-        this.add.image(400, 300, 'Photo2');
+        this.add.image(400, 300, 'Photo4');
         const { width, height } = this.scale;
         // Add Next Button
         const NextButton = this.add.text(width / 2, height / 2, 'Next', {
@@ -24,7 +24,7 @@ export default class Photo2Scene extends Phaser.Scene {
         NextButton.setOrigin(-2);
         NextButton.setInteractive({ useHandCursor: true });
         NextButton.on('pointerdown', () => {
-          this.scene.start('Photo3Scene');
+          this.scene.start('InputScene');
         });
       }
   }
