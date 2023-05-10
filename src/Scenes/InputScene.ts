@@ -48,7 +48,7 @@ export default class InputScene extends Phaser.Scene {
       'myText2'
     ) as HTMLInputElement;
 
-    this.add.text(10, 10, 'Enter your text:', {
+    this.add.text(10, 10, 'Enter your PirateScript:', {
       fontSize: '32px',
       color: '#ffffff',
       backgroundColor: '#000000',
@@ -121,6 +121,7 @@ const submitButton = this.add.text(300, 300, 'Submit', {
   backgroundColor: '#000000',
   padding: { left: 10, right: 10, top: 5, bottom: 5 },
 });
+submitButton.setVisible(false);
 submitButton.setX(200)
 submitButton.setY(350)
 
@@ -154,6 +155,10 @@ submitButton.setY(350)
           invalidErrorMessage.setVisible(false);
           uniqueErrorMessage.setVisible(false);
           this.saveInputP1();
+          if(this.player1Ready && this.player2Ready){
+            submitButton.setVisible(true);
+            submitButton.setInteractive({useHandCursor: true});
+          }
         }
     });
 
@@ -190,8 +195,14 @@ submitButton.setY(350)
         uniqueErrorMessage.setVisible(false);
 
         this.saveInputP2();
+        if(this.player1Ready && this.player2Ready){
+        submitButton.setVisible(true);
+        submitButton.setInteractive({useHandCursor: true});
+        }
       }
     });
+    //Button finally appears goshdanit
+    console.log(this.player1Ready && this.player2Ready)
     
     const invalidErrorMessage = this.add.text(10, 500, 'Failed to save code. \n Make sure you have spelled all the commands correctly\nand that your list of commands is seperated by commas', {
       fontSize: '20px',
@@ -264,6 +275,7 @@ submitButton.setY(350)
     this.p1_responseText = this.formatRequest(this.savedTextP1);
     
     this.player1Ready = true;
+
   }
 
   saveInputP2() {
