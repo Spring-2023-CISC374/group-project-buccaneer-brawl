@@ -266,11 +266,11 @@ submitButton.setY(350)
 
   }
   checkForMoves(command: string){
-    let valid_moves = ["walk_forward", "walk_back", "jump_forward", "jump_back", "jump", "roll_forward", "roll_back"] 
+    const valid_moves = ["walk_forward", "walk_back", "jump_forward", "jump_back", "jump", "roll_forward", "roll_back"] 
     return valid_moves.indexOf(command) != -1;
   }
   checkForAttacks(command: string){
-    let valid_moves = ["kick", "punch", "hook", "uppercut", "crhook", "roundhouse", "dashkick"] 
+    const valid_moves = ["kick", "punch", "hook", "uppercut", "crhook", "roundhouse", "dashkick", "rising_uppercut", "fire_cannon"] 
     return valid_moves.indexOf(command) != -1;
   }
   transitionToInstructions(){
