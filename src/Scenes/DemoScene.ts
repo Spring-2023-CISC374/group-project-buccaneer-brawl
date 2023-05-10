@@ -74,9 +74,7 @@ export default class DemoScene extends Phaser.Scene{
           y: 8,
           }
         })
-        walk_forward_button.setScale(1, 1).setX(12).setY(235)
-        walk_forward_button.setInteractive({useHandCursor: true});
-        walk_forward_button.on("pointerdown", ()=>{
+        walk_forward_button.setScale(1, 1).setX(12).setY(235).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
           this.player2?.sprite.anims.play("left");
           this.animationHandler();
         })
@@ -90,9 +88,7 @@ export default class DemoScene extends Phaser.Scene{
           y: 8,
           }
         })
-        walk_back_button.setScale(1, 1).setX(12).setY(285)
-        walk_back_button.setInteractive({useHandCursor: true})
-        walk_back_button.on("pointerdown", ()=>{
+        walk_back_button.setScale(1, 1).setX(12).setY(285).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
           this.player2?.sprite.anims.play("right")
           this.animationHandler();
         })
@@ -113,6 +109,39 @@ export default class DemoScene extends Phaser.Scene{
           // this.player2?.sprite.anims.play("jump")
           this.animationHandler();
         })
+
+        const jump_fwd_button = this.add.text(width /4, height /2, available_moves[4].toUpperCase(), {
+          fontSize: '21px',
+          fontFamily: 'Arial',
+          color: '#ffffff',
+          backgroundColor: '#000000',
+          padding: {
+          x: 16,
+          y: 8,
+          }
+        })
+        jump_fwd_button.setScale(1, 1).setX(512).setY(365).setInteractive({useHandCursor:true}).on("pointerdown", ()=>{
+          this.player2?.sprite.setVelocityY(-500);
+          this.player2?.sprite.setVelocityX(500);
+          this.player2?.sprite.anims.play("turn");
+          //Sprite goes off screen so I'm going to make sure it doesn't
+          this.player2?.sprite.setOffset(-100, 0);
+          this.player2?.sprite.setOffset(10, 0);
+        })
+        // const jump_back_button = this.add.text(width / 4, height / 2, available_moves[5].toUpperCase(), {
+        //   fontSize: '21px',
+        //   fontFamily: 'Arial',
+        //   color: '#ffffff',
+        //   backgroundColor: '#000000',
+        //   padding: {
+        //   x: 16,
+        //   y: 8,
+        //   }
+        // })
+
+        // jump_back_button.setScale(1, 1).setX(512).setY(305).setInteractive({useHandCursor:true}).on("pointerdown", ()=>{
+        //   this.player2?.sprite.setVelocityY(-500);
+        // })
 
         const kick_button = this.add.text(width / 4, height / 4, available_moves[6].toUpperCase(), {
           fontSize: '21px',

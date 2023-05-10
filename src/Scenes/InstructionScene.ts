@@ -85,7 +85,7 @@ export default class InstructionScene extends Phaser.Scene{
         color: '#ffffff',
         backgroundColor: '#000000',}).setOrigin(0.5, -4);
 
-      const backToStartButton = this.add.text(width / 4, height / 2, 'Return to Input', {
+      const backToStartButton = this.add.text(width / 4, height / 2, 'Start', {
         fontSize: '48px',
         fontFamily: 'Arial',
         color: '#ffffff',

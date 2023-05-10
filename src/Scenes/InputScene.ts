@@ -35,10 +35,12 @@ export default class InputScene extends Phaser.Scene {
   }
 
   create() {
-    this.cameras.main.setBackgroundColor('#ffffff');
-    console.log(this.savedTextP1);
-    console.log(this.savedTextP2);
+    //this.cameras.main.setBackgroundColor('#ffffff');
     const { width, height } = this.scale;
+    const titlescreen = this.add.sprite(400, 330, 'titlescreen');
+    
+    titlescreen.scaleX = 3.5;
+    titlescreen.scaleY = 1.5;
     document.getElementById(
       'myText1'
     ) as HTMLInputElement;
@@ -48,19 +50,22 @@ export default class InputScene extends Phaser.Scene {
 
     this.add.text(10, 10, 'Enter your text:', {
       fontSize: '32px',
-      color: '#000',
+      color: '#ffffff',
+      backgroundColor: '#000000',
     });
 
     const movelist_text = available_moves.join('\n');
 
     this.add.text(240, 100, `Available Moves:\n${movelist_text}`, {
       fontSize: '10px',
-      color: '#000',
+      color: '#ffffff',
+      backgroundColor: '#000000',
     });
 
     this.add.text(50, 60, 'Player 1', {
       fontSize: '24px',
-      color: '#000',
+      color: '#ffffff',
+      backgroundColor: '#000000',
     });
     
     const instructionsButton = this.add.text(width / 2, (height / 5), 'Instructions', {
@@ -82,13 +87,16 @@ export default class InputScene extends Phaser.Scene {
     input.style.top = '90px';
     input.style.width = '150px';
     input.style.height = '200px';
+    input.style.backgroundColor = "black";
+    input.style.color = "white";
     document.body.appendChild(input);
     if (this.savedTextP1 != undefined){
       input.innerText = this.savedTextP1;
     }
     this.add.text(350, 60, 'Player 2', {
       fontSize: '24px',
-      color: '#000',
+      color: '#ffffff',
+      backgroundColor: '#000000',
     });
 
     const inputP2 = document.createElement('textarea');
@@ -99,6 +107,8 @@ export default class InputScene extends Phaser.Scene {
     inputP2.style.top = '90px';
     inputP2.style.width = '150px';
     inputP2.style.height = '200px';
+    inputP2.style.backgroundColor = "black";
+    inputP2.style.color = "white";
     document.body.appendChild(inputP2);
     if (this.savedTextP2 != undefined){
       inputP2.innerText = this.savedTextP2;
@@ -116,10 +126,11 @@ submitButton.setY(350)
 
     const p1DoneButton = this.add.text(70, 300, 'Ready?', {
       fontSize: '32px',
-      color: '#000',
-      backgroundColor: '#fff',
+      color: 'white',
+      backgroundColor: '#00000',
       padding: { left: 10, right: 10, top: 5, bottom: 5 },
     });
+    
     p1DoneButton.setInteractive({ useHandCursor: true });
 
     p1DoneButton.on('pointerdown', () => {
@@ -128,17 +139,21 @@ submitButton.setY(350)
 
     const p2DoneButton = this.add.text(380, 300, 'Ready?', {
       fontSize: '32px',
-      color: '#000',
-      backgroundColor: '#fff',
+      color: '#ffffff',
+      backgroundColor: '#00000',
       padding: { left: 10, right: 10, top: 5, bottom: 5 },
     });
     p2DoneButton.setInteractive({ useHandCursor: true });
-
+    
+    if(p1DoneButton.setInteractive({useHandCursor: true}) && p2DoneButton.setInteractive({ useHandCursor: true })){
+      console.log("You can start the game!")
+      submitButton.setInteractive({ useHandCursor: true });
+    }
     p2DoneButton.on('pointerdown', () => {
       this.saveInputP2();
     });
-
-    submitButton.setInteractive({ useHandCursor: true });
+    
+   
 
     submitButton.on('pointerdown', () => {
       this.startGame();
