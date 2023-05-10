@@ -83,6 +83,26 @@ export default class SPInputScene extends Phaser.Scene {
       input.innerText = this.savedTextP1;
     }
 
+    const invalidErrorMessage = this.add.text(10, 500, 'Failed to save code. \n Make sure you have spelled all the commands correctly\nand that your list of commands is seperated by commas', {
+      fontSize: '20px',
+      color: '#ff0000',
+      backgroundColor: '#00000',
+    });
+    const moveAtkErrorMessage = this.add.text(10, 500, 'Failed to save code. \nYou need to have at least 1 move command (walk_forward, jump, etc)\n and one attack command (punch, roundhosue, etc.)', {
+      fontSize: '20px',
+      color: '#ff0000',
+      backgroundColor: '#00000',
+    });
+    const uniqueErrorMessage = this.add.text(10, 500, 'Failed to save code. \nYou need to have at least 3 unique commands', {
+      fontSize: '20px',
+      color: '#ff0000',
+      backgroundColor: '#00000',
+    });
+
+    invalidErrorMessage.setVisible(false);
+    uniqueErrorMessage.setVisible(false);
+    moveAtkErrorMessage.setVisible(false);
+
     const submitButton = this.add.text(300, 300, 'Submit', {
       fontSize: '48px',
       fontFamily: 'Arial',
@@ -96,7 +116,42 @@ export default class SPInputScene extends Phaser.Scene {
    
 
     submitButton.on('pointerdown', () => {
-      this.saveInput();
+      
+      const inputElement1 = document.getElementById(
+        'myText1'
+      ) as HTMLInputElement;
+  
+      this.savedTextP1 = inputElement1.value;
+      const submitted_array = this.formatRequest(this.savedTextP1);
+
+      if (submitted_array.find(element => element === 'random')){
+        uniqueErrorMessage.setVisible(false);
+        moveAtkErrorMessage.setVisible(false);
+        invalidErrorMessage.setVisible(true);
+      }
+      //you dont have one attack and one movement command
+      else if (!submitted_array.some(this.checkForAttacks) || !submitted_array.some(this.checkForMoves)){
+        console.log("moves", submitted_array.some(this.checkForMoves))
+        console.log("attacks", submitted_array.some(this.checkForAttacks))
+  
+        uniqueErrorMessage.setVisible(false);
+        invalidErrorMessage.setVisible(false);
+        moveAtkErrorMessage.setVisible(true);
+  
+      }
+      //you don't have at least 3 unique moves 
+      else if(Array.from(new Set(submitted_array)).length < 3){
+        invalidErrorMessage.setVisible(false);
+        moveAtkErrorMessage.setVisible(false);
+        uniqueErrorMessage.setVisible(true);
+      }
+  
+      else{
+        invalidErrorMessage.setVisible(false);
+        uniqueErrorMessage.setVisible(false);
+        moveAtkErrorMessage.setVisible(false);
+        this.saveInput();
+      }
     });
 
     instructionsButton.setOrigin(0.2, -0.5);
@@ -111,6 +166,15 @@ export default class SPInputScene extends Phaser.Scene {
     console.log(this.levels);
   }
 
+  checkForMoves(command: string){
+    const valid_moves = ["walk_forward", "walk_back", "jump_forward", "jump_back", "jump", "roll_forward", "roll_back"] 
+    return valid_moves.indexOf(command) != -1;
+  }
+  checkForAttacks(command: string){
+    const valid_moves = ["kick", "punch", "hook", "uppercut", "crhook", "roundhouse", "dashkick", "rising_uppercut", "fire_cannon"] 
+    return valid_moves.indexOf(command) != -1;
+  }
+
   saveInput() {
     const inputElement1 = document.getElementById(
       'myText1'
@@ -122,9 +186,6 @@ export default class SPInputScene extends Phaser.Scene {
     inputElement1.value = '';
 
     this.p1_responseText = this.formatRequest(this.savedTextP1);
-
-    console.log(this.p1_responseText);
-
 
     this.scene.start("SPFightSceneLevel1", {
       p1_responseText: this.p1_responseText,
