@@ -7,7 +7,7 @@ import TitleScene from './Scenes/TitleScene';
 import InstructionScene from './Scenes/InstructionScene';
 import ResultScene from './Scenes/ResultScene';
 import Photo1Scene from './Scenes/Photo1Scene';
-
+import Photo2Scene from './Scenes/Photo2Scene';
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   parent: 'app',
