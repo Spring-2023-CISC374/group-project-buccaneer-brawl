@@ -110,6 +110,7 @@ submitButton.setY(350)
       backgroundColor: '#fff',
       padding: { left: 10, right: 10, top: 5, bottom: 5 },
     });
+    
     p1DoneButton.setInteractive({ useHandCursor: true });
 
     p1DoneButton.on('pointerdown', () => {
@@ -123,12 +124,16 @@ submitButton.setY(350)
       padding: { left: 10, right: 10, top: 5, bottom: 5 },
     });
     p2DoneButton.setInteractive({ useHandCursor: true });
-
+    
+    if(p1DoneButton.setInteractive({useHandCursor: true}) && p2DoneButton.setInteractive({ useHandCursor: true })){
+      console.log("You can start the game!")
+      submitButton.setInteractive({ useHandCursor: true });
+    }
     p2DoneButton.on('pointerdown', () => {
       this.saveInputP2();
     });
-
-    submitButton.setInteractive({ useHandCursor: true });
+    
+   
 
     submitButton.on('pointerdown', () => {
       this.startGame();
