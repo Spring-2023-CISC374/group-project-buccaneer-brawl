@@ -17,22 +17,30 @@ export default class Player {
   fallCounter: number;
   fallen: boolean;
   player1: boolean;
+  spamQueue: string[];
+  attackType: string;
 
-  constructor(sprite: Phaser.Physics.Arcade.Sprite, health?: number, tint?: number) {
+  constructor(
+    sprite: Phaser.Physics.Arcade.Sprite,
+    health?: number,
+    tint?: number
+  ) {
     this.sprite = sprite;
     this.health = 3;
     this.coins = 0;
     this.sprite.setCollideWorldBounds(true);
     this.action = "nothing";
     this.timer = 0;
-    if (health){
+    this.spamQueue = [];
+
+    if (health) {
       this.maxHealth = health;
       this.health = health;
     }
     //default is 100
-    else{
+    else {
       this.maxHealth = 100;
-      this.health = 100; 
+      this.health = 100;
     }
     this.cooldown = true;
     this.hitstun = false;
@@ -44,7 +52,7 @@ export default class Player {
     this.fallCounter = 0;
     this.fallen = false;
     this.player1 = true;
-  
+    this.attackType = "";
 
     if (tint) {
       this.sprite.setTint(tint);
@@ -87,14 +95,16 @@ export default class Player {
     //console.log(moveType);
     if (opponent === undefined) return;
 
-    if(this.player1) {
+    if (this.player1) {
       this.sprite.setTint(0xffffff);
     } else {
       this.sprite.setTint(0x0096ff);
     }
 
+    this.attackType = "";
     const dist =
       this.sprite.body.x > opponent.sprite.body.x ? -distance : distance;
+
     if (moveType === "walk_forward") {
       this.sprite.setVelocityX(0);
       this.sprite.setVelocityX(dist);
@@ -106,6 +116,19 @@ export default class Player {
       this.sprite.setVelocityX(-dist);
       this.sprite.anims.play("left", true);
       this.action = "walking";
+      this.timer = 0;
+    }
+    if (moveType === "dash_forward") {
+      this.sprite.setVelocityX(0);
+      this.sprite.setVelocityX(dist * 2);
+      this.sprite.anims.play("dash", true);
+      this.action = "dash";
+      this.timer = 0;
+    } else if (moveType === "dash_back") {
+      this.sprite.setVelocityX(0);
+      this.sprite.setVelocityX(-dist * 2);
+      this.sprite.anims.play("dash", true);
+      this.action = "dash";
       this.timer = 0;
     } else if (moveType === "jump") {
       this.sprite.anims.play("right", true);
@@ -123,106 +146,134 @@ export default class Player {
       this.sprite.setVelocityX(-dist);
       this.sprite.anims.play("right", true);
       this.action = "jumping";
-    } else if(moveType === "dodge") {
+    } else if (moveType === "dodge") {
       this.sprite.setVelocityX(0);
       this.sprite.setVelocityX(0);
       this.sprite.anims.play("dodge", true);
       this.action = "dodge";
       this.invulnerable = true;
-      
+
       const rng = Phaser.Math.Between(0, 1);
       console.log(rng);
-      if(rng==1) {
+      if (rng == 1) {
         this.invulnerable = false;
         this.sprite.setTint(0x000000);
       }
-
-    }
-    else if(moveType === "roll_forward") {
+    } else if (moveType === "roll_forward") {
       this.sprite.setVelocityX(0);
-      this.sprite.setVelocityX(dist/2);
+      this.sprite.setVelocityX(dist / 2);
       this.sprite.anims.play("roll_forward", true);
       this.action = "roll_forward";
       this.invulnerable = true;
 
       const rng = Phaser.Math.Between(0, 1);
       console.log(rng);
-      if(rng==1) {
+      if (rng == 1) {
         this.invulnerable = false;
         this.sprite.setTint(0x000000);
       }
-    }
-    else if(moveType === "roll_back") {
+    } else if (moveType === "roll_back") {
       this.sprite.setVelocityX(0);
-      this.sprite.setVelocityX(-dist/2);
+      this.sprite.setVelocityX(-dist / 2);
       this.sprite.anims.play("roll_back", true);
       this.action = "roll_back";
       this.invulnerable = true;
 
       const rng = Phaser.Math.Between(0, 1);
       console.log(rng);
-      if(rng==1) {
+      if (rng == 1) {
         this.invulnerable = false;
         this.sprite.setTint(0x000000);
       }
+    } else {
+      this.action = "waiting";
     }
-     else {
-		this.action = "waiting";
-	}
   }
 
-  playerAttack(moveType: string) {
+  playerAttack(moveType: string, opponent?: Player) {
     if (this.hitstun) {
       console.log("in hitstun");
       return;
     }
 
-    if(this.player1) {
+    if (this.player1) {
       this.sprite.setTint(0xffffff);
     } else {
       this.sprite.setTint(0x0096ff);
     }
+    if (opponent === undefined) return;
 
-	this.action = "attack/" + moveType;	
+    const distance = 520;
+    const dist =
+      this.sprite.body.x > opponent.sprite.body.x ? -distance : distance;
+
+    this.action = "attack/" + moveType;
 
     if (
       moveType === "crhook" ||
       moveType === "uppercut" ||
       moveType === "roundhouse"
     ) {
-		this.action = "startup/" + moveType;
-	}
+      this.action = "startup/" + moveType;
+    }
 
     switch (moveType) {
       case "punch":
         this.damage = 5;
-		this.knockbackX = 50;
-		this.knockbackY = 0;
+        this.knockbackX = 50;
+        this.knockbackY = 0;
+        this.attackType = "punch";
         break;
       case "hook":
         this.damage = 7;
-		this.knockbackX = 180;
-		this.knockbackY = 0;
+        this.knockbackX = 180;
+        this.knockbackY = 0;
+        this.attackType = "hook";
         break;
       case "kick":
         this.damage = 9;
-		this.knockbackX = 50;
-		this.knockbackY = 200;
+        this.knockbackX = 50;
+        this.knockbackY = 200;
+        this.attackType = "kick";
         break;
       case "uppercut":
         this.damage = 15;
-		this.knockbackX = 20;
-		this.knockbackY = 560;
+        this.knockbackX = 20;
+        this.knockbackY = 560;
+        this.attackType = "punch";
         break;
       case "roundhouse":
-        this.damage = 21;
-		this.knockbackX = 360;
-		this.knockbackY = 460;
+        this.damage = 20;
+        this.knockbackX = 360;
+        this.knockbackY = 460;
+        this.attackType = "kick";
         break;
       case "crhook":
-        this.damage = 27;
-		this.knockbackX = 80;
-		this.knockbackY = 0;
+        this.damage = 18;
+        this.knockbackX = 80;
+        this.knockbackY = 0;
+        this.attackType = "hook";
+        break;
+      case "dashkick":
+        this.damage = 11;
+        this.knockbackX = 360;
+        this.knockbackY = 460;
+        this.sprite.setVelocityX(dist);
+        this.attackType = "dashkick";
+        break;
+      case "rising_uppercut":
+        this.damage = 22;
+        this.knockbackX = 80;
+        this.knockbackY = 860;
+        this.sprite.setVelocityX(dist / 3);
+        this.sprite.setVelocityY(-560);
+        this.attackType = "rising_uppercut";
+        break;
+      case "fire_cannon":
+        this.damage = 0;
+        this.knockbackX = 180;
+        this.knockbackY = 0;
+        this.attackType = "fire_cannon";
         break;
       default:
         break;
@@ -231,12 +282,18 @@ export default class Player {
     this.sprite.anims.play(moveType, true);
   }
 
+  playerRest() {
+    this.action = "rest";
+    this.sprite.anims.play("rest", true);
+  }
+
   performNextAction(delta: number) {
     if (this.action != "nothing") this.timer += delta;
 
-    const moveType = this.action.split('/')[1];
+    const moveType = this.action.split("/")[1];
     let nextMoveTime = 500;
-    if(moveType === "punch" || moveType ==="kick" || moveType === "hook") nextMoveTime = 250;
+    if (moveType === "punch" || moveType === "kick" || moveType === "hook")
+      nextMoveTime = 250;
 
     while (this.timer > nextMoveTime) {
       //this.timer -= 1000;
@@ -246,4 +303,5 @@ export default class Player {
       this.sprite.anims.play("turn", true);
     }
   }
+
 }
