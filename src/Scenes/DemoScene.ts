@@ -109,7 +109,7 @@ export default class DemoScene extends Phaser.Scene{
           y: 8,
           }
         })
-        jump_fwd_button.setScale(1, 1).setX(512).setY(365).setInteractive({useHandCursor:true}).on("pointerdown", ()=>{
+        jump_fwd_button.setScale(1, 1).setX(12).setY(575).setInteractive({useHandCursor:true}).on("pointerdown", ()=>{
           this.player2?.sprite.setVelocityY(-500);
           this.player2?.sprite.setVelocityX(500);
           this.player2?.sprite.anims.play("turn");
@@ -225,20 +225,20 @@ export default class DemoScene extends Phaser.Scene{
         this.player2?.sprite.anims.play("roundhouse")
         this.animationHandler();
        })
-       const dodge_btn = this.add.text(width / 4, height / 2, available_moves[12].toUpperCase(), {
-        fontSize: '21px',
-        fontFamily: 'Arial',
-        color: '#ffffff',
-        backgroundColor: '#000000',
-        padding: {
-          x: 16,
-          y: 8,
-        }
-     })
-      dodge_btn.setScale(1, 1).setX(12).setY(575).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
-      this.player2?.sprite.anims.play("dodge")
-      this.animationHandler();
-     })
+    //    const dodge_btn = this.add.text(width / 4, height / 2, available_moves[12].toUpperCase(), {
+    //     fontSize: '21px',
+    //     fontFamily: 'Arial',
+    //     color: '#ffffff',
+    //     backgroundColor: '#000000',
+    //     padding: {
+    //       x: 16,
+    //       y: 8,
+    //     }
+    //  })
+    //   dodge_btn.setScale(1, 1).setX(12).setY(575).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
+    //   this.player2?.sprite.anims.play("dodge")
+    //   this.animationHandler();
+    //  })
 
         const backToStartButton = this.add.text(width / 4, height / 2, 'Return to Input', {
             fontSize: '48px',
