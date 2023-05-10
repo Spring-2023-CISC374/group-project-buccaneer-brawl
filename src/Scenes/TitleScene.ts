@@ -32,7 +32,7 @@ export default class TitleScene extends Phaser.Scene {
     title.setOrigin(0.5);
 
     // Add start button
-    const startButton = this.add.text(width / 2, height / 2, 'View Instructions', {
+    const startButton = this.add.text(width / 2, height / 2, 'Start Brawl', {
       fontSize: '48px',
       fontFamily: 'Arial',
       color: '#ffffff',
