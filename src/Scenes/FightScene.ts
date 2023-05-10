@@ -22,8 +22,6 @@ export default class FightScene extends Phaser.Scene {
   private savedTextP2?: string;
   private p1_responseText?: string[];
   private p2_responseText?: string[];
-  private msgBox1?: Phaser.GameObjects.Text;
-  private msgBox2?: Phaser.GameObjects.Text;
   private roundTimer = 99;
   private roundTimerdelta = 0;
   private timeNumber?: number;
@@ -74,16 +72,6 @@ export default class FightScene extends Phaser.Scene {
       0x0096ff
     );
 
-    this.msgBox1 = this.add.text(14, 80, "Player 1 Cannon Ready! Press Q", {
-      fontSize: "20px",
-      color: "#ffffff",
-      backgroundColor: "#000000",
-    });
-    this.msgBox2 = this.add.text(430, 80, "Player 2 Cannon Ready! Press P", {
-      fontSize: "20px",
-      color: "#ffffff",
-      backgroundColor: "#000000",
-    });
     this.makeHealthBar(14, 60, 300, true);
     this.makeHealthBar(450, 60, 300, false);
 
@@ -195,26 +183,11 @@ export default class FightScene extends Phaser.Scene {
     );
 
     if (this.player1 && this.player2) {
-      this.handleKeyboardInput();
-      
-      if(this.player1.action === "attack/fire_cannon" && this.player1.timer < 10) {
-        console.log("CANNONS ARE FIRING");
-        const rng = Phaser.Math.Between(0, 1);
-        if(rng == 1) {
-          this.fireCannon(this.player1, this.player2); 
-        }
-       
-      } else if (this.player2.action === "attack/fire_cannon" && this.player2.timer < 10) {
-        const rng = Phaser.Math.Between(0, 1);
-        if(rng == 1) {
+      if(this.player1.action === "attack/fire_cannon" && this.player1.timer < 10 && !this.player2.invulnerable) {
+          this.fireCannon(this.player1, this.player2);         
+      } else if (this.player2.action === "attack/fire_cannon" && this.player2.timer < 10 && !this.player1.invulnerable) {
         this.fireCannon(this.player2, this.player1);
-        }
       }
-
-
-
-
-
     }
 
 
@@ -266,18 +239,6 @@ export default class FightScene extends Phaser.Scene {
       this.player2.fallCounter += delta;
     }
 
-    if (this.player1 && this.player2) {
-      if (this.player1.coins >= 20) {
-        this.msgBox1?.setVisible(true);
-      } else {
-        this.msgBox1?.setVisible(false);
-      }
-      if (this.player2.coins >= 20) {
-        this.msgBox2?.setVisible(true);
-      } else {
-        this.msgBox2?.setVisible(false);
-      }
-    }
     if (this.player1 && this.player2) {
       if (this.player1.fallCounter >= this.player1.fallTime) {
         if (this.player1.fallen) {
@@ -429,15 +390,26 @@ export default class FightScene extends Phaser.Scene {
   ) {
     const cannonball = b as Phaser.Physics.Arcade.Image;
     cannonball.disableBody(true, true);
+    cannonball.setVelocity(0,0);
     if (this.player1 && this.player2) {
       if (this.player1.sprite === player) {
         console.log("cannon hit");
           this.player1.health -= 10;
-          this.player1.sprite.setVelocityY(-780);
+          if(this.player1.sprite.x < this.player2.sprite.x) {
+            this.player1.sprite.setVelocityX(200)
+          } else {
+            this.player1.sprite.setVelocityX(-300)
+          }
+          this.player1.sprite.setVelocityY(-380);
           this.p1_healthBar?.animate(this.player1.health / this.player1.maxHealth);
       } else {
         this.player2.health -= 10;
-        this.player2.sprite.setVelocityY(-780);
+        if(this.player2.sprite.x < this.player1.sprite.x) {
+          this.player2.sprite.setVelocityX(200)
+        } else {
+          this.player2.sprite.setVelocityX(-300)
+        }
+        this.player2.sprite.setVelocityY(-380);
         this.p2_healthBar?.animate(this.player2.health / this.player2.maxHealth);        
       }
       cannonball.destroy(true);
@@ -649,20 +621,19 @@ export default class FightScene extends Phaser.Scene {
         //fire to the left
         const cannonball: Phaser.Physics.Arcade.Image =
           this.cannonballs?.create(user.sprite.x, user.sprite.y + 20, "cannonball");
-        cannonball.setScale(2, 2);
-        cannonball.setCollideWorldBounds(true);
-        cannonball.setVelocityX(1000);
-        cannonball.setGravityY(10);
+          cannonball.setScale(2, 2);
+          cannonball.setCollideWorldBounds(true);
+          cannonball.setVelocityX(1000);
+          cannonball.setGravityY(10);
       } else {
         //fire to the right
         const cannonball: Phaser.Physics.Arcade.Image =
           this.cannonballs?.create(user.sprite.x, user.sprite.y + 20, "cannonball");
         cannonball.setScale(2, 2);
         cannonball.setCollideWorldBounds(true);
-        cannonball.setVelocityX(1000);
+        cannonball.setVelocityX(-1000);
         cannonball.setGravityY(10);
       }
-    
   }
 
   decrementRoundTimer(delta: number) {
@@ -687,20 +658,6 @@ export default class FightScene extends Phaser.Scene {
         who_won: winner,
       });
     }
-  }
-
-  handleKeyboardInput() {
-    const keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
-    const keyP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
-
-    keyQ.on("down", () => {
-      if (this.player1 && this.player2)
-        this.fireCannon(this.player1, this.player2);
-    });
-    keyP.on("down", () => {
-      if (this.player1 && this.player2)
-        this.fireCannon(this.player2, this.player1);
-    });
   }
 
   private animationHandler() {
