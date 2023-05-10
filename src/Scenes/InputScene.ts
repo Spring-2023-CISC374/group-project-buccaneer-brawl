@@ -134,7 +134,27 @@ submitButton.setY(350)
     p1DoneButton.setInteractive({ useHandCursor: true });
 
     p1DoneButton.on('pointerdown', () => {
-      this.saveInputP1();
+      const inputElement1 = document.getElementById(
+        'myText1'
+        ) as HTMLInputElement;
+
+        const submitted_array = this.formatRequest(inputElement1.value);
+
+        //there is an invalid command
+        if (submitted_array.find(element => element === 'random')){
+          uniqueErrorMessage.setVisible(false);
+          invalidErrorMessage.setVisible(true);
+        }
+        //you don't have at least 3 unique moves 
+        else if(Array.from(new Set(submitted_array)).length < 3){
+          invalidErrorMessage.setVisible(false);
+          uniqueErrorMessage.setVisible(true);
+        }
+        else{
+          invalidErrorMessage.setVisible(false);
+          uniqueErrorMessage.setVisible(false);
+          this.saveInputP1();
+        }
     });
 
     const p2DoneButton = this.add.text(380, 300, 'Ready?', {
@@ -146,14 +166,46 @@ submitButton.setY(350)
     p2DoneButton.setInteractive({ useHandCursor: true });
     
     if(p1DoneButton.setInteractive({useHandCursor: true}) && p2DoneButton.setInteractive({ useHandCursor: true })){
-      console.log("You can start the game!")
       submitButton.setInteractive({ useHandCursor: true });
     }
     p2DoneButton.on('pointerdown', () => {
-      this.saveInputP2();
+      const inputElement2 = document.getElementById(
+      'myText2'
+      ) as HTMLInputElement;
+
+      const submitted_array = this.formatRequest(inputElement2.value);
+
+      //there is an invalid command
+      if (submitted_array.find(element => element === 'random')){
+        uniqueErrorMessage.setVisible(false);
+        invalidErrorMessage.setVisible(true);
+      }
+      //you don't have at least 3 unique moves 
+      else if(Array.from(new Set(submitted_array)).length < 3){
+        invalidErrorMessage.setVisible(false);
+        uniqueErrorMessage.setVisible(true);
+      }
+      else{
+        invalidErrorMessage.setVisible(false);
+        uniqueErrorMessage.setVisible(false);
+
+        this.saveInputP2();
+      }
     });
     
-   
+    const invalidErrorMessage = this.add.text(10, 500, 'Failed to save code. \n Make sure you have spelled all the commands correctly\nand that your list of commands is seperated by commas', {
+      fontSize: '20px',
+      color: '#ff0000',
+      backgroundColor: '#00000',
+    });
+    const uniqueErrorMessage = this.add.text(10, 500, 'Failed to save code. \nYou need to have at least 3 unique commands', {
+      fontSize: '20px',
+      color: '#ff0000',
+      backgroundColor: '#00000',
+    });
+
+    invalidErrorMessage.setVisible(false);
+    uniqueErrorMessage.setVisible(false);
 
     submitButton.on('pointerdown', () => {
       this.startGame();
@@ -164,6 +216,7 @@ submitButton.setY(350)
     instructionsButton.setY(0)
     instructionsButton.setInteractive({ useHandCursor: true });
     instructionsButton.on("pointerdown", ()=>{
+      console.log("test");
       this.transitionToInstructions();
     })
 
@@ -177,15 +230,18 @@ submitButton.setY(350)
       'myText2'
     ) as HTMLInputElement;
 
-    this.savedTextP1 = inputElement1.value;
-    this.savedTextP2 = inputElement2.value;
-
-    inputElement1.remove();
-    inputElement2.remove();
-
-    inputElement1.value = '';
-    inputElement2.value = '';
-
+    //incase one of the players submitted
+    if (inputElement1 != null){
+      this.savedTextP1 = inputElement1.value;
+      inputElement1.remove();
+      inputElement1.value = '';
+    }
+    if (inputElement2 != null){
+      this.savedTextP2 = inputElement2.value;
+      inputElement2.remove();
+      inputElement2.value = '';
+    }
+  
     this.scene.start('InstructionScene', {
        savedTextP1: this.savedTextP1,
        savedTextP2: this.savedTextP2,
@@ -204,11 +260,10 @@ submitButton.setY(350)
     inputElement1.remove();
 
     inputElement1.value = '';
-
+  
     this.p1_responseText = this.formatRequest(this.savedTextP1);
-
+    
     this.player1Ready = true;
-
   }
 
   saveInputP2() {
@@ -248,6 +303,7 @@ submitButton.setY(350)
       if (map.has(item.trim())) {
         return item.trim();
       }
+
       return 'random';
     });
    // console.log('splitText', splitText);

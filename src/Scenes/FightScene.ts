@@ -495,8 +495,8 @@ export default class FightScene extends Phaser.Scene {
             this.player2.health = 0;
             this.physics.pause();
             this.scene.start("ResultScene", {
-              p1_understandAmt: this.p1_understandAmt,
-              p2_understandAmt: this.p2_understandAmt,
+              savedTextP1: this.savedTextP1,
+              savedTextP2: this.savedTextP2,
               who_won: "RedBeard",
             });
           }
@@ -584,8 +584,8 @@ export default class FightScene extends Phaser.Scene {
             this.player1.health = 0;
             this.physics.pause();
             this.scene.start("ResultScene", {
-              p1_understandAmt: this.p1_understandAmt,
-              p2_understandAmt: this.p2_understandAmt,
+              savedTextP1: this.savedTextP1,
+              savedTextP2: this.savedTextP2,
               who_won: "BluBeard",
             });
           }
