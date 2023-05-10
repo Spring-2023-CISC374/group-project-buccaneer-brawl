@@ -8,7 +8,7 @@ export default class Photo1Scene extends Phaser.Scene {
         this.load.image('Photo1', 'assets/InstructionPhotos/Photo1.png');
       }
       create() {
-        const photo = this.add.image(400, 400, "Photo1");
+        const photo = this.add.image(400, 300, "Photo1");
         const desiredWidth = 800; // in pixels
         const desiredHeight = 600; // in pixels
         photo.setScale(desiredWidth / photo.width, desiredHeight / photo.height);

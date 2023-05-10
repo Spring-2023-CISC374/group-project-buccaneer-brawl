@@ -8,7 +8,7 @@ export default class Photo2Scene extends Phaser.Scene {
         this.load.image('Photo2', 'assets/InstructionPhotos/Photo2.png');
       }
       create() {
-        this.add.image(0, 0, 'Photo2');
+        this.add.image(400, 300, 'Photo2');
         const { width, height } = this.scale;
         // Add Next Button
         const NextButton = this.add.text(width / 2, height / 2, 'Next', {
@@ -21,7 +21,7 @@ export default class Photo2Scene extends Phaser.Scene {
             y: 8,
           },
         });
-        NextButton.setOrigin(0.5);
+        NextButton.setOrigin(-2);
         NextButton.setInteractive({ useHandCursor: true });
         NextButton.on('pointerdown', () => {
           this.scene.start('InputScene');
