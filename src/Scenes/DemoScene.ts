@@ -5,10 +5,21 @@ import available_moves from '../Types/available_moves';
 export default class DemoScene extends Phaser.Scene{
     constructor(){
         super({key: 'DemoScene'});
+        this.savedTextP1 = '';
+        this.savedTextP2 = '';
     }
+
+    private savedTextP1: string;
+    private savedTextP2: string;
     private player2?: Player;
     
-
+    init(data: {
+      savedTextP1: string;
+      savedTextP2: string;
+    }) {
+      this.savedTextP1 = data.savedTextP1;
+      this.savedTextP2 = data.savedTextP2;
+    }
     create(){
         const titlescreen = this.add.sprite(400, 330, 'titlescreen');
         titlescreen.scaleX = 2.5;
@@ -109,7 +120,7 @@ export default class DemoScene extends Phaser.Scene{
           y: 8,
           }
         })
-        jump_fwd_button.setScale(1, 1).setX(512).setY(365).setInteractive({useHandCursor:true}).on("pointerdown", ()=>{
+        jump_fwd_button.setScale(1, 1).setX(12).setY(575).setInteractive({useHandCursor:true}).on("pointerdown", ()=>{
           this.player2?.sprite.setVelocityY(-500);
           this.player2?.sprite.setVelocityX(500);
           this.player2?.sprite.anims.play("turn");
@@ -225,20 +236,20 @@ export default class DemoScene extends Phaser.Scene{
         this.player2?.sprite.anims.play("roundhouse")
         this.animationHandler();
        })
-       const dodge_btn = this.add.text(width / 4, height / 2, available_moves[12].toUpperCase(), {
-        fontSize: '21px',
-        fontFamily: 'Arial',
-        color: '#ffffff',
-        backgroundColor: '#000000',
-        padding: {
-          x: 16,
-          y: 8,
-        }
-     })
-      dodge_btn.setScale(1, 1).setX(12).setY(575).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
-      this.player2?.sprite.anims.play("dodge")
-      this.animationHandler();
-     })
+    //    const dodge_btn = this.add.text(width / 4, height / 2, available_moves[12].toUpperCase(), {
+    //     fontSize: '21px',
+    //     fontFamily: 'Arial',
+    //     color: '#ffffff',
+    //     backgroundColor: '#000000',
+    //     padding: {
+    //       x: 16,
+    //       y: 8,
+    //     }
+    //  })
+    //   dodge_btn.setScale(1, 1).setX(12).setY(575).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
+    //   this.player2?.sprite.anims.play("dodge")
+    //   this.animationHandler();
+    //  })
 
         const backToStartButton = this.add.text(width / 4, height / 2, 'Return to Input', {
             fontSize: '48px',
@@ -253,7 +264,10 @@ export default class DemoScene extends Phaser.Scene{
           backToStartButton.setScale(1, 1)
           backToStartButton.setInteractive({ useHandCursor: true });
           backToStartButton.on("pointerdown", ()=>{
-          this.scene.start("InputScene");
+            this.scene.start('InputScene', {
+            savedTextP1: this.savedTextP1,
+            savedTextP2: this.savedTextP2,
+        });
         })
         this.animationHandler();
         
