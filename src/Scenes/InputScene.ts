@@ -48,7 +48,7 @@ export default class InputScene extends Phaser.Scene {
       'myText2'
     ) as HTMLInputElement;
 
-    this.add.text(10, 10, 'Enter your text:', {
+    this.add.text(10, 10, 'Enter your PirateScript:', {
       fontSize: '32px',
       color: '#ffffff',
       backgroundColor: '#000000',
