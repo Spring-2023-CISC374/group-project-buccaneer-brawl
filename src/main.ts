@@ -8,6 +8,8 @@ import InstructionScene from './Scenes/InstructionScene';
 import ResultScene from './Scenes/ResultScene';
 import Photo1Scene from './Scenes/Photo1Scene';
 import Photo2Scene from './Scenes/Photo2Scene';
+import Photo3Scene from './Scenes/Photo3Scene';
+import Photo4Scene from './Scenes/Photo4Scene';
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   parent: 'app',
@@ -20,7 +22,7 @@ const config: Phaser.Types.Core.GameConfig = {
       debug: false,
     },
   },
-  scene: [LoadingScene, TitleScene, InputScene, InstructionScene, FightScene, ResultScene, DemoScene, Photo1Scene, Photo2Scene],
+  scene: [LoadingScene, TitleScene, InputScene, InstructionScene, FightScene, ResultScene, DemoScene, Photo1Scene, Photo2Scene, Photo3Scene, Photo4Scene],
 };
 
 export default new Phaser.Game(config)
