@@ -432,20 +432,18 @@ export default class FightScene extends Phaser.Scene {
     cannonball.disableBody(true, true);
     if (this.player1 && this.player2) {
       if (this.player1.sprite === player) {
-        this.player1.health -= 10;
-        //this.player1.sprite.setVelocityY(-780);
-        this.p1_healthBar?.animate(
-          this.player1.health / this.player1.maxHealth
-        );
+        console.log("cannon hit");
+          this.player1.health -= 10;
+          this.player1.sprite.setVelocityY(-780);
+          this.p1_healthBar?.animate(this.player1.health / this.player1.maxHealth);
       } else {
         this.player2.health -= 10;
-       // this.player2.sprite.setVelocityY(-780);
-        this.p2_healthBar?.animate(
-          this.player2.health / this.player2.maxHealth
-        );
+        this.player2.sprite.setVelocityY(-780);
+        this.p2_healthBar?.animate(this.player2.health / this.player2.maxHealth);        
       }
       cannonball.destroy(true);
     }
+    console.log("swag");
   }
 
   private hitCallback(
