@@ -7,8 +7,6 @@ export default class InputScene extends Phaser.Scene {
   private savedTextP2: string;
   private p1_responseText: string[];
   private p2_responseText: string[];
-  private p1_understandAmt: number;
-  private p2_understandAmt: number;
   private moveMap: Map<string, string>;
   private player1Ready: boolean;
   private player2Ready: boolean;
@@ -19,9 +17,6 @@ export default class InputScene extends Phaser.Scene {
     this.savedTextP2 = '';
     this.p1_responseText = ['random'];
     this.p2_responseText = ['random'];
-
-    this.p1_understandAmt = 0;
-    this.p2_understandAmt = 0;
     this.player1Ready = false;
     this.player2Ready = false;
 
@@ -29,6 +24,14 @@ export default class InputScene extends Phaser.Scene {
       accumulator.set(curr, 'true');
       return accumulator;
     }, new Map<string, string>());
+  }
+
+  init(data: {
+    savedTextP1: string;
+    savedTextP2: string;
+  }) {
+    this.savedTextP1 = data.savedTextP1;
+    this.savedTextP2 = data.savedTextP2;
   }
 
   create() {
@@ -87,7 +90,9 @@ export default class InputScene extends Phaser.Scene {
     input.style.backgroundColor = "black";
     input.style.color = "white";
     document.body.appendChild(input);
-
+    if (this.savedTextP1 != undefined){
+      input.innerText = this.savedTextP1;
+    }
     this.add.text(350, 60, 'Player 2', {
       fontSize: '24px',
       color: '#ffffff',
@@ -105,6 +110,9 @@ export default class InputScene extends Phaser.Scene {
     inputP2.style.backgroundColor = "black";
     inputP2.style.color = "white";
     document.body.appendChild(inputP2);
+    if (this.savedTextP2 != undefined){
+      inputP2.innerText = this.savedTextP2;
+    }
 
 const submitButton = this.add.text(300, 300, 'Submit', {
   fontSize: '48px',
@@ -151,16 +159,12 @@ submitButton.setY(350)
       this.startGame();
     });
 
-    this.p1_understandAmt = 0;
-    this.p2_understandAmt = 0;
-
     instructionsButton.setOrigin(0.2, -0.5);
     instructionsButton.setX(530)
     instructionsButton.setY(0)
     instructionsButton.setInteractive({ useHandCursor: true });
     instructionsButton.on("pointerdown", ()=>{
       this.transitionToInstructions();
-      this.scene.start("InstructionScene");
     })
 
   }
@@ -176,30 +180,16 @@ submitButton.setY(350)
     this.savedTextP1 = inputElement1.value;
     this.savedTextP2 = inputElement2.value;
 
-    //console.log('Saved text Player 1: ', this.savedTextP1);
-    //console.log('Saved text Player 2: ', this.savedTextP2);
-    
-
     inputElement1.remove();
     inputElement2.remove();
 
     inputElement1.value = '';
     inputElement2.value = '';
 
-    this.p1_responseText = this.formatRequest(this.savedTextP1);
-    this.p2_responseText = this.formatRequest(this.savedTextP2);
-
-      console.log(this.p1_responseText);
-      console.log(this.p2_responseText);
-
-      //this.checkPlayerUnderstanding();
-
-      this.scene.start('InstructionScene', {
-        p1_responseText: this.p1_responseText,
-        p2_responseText: this.p2_responseText,
-        p1_understandAmt: this.p1_understandAmt,
-        p2_understandAmt: this.p2_understandAmt
-      });
+    this.scene.start('InstructionScene', {
+       savedTextP1: this.savedTextP1,
+       savedTextP2: this.savedTextP2,
+     });
   }
 
   
@@ -210,16 +200,12 @@ submitButton.setY(350)
     ) as HTMLInputElement;
 
     this.savedTextP1 = inputElement1.value;
-    //console.log('Saved text Player 1: ', this.savedTextP1);
-    //console.log('Saved text Player 2: ', this.savedTextP2);  
 
     inputElement1.remove();
 
     inputElement1.value = '';
 
     this.p1_responseText = this.formatRequest(this.savedTextP1);
-
-    console.log(this.p1_responseText);
 
     this.player1Ready = true;
 
@@ -238,8 +224,6 @@ submitButton.setY(350)
 
     this.p2_responseText = this.formatRequest(this.savedTextP2);
 
-    console.log(this.p2_responseText);
-
     this.player2Ready = true;
 
   }
@@ -247,10 +231,10 @@ submitButton.setY(350)
   startGame() {
     if(this.player1Ready && this.player2Ready) {
       this.scene.start('FightScene', {
+        savedTextP1: this.savedTextP1,
+        savedTextP2: this.savedTextP2,
         p1_responseText: this.p1_responseText,
         p2_responseText: this.p2_responseText,
-        p1_understandAmt: this.p1_understandAmt,
-        p2_understandAmt: this.p2_understandAmt
       });
     }
   }
@@ -269,29 +253,4 @@ submitButton.setY(350)
    // console.log('splitText', splitText);
     return splitText;
   }
-
-  /*
-  checkPlayerUnderstanding() {
-    this.p1_responseText.forEach((s:string)=> {
-      if(s !== "random") {
-        console.log("understood a command!");
-        this.p1_understandAmt++;
-      }
-    });
-
-    this.p2_responseText.forEach((s:string)=> {
-      if(s !== "random") {
-        console.log("understood a command!");
-        this.p2_understandAmt++;
-      }
-    });
-
-    this.p1_understandAmt = (this.p1_understandAmt / this.p1_responseText.length) * 100;
-    this.p2_understandAmt = (this.p2_understandAmt / this.p2_responseText.length) * 100;
-
-    console.log("understandAmount: ", this.p1_understandAmt + "%");
-    console.log("understandAmount: ", this.p2_understandAmt + "%");
-
-  }
-  */
 }

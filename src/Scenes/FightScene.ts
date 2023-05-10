@@ -18,10 +18,10 @@ export default class FightScene extends Phaser.Scene {
   private registerTwo?: RegisterInput;
   private p1_healthBar?: HealthBar;
   private p2_healthBar?: HealthBar;
+  private savedTextP1?: string;
+  private savedTextP2?: string;
   private p1_responseText?: string[];
   private p2_responseText?: string[];
-  private p1_understandAmt?: number;
-  private p2_understandAmt?: number;
   private msgBox1?: Phaser.GameObjects.Text;
   private msgBox2?: Phaser.GameObjects.Text;
   private roundTimer = 99;
@@ -30,22 +30,21 @@ export default class FightScene extends Phaser.Scene {
   private timerText?: Phaser.GameObjects.Text;
 
   init(data: {
+    savedTextP1: string;
+    savedTextP2: string;
     p1_responseText: string[] | undefined;
     p2_responseText: string[] | undefined;
-    p1_understandAmtt: number;
-    p2_understandAmt: number;
   }) {
+    this.savedTextP1 = data.savedTextP1;
+    this.savedTextP2 = data.savedTextP2;
     this.p1_responseText = data.p1_responseText;
     this.p2_responseText = data.p2_responseText;
-    this.p1_understandAmt = data.p1_understandAmtt;
-    this.p2_understandAmt = data.p2_understandAmt;
   }
 
   create() {
     this.add.image(400, 300, "pirateship").setScale(2);
 
     this.game.sound.stopAll();
-
     const music = this.sound.add("battlemusic");
 
     music.play();
@@ -525,6 +524,16 @@ export default class FightScene extends Phaser.Scene {
           }
         }, 300);
 
+        //Game over placeholder
+        if (this.player2.health <= 0) {
+          this.player2.health = 0;
+          this.physics.pause();
+          this.scene.start("ResultScene", {
+            savedTextP1: this.savedTextP1,
+            savedTextP2: this.savedTextP2,
+            who_won: "RedBeard",
+          });
+        }
         console.log(this.player1.spamQueue);
         console.log("damage", this.player1.damage);
 
@@ -608,6 +617,32 @@ export default class FightScene extends Phaser.Scene {
             this.player2?.setCooldown(true);
           }
         }, 300);
+
+        //Game over placeholder
+        if (this.player1.health <= 0) {
+          this.player1.health = 0;
+          this.physics.pause();
+          this.scene.start("ResultScene", {
+            savedTextP1: this.savedTextP1,
+            savedTextP2: this.savedTextP2,
+            who_won: "BluBeard",
+          });
+        }
+
+        this.physics.add.group({
+          key: "star",
+          repeat: 12,
+          setXY: {
+            x: Phaser.Math.Between(0, 100),
+            y: 0,
+            stepX: Phaser.Math.Between(70, 100),
+          },
+        });
+
+        this.coins?.children.iterate((c) => {
+          const child = c as Phaser.Physics.Arcade.Image;
+          child.enableBody(true, child.x, 0, true, true);
+        });
       }
     }
   }
@@ -651,8 +686,8 @@ export default class FightScene extends Phaser.Scene {
       }
 
       this.scene.start("ResultScene", {
-        p1_understandAmt: this.p1_understandAmt,
-        p2_understandAmt: this.p2_understandAmt,
+        savedTextP1: this.savedTextP1,
+        savedTextP2: this.savedTextP2,
         who_won: winner,
       });
     }
