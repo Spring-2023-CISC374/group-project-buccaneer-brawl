@@ -51,7 +51,8 @@ export default class TitleScene extends Phaser.Scene {
     startButton.setOrigin(0.5);
     startButton.setInteractive({ useHandCursor: true });
     startButton.on('pointerdown', () => {
-      this.scene.start('InstructionScene');
+      this.scene.start('Photo1Scene');
+      
     });
 
     
