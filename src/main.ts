@@ -6,6 +6,7 @@ import LoadingScene from './Scenes/LoadingScene';
 import TitleScene from './Scenes/TitleScene';
 import InstructionScene from './Scenes/InstructionScene';
 import ResultScene from './Scenes/ResultScene';
+import Photo1Scene from './Scenes/Photo1Scene';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -19,7 +20,7 @@ const config: Phaser.Types.Core.GameConfig = {
       debug: false,
     },
   },
-  scene: [LoadingScene, TitleScene, InputScene, InstructionScene, FightScene, ResultScene, DemoScene],
+  scene: [LoadingScene, TitleScene, InputScene, InstructionScene, FightScene, ResultScene, DemoScene, Photo1Scene, Photo2Scene],
 };
 
 export default new Phaser.Game(config)
