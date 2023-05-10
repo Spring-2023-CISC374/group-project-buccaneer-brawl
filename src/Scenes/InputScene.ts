@@ -144,16 +144,30 @@ submitButton.setY(350)
         //there is an invalid command
         if (submitted_array.find(element => element === 'random')){
           uniqueErrorMessage.setVisible(false);
+          moveAtkErrorMessage.setVisible(false);
           invalidErrorMessage.setVisible(true);
+        }
+        //you dont have one attack and one movement command
+        else if (!submitted_array.some(this.checkForAttacks) || !submitted_array.some(this.checkForMoves)){
+          console.log("moves", submitted_array.some(this.checkForMoves))
+          console.log("attacks", submitted_array.some(this.checkForAttacks))
+
+          uniqueErrorMessage.setVisible(false);
+          invalidErrorMessage.setVisible(false);
+          moveAtkErrorMessage.setVisible(true);
+
         }
         //you don't have at least 3 unique moves 
         else if(Array.from(new Set(submitted_array)).length < 3){
           invalidErrorMessage.setVisible(false);
+          moveAtkErrorMessage.setVisible(false);
           uniqueErrorMessage.setVisible(true);
         }
+
         else{
           invalidErrorMessage.setVisible(false);
           uniqueErrorMessage.setVisible(false);
+          moveAtkErrorMessage.setVisible(false);
           this.saveInputP1();
           if(this.player1Ready && this.player2Ready){
             submitButton.setVisible(true);
@@ -183,16 +197,29 @@ submitButton.setY(350)
       //there is an invalid command
       if (submitted_array.find(element => element === 'random')){
         uniqueErrorMessage.setVisible(false);
+        moveAtkErrorMessage.setVisible(false);
         invalidErrorMessage.setVisible(true);
+      }
+      //you dont have one move and one attack
+      else if (!submitted_array.some(this.checkForAttacks) || !submitted_array.some(this.checkForMoves)){
+        console.log("moves", submitted_array.some(this.checkForMoves))
+        console.log("attacks", submitted_array.some(this.checkForAttacks))
+
+        uniqueErrorMessage.setVisible(false);
+        invalidErrorMessage.setVisible(false);
+        moveAtkErrorMessage.setVisible(true);
+
       }
       //you don't have at least 3 unique moves 
       else if(Array.from(new Set(submitted_array)).length < 3){
         invalidErrorMessage.setVisible(false);
+        moveAtkErrorMessage.setVisible(false);
         uniqueErrorMessage.setVisible(true);
       }
       else{
         invalidErrorMessage.setVisible(false);
         uniqueErrorMessage.setVisible(false);
+        moveAtkErrorMessage.setVisible(false);
 
         this.saveInputP2();
         if(this.player1Ready && this.player2Ready){
@@ -209,6 +236,11 @@ submitButton.setY(350)
       color: '#ff0000',
       backgroundColor: '#00000',
     });
+    const moveAtkErrorMessage = this.add.text(10, 500, 'Failed to save code. \nYou need to have at least 1 move command (walk_forward, jump, etc)\n and one attack command (punch, roundhosue, etc.)', {
+      fontSize: '20px',
+      color: '#ff0000',
+      backgroundColor: '#00000',
+    });
     const uniqueErrorMessage = this.add.text(10, 500, 'Failed to save code. \nYou need to have at least 3 unique commands', {
       fontSize: '20px',
       color: '#ff0000',
@@ -217,6 +249,7 @@ submitButton.setY(350)
 
     invalidErrorMessage.setVisible(false);
     uniqueErrorMessage.setVisible(false);
+    moveAtkErrorMessage.setVisible(false);
 
     submitButton.on('pointerdown', () => {
       this.startGame();
@@ -232,7 +265,14 @@ submitButton.setY(350)
     })
 
   }
-
+  checkForMoves(command: string){
+    let valid_moves = ["walk_forward", "walk_back", "jump_forward", "jump_back", "jump", "roll_forward", "roll_back"] 
+    return valid_moves.indexOf(command) != -1;
+  }
+  checkForAttacks(command: string){
+    let valid_moves = ["kick", "punch", "hook", "uppercut", "crhook", "roundhouse", "dashkick"] 
+    return valid_moves.indexOf(command) != -1;
+  }
   transitionToInstructions(){
     const inputElement1 = document.getElementById(
       'myText1'
