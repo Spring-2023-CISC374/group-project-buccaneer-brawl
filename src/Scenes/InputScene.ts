@@ -56,7 +56,6 @@ export default class InputScene extends Phaser.Scene {
       backgroundColor: '#000000',
     });
 
-    const movelist_text = available_moves.join('\n');
     /*
     const available_moves_p1 = this.add.text(240, 100, `Available Moves:\n${movelist_text}`, {
       fontSize: '15px',
@@ -228,7 +227,7 @@ export default class InputScene extends Phaser.Scene {
     })
 
   }
-  update(time: number, delta: number): void {
+  update(): void {
     if (this.player1Ready){
       this.player_text?.setText("Player 2");
     }
