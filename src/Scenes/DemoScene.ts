@@ -29,13 +29,12 @@ export default class DemoScene extends Phaser.Scene{
         const { width, height } = this.scale;
         // const bg = this.add.image(width / 2, height / 2, 'background');
         // bg.setScale(2);
-        this.add.text(width / 4, height / 4, 'Examples', {
-            fontSize: '64px',
+        this.add.text(width / 4, height / 4, 'DEMO', {
+            fontSize: '20px',
             fontFamily: 'Arial',
             color: '#ffffff',
             backgroundColor: '#000000',
-          }).setOrigin(0, 0);
-
+          }).setOrigin(0, 0).setX(350).setY(0);
 
           this.player2 = new Player(
             this.physics.add
@@ -45,7 +44,8 @@ export default class DemoScene extends Phaser.Scene{
               .setScale(2),
             0x0096ff
           ); 
-          
+
+
         const waitButton = this.add.text(width / 4, height / 4, available_moves[0].toUpperCase(), {
             fontSize: '21px',
             fontFamily: 'Arial',
@@ -56,7 +56,7 @@ export default class DemoScene extends Phaser.Scene{
             y: 8,
         },
         })
-        waitButton.setScale(1, 1).setOrigin(1.9, -1)
+        waitButton.setScale(1, 1).setX(12).setY(20)
         waitButton.setInteractive({ useHandCursor: true });
         waitButton.on("pointerdown", ()=>{
           
@@ -74,7 +74,8 @@ export default class DemoScene extends Phaser.Scene{
           y: 8,
           }
         })
-        walk_forward_button.setScale(1, 1).setX(12).setY(235).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
+        walk_forward_button.setScale(1, 1).setX(12).setY(55).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
+          this.player2?.sprite.setVelocityX(200);
           this.player2?.sprite.anims.play("left");
           this.animationHandler();
         })
@@ -88,7 +89,8 @@ export default class DemoScene extends Phaser.Scene{
           y: 8,
           }
         })
-        walk_back_button.setScale(1, 1).setX(12).setY(285).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
+        walk_back_button.setScale(1, 1).setX(12).setY(90).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
+          this.player2?.sprite.setVelocityX(-200);
           this.player2?.sprite.anims.play("right")
           this.animationHandler();
         })
@@ -103,7 +105,7 @@ export default class DemoScene extends Phaser.Scene{
           y: 8,
           }
         })
-        jump_button.setScale(1, 1).setX(12).setY(335).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
+        jump_button.setScale(1, 1).setX(12).setY(125).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
           this.player2?.sprite.setVelocityY(-500);
           this.player2?.sprite.anims.play("turn")
           // this.player2?.sprite.anims.play("jump")
@@ -120,7 +122,7 @@ export default class DemoScene extends Phaser.Scene{
           y: 8,
           }
         })
-        jump_fwd_button.setScale(1, 1).setX(12).setY(575).setInteractive({useHandCursor:true}).on("pointerdown", ()=>{
+        jump_fwd_button.setScale(1, 1).setX(12).setY(160).setInteractive({useHandCursor:true}).on("pointerdown", ()=>{
           this.player2?.sprite.setVelocityY(-500);
           this.player2?.sprite.setVelocityX(500);
           this.player2?.sprite.anims.play("turn");
@@ -128,22 +130,23 @@ export default class DemoScene extends Phaser.Scene{
           this.player2?.sprite.setOffset(-100, 0);
           this.player2?.sprite.setOffset(10, 0);
         })
-        // const jump_back_button = this.add.text(width / 4, height / 2, available_moves[5].toUpperCase(), {
-        //   fontSize: '21px',
-        //   fontFamily: 'Arial',
-        //   color: '#ffffff',
-        //   backgroundColor: '#000000',
-        //   padding: {
-        //   x: 16,
-        //   y: 8,
-        //   }
-        // })
+         const jump_back_button = this.add.text(width / 4, height / 2, available_moves[5].toUpperCase(), {
+           fontSize: '21px',
+           fontFamily: 'Arial',
+           color: '#ffffff',
+           backgroundColor: '#000000',
+           padding: {
+           x: 16,
+           y: 8,
+           }
+         })
 
-        // jump_back_button.setScale(1, 1).setX(512).setY(305).setInteractive({useHandCursor:true}).on("pointerdown", ()=>{
-        //   this.player2?.sprite.setVelocityY(-500);
-        // })
+         jump_back_button.setScale(1, 1).setX(12).setY(195).setInteractive({useHandCursor:true}).on("pointerdown", ()=>{
+          this.player2?.sprite.setVelocityX(-500);
+           this.player2?.sprite.setVelocityY(-500);
+         })
 
-        const kick_button = this.add.text(width / 4, height / 4, available_moves[6].toUpperCase(), {
+        const kick_button = this.add.text(width / 4, height / 4, available_moves[6].toUpperCase() + " dmg: 7", {
           fontSize: '21px',
           fontFamily: 'Arial',
           color: '#ffffff',
@@ -153,13 +156,13 @@ export default class DemoScene extends Phaser.Scene{
           y: 8,
           }
         })
-        kick_button.setScale(1, 1).setX(12).setY(375)
+        kick_button.setScale(1, 1).setX(12).setY(230)
         kick_button.setInteractive({useHandCursor: true})
         kick_button.on("pointerdown", ()=>{
             this.player2?.sprite.anims.play("kick");
             this.animationHandler();
           })
-        const punch_button = this.add.text(width / 4, height / 4, available_moves[7].toUpperCase(), {
+        const punch_button = this.add.text(width / 4, height / 4, available_moves[7].toUpperCase() + " dmg: 5", {
             fontSize: '21px',
             fontFamily: 'Arial',
             color: '#ffffff',
@@ -169,14 +172,14 @@ export default class DemoScene extends Phaser.Scene{
             y: 8,
             }
           })  
-          punch_button.setScale(1, 1).setX(12).setY(415)
+          punch_button.setScale(1, 1).setX(12).setY(265)
           punch_button.setInteractive({useHandCursor: true})
           punch_button.on("pointerdown", ()=>{
             this.player2?.sprite.anims.play("punch");
             this.animationHandler();
           })
 
-          const hook_button = this.add.text(width / 4, height / 2, available_moves[8].toUpperCase(),{
+          const hook_button = this.add.text(width / 4, height / 2, available_moves[8].toUpperCase() + " dmg: 9",{
             fontSize: '21px',
             fontFamily: 'Arial',
             color: '#ffffff',
@@ -186,13 +189,13 @@ export default class DemoScene extends Phaser.Scene{
             y: 8,
             }
           })
-          hook_button.setScale(1, 1).setX(12).setY(445)
+          hook_button.setScale(1, 1).setX(12).setY(300)
           hook_button.setInteractive({useHandCursor: true})
           hook_button.on("pointerdown", ()=>{
             this.player2?.sprite.anims.play("hook");
             this.animationHandler();
           })
-          const uppercut_button = this.add.text(width / 4, height / 2, available_moves[7].toUpperCase(), {
+          const uppercut_button = this.add.text(width / 4, height / 2, available_moves[9].toUpperCase() + " dmg: 15", {
             fontSize: '21px',
             fontFamily: 'Arial',
             color: '#ffffff',
@@ -202,12 +205,12 @@ export default class DemoScene extends Phaser.Scene{
               y: 8,
             }
           })
-          uppercut_button.setScale(1, 1).setX(12).setY(485).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
+          uppercut_button.setScale(1, 1).setX(12).setY(335).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
             this.player2?.sprite.anims.play("uppercut")
             this.animationHandler();
           })
 
-         const crhook_btn = this.add.text(width / 4, height / 2, available_moves[9].toUpperCase(), {
+         const crhook_btn = this.add.text(width / 4, height / 2, available_moves[10].toUpperCase() + " dmg: 18", {
             fontSize: '21px',
             fontFamily: 'Arial',
             color: '#ffffff',
@@ -217,12 +220,12 @@ export default class DemoScene extends Phaser.Scene{
               y: 8,
             }
          })
-          crhook_btn.setScale(1, 1).setX(12).setY(515).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
+          crhook_btn.setScale(1, 1).setX(12).setY(370).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
           this.player2?.sprite.anims.play("crhook")
           this.animationHandler();
          })
 
-         const roundhouse_btn = this.add.text(width / 4, height / 2, available_moves[11].toUpperCase(), {
+         const roundhouse_btn = this.add.text(width / 4, height / 2, available_moves[11].toUpperCase() + " dmg: 20", {
           fontSize: '21px',
           fontFamily: 'Arial',
           color: '#ffffff',
@@ -232,7 +235,7 @@ export default class DemoScene extends Phaser.Scene{
             y: 8,
           }
        })
-        roundhouse_btn.setScale(1, 1).setX(12).setY(545).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
+        roundhouse_btn.setScale(1, 1).setX(12).setY(405).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
         this.player2?.sprite.anims.play("roundhouse")
         this.animationHandler();
        })
@@ -251,8 +254,8 @@ export default class DemoScene extends Phaser.Scene{
     //   this.animationHandler();
     //  })
 
-        const backToStartButton = this.add.text(width / 4, height / 2, 'Return to Input', {
-            fontSize: '48px',
+        const backToStartButton = this.add.text(width / 4, height / 2, 'BACK', {
+            fontSize: '32px',
             fontFamily: 'Arial',
             color: '#ffffff',
             backgroundColor: '#000000',
@@ -261,7 +264,7 @@ export default class DemoScene extends Phaser.Scene{
               y: 8,
             },
           }).setOrigin(0, -2);
-          backToStartButton.setScale(1, 1)
+          backToStartButton.setScale(1, 1).setX(660).setY(-100)
           backToStartButton.setInteractive({ useHandCursor: true });
           backToStartButton.on("pointerdown", ()=>{
             this.scene.start('InputScene', {
@@ -272,7 +275,27 @@ export default class DemoScene extends Phaser.Scene{
         this.animationHandler();
         
 
+        this.player2?.sprite.anims.play("turn");
+        this.animationHandler();
         
+    }
+
+    update(): void {
+
+      if(this.player2) {
+        if (this.player2.sprite.body && this.player2.sprite.body.velocity.x > 10) {
+          this.player2.sprite.setVelocityX(
+            this.player2.sprite.body && this.player2.sprite.body.velocity.x - 5
+          );
+        } else if (this.player2.sprite.body && this.player2.sprite.body.velocity.x < -10) {
+          this.player2.sprite.setVelocityX(
+            this.player2.sprite?.body && this.player2.sprite.body.velocity.x + 5
+          );
+        } else {
+          this.player2.sprite.setVelocityX(0);
+        }    
+      }
+
     }
 
     private animationHandler() {
@@ -392,5 +415,68 @@ export default class DemoScene extends Phaser.Scene{
         frameRate: 10,
         repeat: -1,
       })
+      this.anims.create({
+        key: "roll_forward",
+        frames: this.anims.generateFrameNumbers("roll", {
+          start: 0,
+          end: 10,
+        }),
+        frameRate: 20,
+        repeat: -1,
+      });
+      this.anims.create({
+        key: "roll_back",
+        frames: this.anims.generateFrameNumbers("roll", {
+          start: 10,
+          end: 0,
+        }),
+        frameRate: 20,
+        repeat: -1,
+      });
+      this.anims.create({
+        key: "dodge",
+        frames: this.anims.generateFrameNumbers("roll", {
+          start: 0,
+          end: 3,
+        }),
+        frameRate: 10,
+        repeat: -1,
+      });
+      this.anims.create({
+        key: "rest",
+        frames: this.anims.generateFrameNumbers("rest", {
+          start: 0,
+          end: 3,
+        }),
+        frameRate: 10,
+        repeat: -1,
+      });
+      this.anims.create({
+        key: "dashkick",
+        frames: this.anims.generateFrameNumbers("dash", {
+          start: 0,
+          end: 2,
+        }),
+        frameRate: 20,
+        repeat: -1,
+      });
+      this.anims.create({
+        key: "rising_uppercut",
+        frames: this.anims.generateFrameNumbers("specials", {
+          start: 0,
+          end: 4,
+        }),
+        frameRate: 10,
+        repeat: -1,
+      });
+      this.anims.create({
+        key: "fire_cannon",
+        frames: this.anims.generateFrameNumbers("specials", {
+          start: 5,
+          end: 11,
+        }),
+        frameRate: 10,
+        repeat: -1,
+      });
     }
 }
