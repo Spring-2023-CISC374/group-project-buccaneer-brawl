@@ -66,6 +66,15 @@ export default class SPInputScene extends Phaser.Scene {
     });
     instructionsButton.setScale(0.5, 0.5);
 
+    const backButton = this.add.text((width / 2), (height / 5), 'Back', {
+      fontSize: '48px',
+      fontFamily: 'Arial',
+      color: '#ffffff',
+      backgroundColor: '#000000',
+      padding: { left: 10, right: 10, top: 5, bottom: 5 },
+    });
+    backButton.setScale(0.5, 0.5);
+
     this.input.keyboard.clearCaptures();
 
     const input = document.createElement('textarea');
@@ -160,6 +169,20 @@ export default class SPInputScene extends Phaser.Scene {
     instructionsButton.setInteractive({ useHandCursor: true });
     instructionsButton.on("pointerdown", ()=>{
       this.transitionToInstructions();
+    })
+
+    backButton.setOrigin(0.2, -0.5);
+    backButton.setX(680)
+    backButton.setY(0)
+    backButton.setInteractive({ useHandCursor: true });
+    backButton.on("pointerdown", ()=>{
+      const inputElement1 = document.getElementById(
+        'myText1'
+      ) as HTMLInputElement;
+
+      inputElement1.remove();
+      
+      this.scene.start('GamemodeScene');    
     })
 
     if(this.levels===undefined) this.levels = 0;

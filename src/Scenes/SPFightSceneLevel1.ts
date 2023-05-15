@@ -74,10 +74,9 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
           .setSize(54, 108)
           .setOffset(70, 12)
           .setScale(2 * bossScale),
-        undefined,
+        100 * this.levels,
         0x0096ff
       );
-      this.player2.health *= this.levels;
     
 
 
@@ -544,6 +543,7 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
 
         this.player2.health -= this.player1.damage;
         //HP bar drops to percentage of max HP
+ 
         this.p2_healthBar?.animate(
           this.player2.health / this.player2.maxHealth
         );

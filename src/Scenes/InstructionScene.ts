@@ -115,6 +115,8 @@ export default class InstructionScene extends Phaser.Scene{
       }
     }).setOrigin(-0.5, -3.5);
     demoButton.setScale(1, 1)
+    demoButton.setY(200)
+    demoButton.setX(300)
     demoButton.setInteractive({useHandCursor: true});
     demoButton.on("pointerdown", ()=>{
       this.scene.start("DemoScene", {
