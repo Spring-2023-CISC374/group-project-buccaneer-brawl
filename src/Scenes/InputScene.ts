@@ -158,8 +158,8 @@ submitButton.setY(350)
         }
         //you dont have one attack and one movement command
         else if (!submitted_array.some(this.checkForAttacks) || !submitted_array.some(this.checkForMoves)){
-          console.log("moves", submitted_array.some(this.checkForMoves))
-          console.log("attacks", submitted_array.some(this.checkForAttacks))
+          //console.log("moves", submitted_array.some(this.checkForMoves))
+          //console.log("attacks", submitted_array.some(this.checkForAttacks))
 
           uniqueErrorMessage.setVisible(false);
           invalidErrorMessage.setVisible(false);
@@ -211,8 +211,8 @@ submitButton.setY(350)
       }
       //you dont have one move and one attack
       else if (!submitted_array.some(this.checkForAttacks) || !submitted_array.some(this.checkForMoves)){
-        console.log("moves", submitted_array.some(this.checkForMoves))
-        console.log("attacks", submitted_array.some(this.checkForAttacks))
+        //console.log("moves", submitted_array.some(this.checkForMoves))
+        //console.log("attacks", submitted_array.some(this.checkForAttacks))
 
         uniqueErrorMessage.setVisible(false);
         invalidErrorMessage.setVisible(false);
@@ -238,7 +238,7 @@ submitButton.setY(350)
       }
     });
     //Button finally appears goshdanit
-    console.log(this.player1Ready && this.player2Ready)
+    //console.log(this.player1Ready && this.player2Ready)
     
     const invalidErrorMessage = this.add.text(10, 500, 'Failed to save code. \n Make sure you have spelled all the commands correctly\nand that your list of commands is seperated by commas', {
       fontSize: '20px',

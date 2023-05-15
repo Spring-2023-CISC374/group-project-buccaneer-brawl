@@ -40,13 +40,15 @@ export default class registerInput extends Phaser.Scene {
             }
 
             if (input[this.key_index].startsWith("walk") || input[this.key_index].startsWith("jump") ||
-                input[this.key_index].startsWith("roll") || input[this.key_index].startsWith("dodge")) {
+                input[this.key_index].startsWith("roll") || input[this.key_index].startsWith("dodge") || input[this.key_index].startsWith("wait")) {
                 if (player) {
+                    player.attackType = "none";
                     player.movePlayer(260, input[this.key_index], opponent);
                 }
             }
             else if (input[this.key_index].startsWith("rest")) {
                 if (player) {
+                    player.attackType = "none";
                     player.playerRest();
                 }
             }

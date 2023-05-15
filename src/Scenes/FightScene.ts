@@ -564,16 +564,12 @@ export default class FightScene extends Phaser.Scene {
     const star = s as Phaser.Physics.Arcade.Image;
     star.disableBody(true, true);
 
-    if (this.player1 && this.player2) {
-      if (this.player1.sprite === player && this.player1.health < this.player1.maxHealth - 5) {
-        this.player1.health += 1;
-        this.p1_healthBar?.animate(this.player1.health / this.player1.maxHealth);
-
-      } else if (this.player2.sprite === player && this.player2.health < this.player2.maxHealth - 1) {
-        this.player2.health += 1;
-        this.p2_healthBar?.animate(this.player2.health / this.player2.maxHealth);
+      if (this.player1?.sprite === player) {
+       this.player1.coins++;
+      } else if(this.player2?.sprite === player) {
+        this.player2.coins++;
       }
-    }
+    
   }
   private handleHitCannonball(
     player: Phaser.GameObjects.GameObject,
@@ -584,7 +580,7 @@ export default class FightScene extends Phaser.Scene {
     cannonball.setVelocity(0, 0);
     if (this.player1 && this.player2) {
       if (this.player1.sprite === player) {
-        console.log("cannon hit");
+        //console.log("cannon hit");
         this.player1.health -= 10;
         this.player1.sprite.setTint(0xff0000);
         if (this.player1.sprite.x < this.player2.sprite.x) {
@@ -599,7 +595,7 @@ export default class FightScene extends Phaser.Scene {
 
         setTimeout(() => {
           if (this.player1) {
-            this.player1.sprite.setTint(0x000000);
+            this.player1.sprite.setTint(0xffffff);
           }
         }, 300);
       } else {
@@ -640,9 +636,9 @@ export default class FightScene extends Phaser.Scene {
       (this.player1?.attackType === "hook" &&
         this.player2?.attackType === "kick")
    
-    const priorityTie = this.player1?.action === this.player2?.action;
+    const priorityTie = this.player1?.action === this.player2?.action || !this.player2?.action.startsWith("attack");
     //const player2priority = (this.player2?.attackType === "punch" && this.player1?.attackType === "hook") || (this.player2?.attackType === "kick" && this.player1?.attackType === "punch") || (this.player2?.attackType === "hook" && this.player1?.attackType === "kick")
-
+    console.log("p1 atkType: ", this.player1?.attackType + " p2 atkType: ", this.player2?.attackType);
     if (this.player1 && this.player2) {
       if (
         this.player1.action.startsWith("attack") &&
@@ -725,11 +721,11 @@ export default class FightScene extends Phaser.Scene {
             who_won: "RedBeard",
           });
         }
-        console.log(this.player1.spamQueue);
-        console.log("damage", this.player1.damage);
+        //console.log(this.player1.spamQueue);
+        //console.log("damage", this.player1.damage);
 
         this.player2.health -= this.player1.damage;
-        console.log("P1 DMG: ", this.player1.damage);
+        //console.log("P1 DMG: ", this.player1.damage);
         //HP bar drops to percentage of max HP
         this.p2_healthBar?.animate(
           this.player2.health / this.player2.maxHealth
@@ -797,7 +793,7 @@ export default class FightScene extends Phaser.Scene {
           });
         }
         this.player1.health -= this.player2.damage;
-        console.log("P2 DMG: ", this.player2.damage);
+        //console.log("P2 DMG: ", this.player2.damage);
         //HP bar drops to percentage of max HP
         this.p1_healthBar?.animate(
           this.player1.health / this.player1.maxHealth
