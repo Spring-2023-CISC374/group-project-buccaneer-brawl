@@ -51,7 +51,7 @@ export default class ResultScene extends Phaser.Scene {
     const pirate1Text = this.add.text(
       width / 1.2,
       height / 2.5,
-      `RedBeard: ${this.who_won === "RedBeard" ? "W" : "L"} BluBeard has scurvy.    '`,
+      `RedBeard: ${this.who_won === "RedBeard" ? "Winner!\n RedBeard can now buy a new pirate ship" : "Loser..\n RedBeard will now apply for a new job."}`,
       {
         fontSize: '32px',
         fontFamily: 'Arial',
@@ -64,7 +64,7 @@ export default class ResultScene extends Phaser.Scene {
     const pirate2Text = this.add.text(
       width / 1.2,
       height / 2,
-      `BluBeard: ${this.who_won === "BluBeard" ? "W" : "L"} RedBeard walked the plank.`,
+      `BluBeard: ${this.who_won === "BluBeard" ? "Winner!    \n BluBeard went back to treasure hunting" : "Loser..\n BluBeard now regrets fighting"} `,
       {
         fontSize: '32px',
         fontFamily: 'Arial',

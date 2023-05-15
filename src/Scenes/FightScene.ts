@@ -26,6 +26,14 @@ export default class FightScene extends Phaser.Scene {
   private roundTimerdelta = 0;
   private timeNumber?: number;
   private timerText?: Phaser.GameObjects.Text;
+  private p1_curMoveText?: Phaser.GameObjects.Text;
+  private p2_curMoveText?: Phaser.GameObjects.Text;
+
+  private p1_movesText?: Phaser.GameObjects.Text;
+  private p2_movesText?: Phaser.GameObjects.Text;
+
+  private P1_keyIndex = 0;
+  private P2_keyIndex = 0;
 
   init(data: {
     savedTextP1: string;
@@ -74,6 +82,8 @@ export default class FightScene extends Phaser.Scene {
 
     this.makeHealthBar(14, 60, 300, true);
     this.makeHealthBar(450, 60, 300, false);
+    //OpenHotSauce();
+    //this.OpenHotSauce();
 
     this.animationHandler();
 
@@ -139,18 +149,11 @@ export default class FightScene extends Phaser.Scene {
       undefined,
       this
     );
-    this.add.text(16, 16, 'Player 1 HP: 0', {
-      fontSize: '30px',
-      color: '#000',
-    });
-    this.add.text(510, 16, 'Player 2 HP: 0', {
-      fontSize: '30px',
-      color: '#000',
-    });
 
-    this.timerText = this.add.text(316, 16, "Time: 99", {
+    this.timerText = this.add.text(316, 16, "Time: 49", {
       fontSize: "30px",
       color: "#000",
+      backgroundColor: "#ede661"
     });
 
     this.player1.sprite.anims.play("turn", true);
@@ -159,8 +162,57 @@ export default class FightScene extends Phaser.Scene {
     this.registerOne = new RegisterInput();
     this.registerTwo = new RegisterInput();
 
-    this.roundTimer = 99;
+    this.roundTimer = 49;
     this.roundTimerdelta = 0;
+
+    this.add.text(16, 16, `RedBeard:`, {
+      fontSize: "30px",
+      color: "#ffffff",
+      backgroundColor: "#a83232",
+    });
+
+    this.add.text(510, 16, `BluBeard:`, {
+      fontSize: "30px",
+      color: "#ffffff",
+      backgroundColor: "#3264a8",
+    });
+
+    this.p1_curMoveText = this.add.text(16, 16, `Player 1 Move`, {
+      fontSize: "30px",
+      color: "#ffffff",
+      backgroundColor: "#a83232",
+    });
+
+    this.p2_curMoveText = this.add.text(510, 16, `Player 2 Move`, {
+      fontSize: "30px",
+      color: "#ffffff",
+      backgroundColor: "#3264a8",
+    });
+
+    //console.log(this.p1_responseText.slice(this.P1_keyIndex, this.P1_keyIndex + 5));
+    const concatenatedTextP1 =
+      this.p1_responseText !== undefined
+        ? this.p1_responseText
+            .slice(this.P1_keyIndex, this.P1_keyIndex + 5)
+            .join("\n")
+        : "";
+    const concatenatedTextP2 =
+      this.p2_responseText !== undefined
+        ? this.p2_responseText
+            .slice(this.P2_keyIndex, this.P2_keyIndex + 5)
+            .join("\n")
+        : "";
+
+    this.p1_movesText = this.add.text(16, 76, `${concatenatedTextP1}`, {
+      fontSize: "15px",
+      color: "#ffffff",
+      backgroundColor: "#a83232",
+    });
+    this.p2_movesText = this.add.text(510, 76, `${concatenatedTextP2}`, {
+      fontSize: "15px",
+      color: "#ffffff",
+      backgroundColor: "#3264a8",
+    });
   }
 
   update(time: number, delta: number) {
@@ -175,31 +227,46 @@ export default class FightScene extends Phaser.Scene {
       this.p1_responseText = ["random"];
     }
 
-    this.registerOne?.validInput(
-      this.p1_responseText,
-      delta,
-      this.player1,
-      this.player2
-    );
+    if (this.registerOne !== undefined) {
+      this.P1_keyIndex = this.registerOne?.validInput(
+        this.p1_responseText,
+        delta,
+        this.player1,
+        this.player2
+      );
+    }
+
     if (this.p2_responseText === undefined) {
       this.p2_responseText = ["random"];
     }
-    this.registerTwo?.validInput(
-      this.p2_responseText,
-      delta,
-      this.player2,
-      this.player1
-    );
+
+    if (this.registerTwo !== undefined) {
+      this.P2_keyIndex = this.registerTwo?.validInput(
+        this.p2_responseText,
+        delta,
+        this.player2,
+        this.player1
+      );
+    }
+
+    this.displayMoveText();
+    this.switchPlayerSides();
 
     if (this.player1 && this.player2) {
-      if(this.player1.action === "attack/fire_cannon" && this.player1.timer < 10 && !this.player2.invulnerable) {
-          this.fireCannon(this.player1, this.player2);         
-      } else if (this.player2.action === "attack/fire_cannon" && this.player2.timer < 10 && !this.player1.invulnerable) {
+      if (
+        this.player1.action === "attack/fire_cannon" &&
+        this.player1.timer < 10 &&
+        !this.player2.invulnerable
+      ) {
+        this.fireCannon(this.player1, this.player2);
+      } else if (
+        this.player2.action === "attack/fire_cannon" &&
+        this.player2.timer < 10 &&
+        !this.player1.invulnerable
+      ) {
         this.fireCannon(this.player2, this.player1);
       }
     }
-
-
 
     //Alter both player's traction and fall speed.
     this.player1?.setPlayerTraction();
@@ -216,30 +283,6 @@ export default class FightScene extends Phaser.Scene {
       this.player2.performNextAction(delta);
     }
 
-    if (this.player1 && this.player2) {
-      if(this.player1.action !== "fire_cannon") {
-        if (this.player1.sprite.body.x < this.player2.sprite.body.x) {
-          this.player1.sprite.flipX = false;
-          this.player2.sprite.flipX = true;
-  
-          this.player1.sprite.setOffset(0, 12);
-          this.player2.sprite.setOffset(70, 12);
-          this.attackRanges(this.player1, true);
-          this.attackRanges(this.player2, false);
-        } else {
-          this.player1.sprite.flipX = true;
-          this.player2.sprite.flipX = false;
-  
-          this.player1.sprite.setOffset(70, 12);
-          this.player2.sprite.setOffset(0, 12);
-          this.attackRanges(this.player1, false);
-          this.attackRanges(this.player2, true);
-        }
-
-      }
-
-    }
-
     if (this.player1) {
       this.player1.fallCounter += delta;
     }
@@ -248,6 +291,192 @@ export default class FightScene extends Phaser.Scene {
       this.player2.fallCounter += delta;
     }
 
+    this.checkHitstunLanding();
+
+    //Continously see if player1 is colliding with player2
+    if (this.player1 && this.player2) {
+      this.physics.overlap(
+        this.player1.sprite,
+        this.player2.sprite,
+        this.hitCallback,
+        undefined,
+        this
+      );
+    }
+
+    this.decrementRoundTimer(delta);
+
+    this.restRecoverHealth();
+  }
+
+  private restRecoverHealth() {
+    if (this.player1 && this.player2) {
+      if (
+        this.player1.action === "rest" &&
+        this.player1.health < this.player1.maxHealth
+      ) {
+        const rng = Phaser.Math.Between(0, 3);
+
+        if (rng === 0) {
+          this.player1.health++;
+          this.p1_healthBar?.animate(
+            this.player1.health / this.player1.maxHealth
+          );
+        }
+      }
+      if (
+        this.player2.action === "rest" &&
+        this.player2.health < this.player2.maxHealth
+      ) {
+        const rng = Phaser.Math.Between(0, 3);
+
+        if (rng === 0) {
+          this.player2.health++;
+          this.p2_healthBar?.animate(
+            this.player2.health / this.player2.maxHealth
+          );
+        }
+      }
+    }
+  }
+
+  private displayMoveText() {
+    if (this.p1_responseText === undefined) return;
+    if (this.p2_responseText === undefined) return;
+
+    const concatenatedTextP1 =
+      this.p1_responseText !== undefined
+        ? this.p1_responseText
+            .slice(this.P1_keyIndex, this.P1_keyIndex + 5)
+            .join("\n")
+        : "";
+    const concatenatedTextP2 =
+      this.p2_responseText !== undefined
+        ? this.p2_responseText
+            .slice(this.P2_keyIndex, this.P2_keyIndex + 5)
+            .join("\n")
+        : "";
+
+    const p1IndexShown =
+      this.P1_keyIndex - 1 <= -1
+        ? this.p1_responseText.length - 1
+        : this.P1_keyIndex - 1;
+    const p2IndexShown =
+      this.P2_keyIndex - 1 <= -1
+        ? this.p2_responseText.length - 1
+        : this.P2_keyIndex - 1;
+
+    this.p1_curMoveText?.setText(`${this.p1_responseText[p1IndexShown]}`);
+    this.p2_curMoveText?.setText(`${this.p2_responseText[p2IndexShown]}`);
+
+    this.p1_movesText?.setText(`${concatenatedTextP1}`);
+    this.p2_movesText?.setText(`${concatenatedTextP2}`);
+  }
+
+  private switchPlayerSides() {
+    if (this.player1 && this.player2) {
+      if (this.player1.sprite.body.x < this.player2.sprite.body.x) {
+        this.player1.sprite.flipX = false;
+        this.player2.sprite.flipX = true;
+
+        this.player1.sprite.setOffset(0, 12);
+        this.player2.sprite.setOffset(70, 12);
+        this.attackRanges(this.player1, true);
+        this.attackRanges(this.player2, false);
+
+        if (
+          this.p1_curMoveText !== undefined &&
+          this.p1_movesText !== undefined
+        ) {
+          this.p1_curMoveText.x = this.player1.sprite.x - 100;
+          this.p1_curMoveText.y = this.player1.sprite.y - 240;
+
+          this.p1_movesText.x = this.player1.sprite.x - 100;
+          this.p1_movesText.y = this.player1.sprite.y - 200;
+        }
+
+        if (
+          this.p2_curMoveText !== undefined &&
+          this.p2_movesText !== undefined
+        ) {
+          this.p2_curMoveText.x = this.player2.sprite.x;
+          this.p2_curMoveText.y = this.player2.sprite.y - 240;
+
+          this.p2_movesText.x = this.player2.sprite.x;
+          this.p2_movesText.y = this.player2.sprite.y - 200;
+        }
+      } else {
+        this.player1.sprite.flipX = true;
+        this.player2.sprite.flipX = false;
+
+        this.player1.sprite.setOffset(70, 12);
+        this.player2.sprite.setOffset(0, 12);
+        this.attackRanges(this.player1, false);
+        this.attackRanges(this.player2, true);
+
+        if (
+          this.p1_curMoveText !== undefined &&
+          this.p1_movesText !== undefined
+        ) {
+          this.p1_curMoveText.x = this.player1.sprite.x;
+          this.p1_curMoveText.y = this.player1.sprite.y - 240;
+
+          this.p1_movesText.x = this.player1.sprite.x;
+          this.p1_movesText.y = this.player1.sprite.y - 200;
+        }
+
+        if (
+          this.p2_curMoveText !== undefined &&
+          this.p2_movesText !== undefined
+        ) {
+          this.p2_curMoveText.x = this.player2.sprite.x - 100;
+          this.p2_curMoveText.y = this.player2.sprite.y - 240;
+
+          this.p2_movesText.x = this.player2.sprite.x - 100;
+          this.p2_movesText.y = this.player2.sprite.y - 200;
+        }
+      }
+    }
+  }
+
+  private attackRanges(player: Player, leftside: boolean) {
+    const offset = leftside ? 0 : 80;
+    const rangeMul = leftside ? 1 : -1;
+
+    const moveType = player.action.split("/")[1];
+
+    if (!player.hitstun) {
+      if (
+        moveType === "crhook" &&
+        player.timer > 200 &&
+        moveType !== undefined
+      ) {
+        player.action = "attack/" + moveType;
+      } else if (
+        moveType === "roundhouse" &&
+        player.timer > 400 &&
+        moveType !== undefined
+      ) {
+        player.action = "attack/" + moveType;
+      } else if (
+        moveType === "uppercut" &&
+        player.timer > 50 &&
+        moveType !== undefined
+      ) {
+        player.action = "attack/" + moveType;
+      }
+
+      if (moveType === "crhook" && player.timer > 200) {
+        player.sprite.setOffset(30 * rangeMul + offset, 12);
+      } else if (moveType === "roundhouse" && player.timer > 400) {
+        player.sprite.setOffset(30 * rangeMul + offset, 12);
+      } else if (moveType !== "crhook" && moveType !== "roundhouse") {
+        player.sprite.setOffset(30 * rangeMul + offset, 12);
+      }
+    }
+  }
+
+  private checkHitstunLanding() {
     if (this.player1 && this.player2) {
       if (this.player1.fallCounter >= this.player1.fallTime) {
         if (this.player1.fallen) {
@@ -292,58 +521,8 @@ export default class FightScene extends Phaser.Scene {
         }
       }
     }
-
-    //Continously see if player1 is colliding with player2
-    if (this.player1 && this.player2) {
-      this.physics.overlap(
-        this.player1.sprite,
-        this.player2.sprite,
-        this.hitCallback,
-        undefined,
-        this
-      );
-    }
-
-    this.decrementRoundTimer(delta);
   }
 
-  private attackRanges(player: Player, leftside: boolean) {
-    const offset = leftside ? 0 : 80;
-    const rangeMul = leftside ? 1 : -1;
-
-    const moveType = player.action.split("/")[1];
-
-    if (!player.hitstun) {
-      if (
-        moveType === "crhook" &&
-        player.timer > 200 &&
-        moveType !== undefined
-      ) {
-        player.action = "attack/" + moveType;
-      } else if (
-        moveType === "roundhouse" &&
-        player.timer > 400 &&
-        moveType !== undefined
-      ) {
-        player.action = "attack/" + moveType;
-      } else if (
-        moveType === "uppercut" &&
-        player.timer > 50 &&
-        moveType !== undefined
-      ) {
-        player.action = "attack/" + moveType;
-      }
-
-      if (moveType === "crhook" && player.timer > 200) {
-        player.sprite.setOffset(30 * rangeMul + offset, 12);
-      } else if (moveType === "roundhouse" && player.timer > 400) {
-        player.sprite.setOffset(30 * rangeMul + offset, 12);
-      } 
-       else if (moveType !== "crhook" && moveType !== "roundhouse") {
-        player.sprite.setOffset(30 * rangeMul + offset, 12);
-      }
-    }
-  }
   //Creates a health bar at x,y with a lenght of fullWidth. The created health bar will be treated as player1/player2's health bar when p1 is true/false respectively
   private makeHealthBar(x: number, y: number, fullWidth: number, p1: boolean) {
     // background shadow
@@ -385,13 +564,12 @@ export default class FightScene extends Phaser.Scene {
     const star = s as Phaser.Physics.Arcade.Image;
     star.disableBody(true, true);
 
-    if (this.player1 && this.player2) {
-      if (this.player1.sprite === player) {
-        this.player1.coins++;
-      } else {
+      if (this.player1?.sprite === player) {
+       this.player1.coins++;
+      } else if(this.player2?.sprite === player) {
         this.player2.coins++;
       }
-    }
+    
   }
   private handleHitCannonball(
     player: Phaser.GameObjects.GameObject,
@@ -399,27 +577,45 @@ export default class FightScene extends Phaser.Scene {
   ) {
     const cannonball = b as Phaser.Physics.Arcade.Image;
     cannonball.disableBody(true, true);
-    cannonball.setVelocity(0,0);
+    cannonball.setVelocity(0, 0);
     if (this.player1 && this.player2) {
       if (this.player1.sprite === player) {
-        console.log("cannon hit");
-          this.player1.health -= 10;
-          if(this.player1.sprite.x < this.player2.sprite.x) {
-            this.player1.sprite.setVelocityX(200)
-          } else {
-            this.player1.sprite.setVelocityX(-300)
+        //console.log("cannon hit");
+        this.player1.health -= 10;
+        this.player1.sprite.setTint(0xff0000);
+        if (this.player1.sprite.x < this.player2.sprite.x) {
+          this.player1.sprite.setVelocityX(200);
+        } else {
+          this.player1.sprite.setVelocityX(-300);
+        }
+        this.player1.sprite.setVelocityY(-380);
+        this.p1_healthBar?.animate(
+          this.player1.health / this.player1.maxHealth
+        );
+
+        setTimeout(() => {
+          if (this.player1) {
+            this.player1.sprite.setTint(0xffffff);
           }
-          this.player1.sprite.setVelocityY(-380);
-          this.p1_healthBar?.animate(this.player1.health / this.player1.maxHealth);
+        }, 300);
       } else {
         this.player2.health -= 10;
-        if(this.player2.sprite.x < this.player1.sprite.x) {
-          this.player2.sprite.setVelocityX(200)
+        this.player2.sprite.setTint(0x0fffcb);
+        if (this.player2.sprite.x < this.player1.sprite.x) {
+          this.player2.sprite.setVelocityX(200);
         } else {
-          this.player2.sprite.setVelocityX(-300)
+          this.player2.sprite.setVelocityX(-300);
         }
         this.player2.sprite.setVelocityY(-380);
-        this.p2_healthBar?.animate(this.player2.health / this.player2.maxHealth);        
+        this.p2_healthBar?.animate(
+          this.player2.health / this.player2.maxHealth
+        );
+
+        setTimeout(() => {
+          if (this.player2) {
+            this.player2.sprite.setTint(0x0096ff);
+          }
+        }, 300);
       }
       cannonball.destroy(true);
     }
@@ -432,40 +628,50 @@ export default class FightScene extends Phaser.Scene {
     const userSprite = user as Phaser.Physics.Arcade.Sprite;
     const targetSprite = target as Phaser.Physics.Arcade.Sprite;
 
-    // let player1priority = this.player1?.attackType === "punch" && this.player2?.attackType === "hook"
-
+    const player1priority =
+      (this.player1?.attackType === "punch" &&
+        this.player2?.attackType === "hook") ||
+      (this.player1?.attackType === "kick" &&
+        this.player2?.attackType === "punch") ||
+      (this.player1?.attackType === "hook" &&
+        this.player2?.attackType === "kick")
+   
+    const priorityTie = this.player1?.action === this.player2?.action || !this.player2?.action.startsWith("attack");
+    //const player2priority = (this.player2?.attackType === "punch" && this.player1?.attackType === "hook") || (this.player2?.attackType === "kick" && this.player1?.attackType === "punch") || (this.player2?.attackType === "hook" && this.player1?.attackType === "kick")
+    console.log("p1 atkType: ", this.player1?.attackType + " p2 atkType: ", this.player2?.attackType);
     if (this.player1 && this.player2) {
       if (
         this.player1.action.startsWith("attack") &&
         this.player1.cooldown &&
         !this.player1.hitstun &&
-        !this.player2.invulnerable
+        !this.player2.invulnerable &&
+        (player1priority || priorityTie)
       ) {
         this.player1.spamQueue.push(this.player1.action.split("/")[1]);
         if (this.player1.spamQueue.length > 10) this.player1.spamQueue.shift();
 
-        let spamCount = this.player1.spamQueue.reduce(
+        let spamCount_P1 = this.player1.spamQueue.reduce(
           (acc, cur) =>
             cur === this.player1?.action.split("/")[1] ? acc + 1 : acc,
           0
         );
-        if (spamCount <= 0) spamCount = 1;
-        this.player1.damage /= spamCount;
+        if (spamCount_P1 <= 0) spamCount_P1 = 1;
+        this.player1.damage /= spamCount_P1;
 
         this.player2.sprite.setTint(0x0fffcb); //0xff0000
 
         this.player1.setCooldown(false);
 
-        if (spamCount < 5) {
+        if (spamCount_P1 < 5 && this.player1.action !== this.player2.action) {
           this.player2.setHitstun(true);
 
           if (this.player1.sprite.body.x < this.player2.sprite.body.x) {
-            userSprite.setVelocityX(-260 * (spamCount / 3));
+            userSprite.setVelocityX(-260 * (spamCount_P1 / 3));
             targetSprite.setVelocityX(this.player1.knockbackX);
             targetSprite.setVelocityY(-this.player1.knockbackY);
             targetSprite.anims.play("hit", true);
           } else {
-            userSprite.setVelocityX(260 * (spamCount / 3));
+            userSprite.setVelocityX(260 * (spamCount_P1 / 3));
             targetSprite.setVelocityX(-this.player1.knockbackX);
             targetSprite.setVelocityY(-this.player1.knockbackY);
             targetSprite.anims.play("hit", true);
@@ -515,10 +721,11 @@ export default class FightScene extends Phaser.Scene {
             who_won: "RedBeard",
           });
         }
-        console.log(this.player1.spamQueue);
-        console.log("damage", this.player1.damage);
+        //console.log(this.player1.spamQueue);
+        //console.log("damage", this.player1.damage);
 
         this.player2.health -= this.player1.damage;
+        //console.log("P1 DMG: ", this.player1.damage);
         //HP bar drops to percentage of max HP
         this.p2_healthBar?.animate(
           this.player2.health / this.player2.maxHealth
@@ -528,32 +735,32 @@ export default class FightScene extends Phaser.Scene {
         this.player2.action.startsWith("attack") &&
         this.player2.cooldown &&
         !this.player2.hitstun &&
-        !this.player1.invulnerable
+        !this.player1.invulnerable && (!player1priority || priorityTie)
       ) {
         this.player2.spamQueue.push(this.player2.action.split("/")[1]);
         if (this.player2.spamQueue.length > 10) this.player2.spamQueue.shift();
 
-        let spamCount = this.player2.spamQueue.reduce(
+        let spamCount_P2 = this.player2.spamQueue.reduce(
           (acc, cur) =>
             cur === this.player2?.action.split("/")[1] ? acc + 1 : acc,
           0
         );
-        if (spamCount <= 0) spamCount = 1;
-        this.player2.damage /= spamCount;
+        if (spamCount_P2 <= 0) spamCount_P2 = 1;
+        this.player2.damage /= spamCount_P2;
 
         this.player2.setCooldown(false);
         this.player1.sprite.setTint(0xff0000);
 
-        if (spamCount < 5) {
+        if (spamCount_P2 < 5 && this.player1.action !== this.player2.action) {
           this.player1.setHitstun(true);
 
           if (this.player1.sprite.body.x > this.player2.sprite.body.x) {
-            targetSprite.setVelocityX(-260 * (spamCount / 3));
+            targetSprite.setVelocityX(-260 * (spamCount_P2 / 3));
             userSprite.setVelocityX(this.player2.knockbackX);
             userSprite.setVelocityY(-this.player2.knockbackY);
             userSprite.anims.play("hit", true);
           } else {
-            targetSprite.setVelocityX(260 * (spamCount / 3));
+            targetSprite.setVelocityX(260 * (spamCount_P2 / 3));
 
             userSprite.setVelocityX(-this.player2.knockbackX);
             userSprite.setVelocityY(-this.player2.knockbackY);
@@ -584,9 +791,9 @@ export default class FightScene extends Phaser.Scene {
             const child = c as Phaser.Physics.Arcade.Image;
             child.enableBody(true, child.x, 0, true, true);
           });
-  
         }
         this.player1.health -= this.player2.damage;
+        //console.log("P2 DMG: ", this.player2.damage);
         //HP bar drops to percentage of max HP
         this.p1_healthBar?.animate(
           this.player1.health / this.player1.maxHealth
@@ -629,24 +836,30 @@ export default class FightScene extends Phaser.Scene {
   }
 
   private fireCannon(user: Player, target: Player) {
-      //user.coins -= 20;
-      if (user.sprite.x < target.sprite.x) {
-        //fire to the left
-        const cannonball: Phaser.Physics.Arcade.Image =
-          this.cannonballs?.create(user.sprite.x, user.sprite.y + 20, "cannonball");
-          cannonball.setScale(2, 2);
-          cannonball.setCollideWorldBounds(true);
-          cannonball.setVelocityX(1000);
-          cannonball.setGravityY(10);
-      } else {
-        //fire to the right
-        const cannonball: Phaser.Physics.Arcade.Image =
-          this.cannonballs?.create(user.sprite.x, user.sprite.y + 20, "cannonball");
-        cannonball.setScale(2, 2);
-        cannonball.setCollideWorldBounds(true);
-        cannonball.setVelocityX(-1000);
-        cannonball.setGravityY(10);
-      }
+    //user.coins -= 20;
+    if (user.sprite.x < target.sprite.x) {
+      //fire to the left
+      const cannonball: Phaser.Physics.Arcade.Image = this.cannonballs?.create(
+        user.sprite.x,
+        user.sprite.y + 20,
+        "cannonball"
+      );
+      cannonball.setScale(2, 2);
+      cannonball.setCollideWorldBounds(true);
+      cannonball.setVelocityX(1000);
+      cannonball.setGravityY(10);
+    } else {
+      //fire to the right
+      const cannonball: Phaser.Physics.Arcade.Image = this.cannonballs?.create(
+        user.sprite.x,
+        user.sprite.y + 20,
+        "cannonball"
+      );
+      cannonball.setScale(2, 2);
+      cannonball.setCollideWorldBounds(true);
+      cannonball.setVelocityX(-1000);
+      cannonball.setGravityY(10);
+    }
   }
 
   decrementRoundTimer(delta: number) {
@@ -663,6 +876,8 @@ export default class FightScene extends Phaser.Scene {
 
       if (this.player1 && this.player2) {
         if (this.player1?.health < this.player2?.health) winner = "BluBeard";
+
+        if (this.player1?.health === this.player2?.health) winner = "TIE";
       }
 
       this.scene.start("ResultScene", {
