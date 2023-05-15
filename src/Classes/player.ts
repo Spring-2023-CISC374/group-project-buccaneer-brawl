@@ -255,7 +255,7 @@ export default class Player {
         this.knockbackX = 360;
         this.knockbackY = 460;
         this.sprite.setVelocityX(dist);
-        this.attackType = "dashkick";
+        this.attackType = "kick";
         break;
       case "rising_uppercut":
         this.damage = 22;
@@ -263,13 +263,13 @@ export default class Player {
         this.knockbackY = 860;
         this.sprite.setVelocityX(dist / 3);
         this.sprite.setVelocityY(-560);
-        this.attackType = "rising_uppercut";
+        this.attackType = "punch";
         break;
       case "fire_cannon":
         this.damage = 0;
         this.knockbackX = 180;
         this.knockbackY = 0;
-        this.attackType = "fire_cannon";
+        this.attackType = "hook";
         break;
       default:
         break;

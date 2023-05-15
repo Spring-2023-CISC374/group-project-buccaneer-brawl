@@ -88,6 +88,12 @@ export default class InstructionScene extends Phaser.Scene{
         color: '#ffffff',
         backgroundColor: '#000000',}).setOrigin(0.5, -4);
 
+        this.add.text(width/2, height/2, "Know your moves! punches beats hooks, kicks beat punches, and hooks beats kicks!", {
+          fontSize: '20px',
+          fontFamily: 'Arial',
+          color: '#ffffff',
+          backgroundColor: '#000000',}).setOrigin(0.5, -7);
+
       const backToStartButton = this.add.text(width / 4, height / 2, 'Start', {
         fontSize: '48px',
         fontFamily: 'Arial',
@@ -97,7 +103,7 @@ export default class InstructionScene extends Phaser.Scene{
           x: 16,
           y: 8,
         },
-      }).setOrigin(0, -2);
+      }).setOrigin(0, -3);
       backToStartButton.setScale(1, 1)
       backToStartButton.setInteractive({ useHandCursor: true });
       backToStartButton.on("pointerdown", ()=>{
@@ -117,9 +123,8 @@ export default class InstructionScene extends Phaser.Scene{
         x: 16,
         y: 8
       }
-    }).setOrigin(-0.5, -3.5);
+    }).setOrigin(-0.5, -3);
     demoButton.setScale(1, 1)
-    demoButton.setY(200)
     demoButton.setX(300)
     demoButton.setInteractive({useHandCursor: true});
     demoButton.on("pointerdown", ()=>{

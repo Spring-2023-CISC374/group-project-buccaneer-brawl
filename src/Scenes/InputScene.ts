@@ -163,8 +163,8 @@ export default class InputScene extends Phaser.Scene {
         }
         //you dont have one attack and one movement command
         else if (!submitted_array.some(this.checkForAttacks) || !submitted_array.some(this.checkForMoves)){
-          console.log("moves", submitted_array.some(this.checkForMoves))
-          console.log("attacks", submitted_array.some(this.checkForAttacks))
+          //console.log("moves", submitted_array.some(this.checkForMoves))
+          //console.log("attacks", submitted_array.some(this.checkForAttacks))
 
           uniqueErrorMessage.setVisible(false);
           invalidErrorMessage.setVisible(false);
@@ -305,6 +305,8 @@ export default class InputScene extends Phaser.Scene {
 
   startGame() {
     if(this.player1Ready && this.player2Ready) {
+      this.player2Ready = false;
+      this.player1Ready = false;
       this.scene.start('FightScene', {
         savedTextP1: this.savedTextP1,
         savedTextP2: this.savedTextP2,
