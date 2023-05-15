@@ -10,6 +10,7 @@ export default class InputScene extends Phaser.Scene {
   private moveMap: Map<string, string>;
   private player1Ready: boolean;
   private player2Ready: boolean;
+  private player_text?: Phaser.GameObjects.Text;
 
   constructor() {
     super({ key: 'InputScene' });
@@ -29,23 +30,24 @@ export default class InputScene extends Phaser.Scene {
   init(data: {
     savedTextP1: string;
     savedTextP2: string;
+    player1Ready: boolean;
   }) {
     this.savedTextP1 = data.savedTextP1;
     this.savedTextP2 = data.savedTextP2;
+    this.player1Ready = data.player1Ready;
   }
 
   create() {
     //this.cameras.main.setBackgroundColor('#ffffff');
     const { width, height } = this.scale;
     const titlescreen = this.add.sprite(400, 330, 'titlescreen');
-    
+    var rectangle = this.add.rectangle(500, 310, 225, 460, 0x000000);
+    rectangle.setVisible(true);
+
     titlescreen.scaleX = 3.5;
     titlescreen.scaleY = 1.5;
     document.getElementById(
       'myText1'
-    ) as HTMLInputElement;
-    document.getElementById(
-      'myText2'
     ) as HTMLInputElement;
 
     this.add.text(10, 10, 'Enter your PirateScript:', {
@@ -55,14 +57,43 @@ export default class InputScene extends Phaser.Scene {
     });
 
     const movelist_text = available_moves.join('\n');
+    /*
+    const available_moves_p1 = this.add.text(240, 100, `Available Moves:\n${movelist_text}`, {
+      fontSize: '15px',
+      color: '#ffffff',
+      backgroundColor: '#000000',
+    });*/
+    for (let i = 0, y = 85; i < available_moves.length; i++, y += 24 ){
+      let text = this.add.text(400, y, available_moves[i], {
+        fontSize: '20px',
+        color: '#ffffff',
+        backgroundColor: '#000000',
+      }).setInteractive({ useHandCursor: true });
+      text.on('pointerdown', () => {
+        let inputElement;
 
-    this.add.text(240, 100, `Available Moves:\n${movelist_text}`, {
-      fontSize: '10px',
+        inputElement = document.getElementById(
+          'myText1'
+        ) as HTMLInputElement;
+        
+        let original_text = inputElement.value
+        if (inputElement.value != ''){
+          inputElement.value = original_text + `, ${available_moves[i]}`;
+        }
+        else{
+          inputElement.value = available_moves[i];
+        }
+      });
+    }
+/*
+    this.add.text(700, 100, `Available Moves:\n${movelist_text}`, {
+      fontSize: '15px',
       color: '#ffffff',
       backgroundColor: '#000000',
     });
+*/
 
-    this.add.text(50, 60, 'Player 1', {
+    this.player_text = this.add.text(100, 120, 'Player 1', {
       fontSize: '24px',
       color: '#ffffff',
       backgroundColor: '#000000',
@@ -92,49 +123,23 @@ export default class InputScene extends Phaser.Scene {
     input.id = 'myText1';
     input.className = 'css-class-name';
     input.style.position = 'absolute';
-    input.style.left = '50px';
-    input.style.top = '90px';
+    input.style.left = '100px';
+    input.style.top = '150px';
     input.style.width = '150px';
     input.style.height = '200px';
     input.style.backgroundColor = "black";
     input.style.color = "white";
     document.body.appendChild(input);
     if (this.savedTextP1 != undefined){
+      if (!this.player1Ready){
       input.innerText = this.savedTextP1;
-    }
-    this.add.text(350, 60, 'Player 2', {
-      fontSize: '24px',
-      color: '#ffffff',
-      backgroundColor: '#000000',
-    });
-
-    const inputP2 = document.createElement('textarea');
-    inputP2.id = 'myText2';
-    inputP2.className = 'css-class-name';
-    inputP2.style.position = 'absolute';
-    inputP2.style.left = '350px';
-    inputP2.style.top = '90px';
-    inputP2.style.width = '150px';
-    inputP2.style.height = '200px';
-    inputP2.style.backgroundColor = "black";
-    inputP2.style.color = "white";
-    document.body.appendChild(inputP2);
-    if (this.savedTextP2 != undefined){
-      inputP2.innerText = this.savedTextP2;
+      }
+      else{
+      input.innerText = this.savedTextP2;
+      }
     }
 
-const submitButton = this.add.text(300, 300, 'Submit', {
-  fontSize: '48px',
-  fontFamily: 'Arial',
-  color: '#ffffff',
-  backgroundColor: '#000000',
-  padding: { left: 10, right: 10, top: 5, bottom: 5 },
-});
-submitButton.setVisible(false);
-submitButton.setX(200)
-submitButton.setY(350)
-
-    const p1DoneButton = this.add.text(70, 300, 'Ready?', {
+    const p1DoneButton = this.add.text(100, 350, 'Ready?', {
       fontSize: '32px',
       color: 'white',
       backgroundColor: '#00000',
@@ -177,80 +182,23 @@ submitButton.setY(350)
           invalidErrorMessage.setVisible(false);
           uniqueErrorMessage.setVisible(false);
           moveAtkErrorMessage.setVisible(false);
-          this.saveInputP1();
-          if(this.player1Ready && this.player2Ready){
-            submitButton.setVisible(true);
-            submitButton.setInteractive({useHandCursor: true});
-          }
+          this.saveInput();
         }
     });
 
-    const p2DoneButton = this.add.text(380, 300, 'Ready?', {
-      fontSize: '32px',
-      color: '#ffffff',
-      backgroundColor: '#00000',
-      padding: { left: 10, right: 10, top: 5, bottom: 5 },
-    });
-    p2DoneButton.setInteractive({ useHandCursor: true });
-    
-    if(p1DoneButton.setInteractive({useHandCursor: true}) && p2DoneButton.setInteractive({ useHandCursor: true })){
-      submitButton.setInteractive({ useHandCursor: true });
-    }
-    p2DoneButton.on('pointerdown', () => {
-      const inputElement2 = document.getElementById(
-      'myText2'
-      ) as HTMLInputElement;
 
-      const submitted_array = this.formatRequest(inputElement2.value);
-
-      //there is an invalid command
-      if (submitted_array.find(element => element === 'random')){
-        uniqueErrorMessage.setVisible(false);
-        moveAtkErrorMessage.setVisible(false);
-        invalidErrorMessage.setVisible(true);
-      }
-      //you dont have one move and one attack
-      else if (!submitted_array.some(this.checkForAttacks) || !submitted_array.some(this.checkForMoves)){
-        console.log("moves", submitted_array.some(this.checkForMoves))
-        console.log("attacks", submitted_array.some(this.checkForAttacks))
-
-        uniqueErrorMessage.setVisible(false);
-        invalidErrorMessage.setVisible(false);
-        moveAtkErrorMessage.setVisible(true);
-
-      }
-      //you don't have at least 3 unique moves 
-      else if(Array.from(new Set(submitted_array)).length < 3){
-        invalidErrorMessage.setVisible(false);
-        moveAtkErrorMessage.setVisible(false);
-        uniqueErrorMessage.setVisible(true);
-      }
-      else{
-        invalidErrorMessage.setVisible(false);
-        uniqueErrorMessage.setVisible(false);
-        moveAtkErrorMessage.setVisible(false);
-
-        this.saveInputP2();
-        if(this.player1Ready && this.player2Ready){
-        submitButton.setVisible(true);
-        submitButton.setInteractive({useHandCursor: true});
-        }
-      }
-    });
-    //Button finally appears goshdanit
-    console.log(this.player1Ready && this.player2Ready)
-    
-    const invalidErrorMessage = this.add.text(10, 500, 'Failed to save code. \n Make sure you have spelled all the commands correctly\nand that your list of commands is seperated by commas', {
+        
+    const invalidErrorMessage = this.add.text(10, 535, 'Failed to save code. \n Make sure you have spelled all the commands correctly\nand that your list of commands is seperated by commas', {
       fontSize: '20px',
       color: '#ff0000',
       backgroundColor: '#00000',
     });
-    const moveAtkErrorMessage = this.add.text(10, 500, 'Failed to save code. \nYou need to have at least 1 move command (walk_forward, jump, etc)\n and one attack command (punch, roundhosue, etc.)', {
+    const moveAtkErrorMessage = this.add.text(10, 525, 'Failed to save code. \nYou need to have at least 1 move command (walk_forward, jump, etc)\n and one attack command (punch, roundhosue, etc.)', {
       fontSize: '20px',
       color: '#ff0000',
       backgroundColor: '#00000',
     });
-    const uniqueErrorMessage = this.add.text(10, 500, 'Failed to save code. \nYou need to have at least 3 unique commands', {
+    const uniqueErrorMessage = this.add.text(10, 525, 'Failed to save code. \nYou need to have at least 3 unique commands', {
       fontSize: '20px',
       color: '#ff0000',
       backgroundColor: '#00000',
@@ -259,12 +207,6 @@ submitButton.setY(350)
     invalidErrorMessage.setVisible(false);
     uniqueErrorMessage.setVisible(false);
     moveAtkErrorMessage.setVisible(false);
-
-    submitButton.on('pointerdown', () => {
-      this.player2Ready = false;
-      this.player1Ready = false;
-      this.startGame();
-    });
 
     instructionsButton.setOrigin(0.2, -0.5);
     instructionsButton.setX(530)
@@ -282,16 +224,18 @@ submitButton.setY(350)
       const inputElement1 = document.getElementById(
         'myText1'
       ) as HTMLInputElement;
-      const inputElement2 = document.getElementById(
-        'myText2'
-      ) as HTMLInputElement;
-
-      inputElement1.remove();
-      inputElement2.remove();
-      
+      inputElement1.remove();      
       this.scene.start('GamemodeScene');    
     })
 
+  }
+  update(time: number, delta: number): void {
+    if (this.player1Ready){
+      this.player_text?.setText("Player 2");
+    }
+    if (this.player1Ready && this.player2Ready){
+      this.startGame();
+    }
   }
   checkForMoves(command: string){
     const valid_moves = ["walk_forward", "walk_back", "jump_forward", "jump_back", "jump", "roll_forward", "roll_back"] 
@@ -305,62 +249,58 @@ submitButton.setY(350)
     const inputElement1 = document.getElementById(
       'myText1'
     ) as HTMLInputElement;
-    const inputElement2 = document.getElementById(
-      'myText2'
-    ) as HTMLInputElement;
 
     //incase one of the players submitted
     if (inputElement1 != null){
-      this.savedTextP1 = inputElement1.value;
+      if (!this.player1Ready){
+        console.log(inputElement1.value)
+        this.savedTextP1 = inputElement1.value;
+      }
+      else{
+        this.savedTextP1 = inputElement1.value;
+        this.savedTextP2 = inputElement1.value;
+      }      
       inputElement1.remove();
       inputElement1.value = '';
     }
-    if (inputElement2 != null){
-      this.savedTextP2 = inputElement2.value;
-      inputElement2.remove();
-      inputElement2.value = '';
-    }
-  
     this.scene.start('InstructionScene', {
        savedTextP1: this.savedTextP1,
        savedTextP2: this.savedTextP2,
+       player1Ready: this.player1Ready
      });
   }
 
   
 
-  saveInputP1() {
-    const inputElement1 = document.getElementById(
+  saveInput() {
+    const inputElement = document.getElementById(
       'myText1'
     ) as HTMLInputElement;
+    //save for p1
+    if (!this.player1Ready){
+      this.savedTextP1 = inputElement.value;
 
-    this.savedTextP1 = inputElement1.value;
-
-    inputElement1.remove();
-
-    inputElement1.value = '';
-  
-    this.p1_responseText = this.formatRequest(this.savedTextP1);
+      inputElement.value = '';
     
-    this.player1Ready = true;
+      this.p1_responseText = this.formatRequest(this.savedTextP1);
+      
+      this.player1Ready = true;
 
-  }
+      console.log(this.savedTextP1);
+    }
+    //save for p2
+    else{
+      this.savedTextP2 = inputElement.value;
 
-  saveInputP2() {
-    const inputElement2 = document.getElementById(
-      'myText2'
-    ) as HTMLInputElement;
+      inputElement.remove();
 
-    this.savedTextP2 = inputElement2.value;
+      inputElement.value = '';
 
-    inputElement2.remove();
+      this.p2_responseText = this.formatRequest(this.savedTextP2);
 
-    inputElement2.value = '';
-
-    this.p2_responseText = this.formatRequest(this.savedTextP2);
-
-    this.player2Ready = true;
-
+      this.player2Ready = true;
+      console.log("p2", this.savedTextP2);
+    }
   }
 
   startGame() {

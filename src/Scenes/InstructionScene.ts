@@ -3,6 +3,7 @@ import Phaser from "phaser";
 export default class InstructionScene extends Phaser.Scene{
     private savedTextP1?: string;
     private savedTextP2?: string;
+    private player1Ready?: boolean;
 
     constructor(){
         super({ key: 'InstructionScene' });
@@ -11,9 +12,11 @@ export default class InstructionScene extends Phaser.Scene{
     init(data: {
       savedTextP1: string;
       savedTextP2: string;
+      player1Ready: boolean;
     }) {
       this.savedTextP1 = data.savedTextP1;
       this.savedTextP2 = data.savedTextP2;
+      this.player1Ready = data.player1Ready;
     }
     //Setting up instructions
     create(){
@@ -101,6 +104,7 @@ export default class InstructionScene extends Phaser.Scene{
         this.scene.start('InputScene', {
           savedTextP1: this.savedTextP1,
           savedTextP2: this.savedTextP2,
+          player1Ready: this.player1Ready
         });
     })
 
@@ -122,6 +126,7 @@ export default class InstructionScene extends Phaser.Scene{
       this.scene.start("DemoScene", {
         savedTextP1: this.savedTextP1,
         savedTextP2: this.savedTextP2,
+        player1Ready: this.player1Ready
       })
     })
   }

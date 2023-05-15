@@ -11,14 +11,17 @@ export default class DemoScene extends Phaser.Scene{
 
     private savedTextP1: string;
     private savedTextP2: string;
+    private player1Ready?: boolean;
     private player2?: Player;
     
     init(data: {
       savedTextP1: string;
       savedTextP2: string;
+      player1Ready: boolean;
     }) {
       this.savedTextP1 = data.savedTextP1;
       this.savedTextP2 = data.savedTextP2;
+      this.player1Ready = data.player1Ready;
     }
     create(){
         const titlescreen = this.add.sprite(400, 330, 'titlescreen');
@@ -297,6 +300,7 @@ export default class DemoScene extends Phaser.Scene{
             this.scene.start('InputScene', {
             savedTextP1: this.savedTextP1,
             savedTextP2: this.savedTextP2,
+            player1Ready: this.player1Ready
         });
         })
         this.animationHandler();
