@@ -261,7 +261,6 @@ submitButton.setY(350)
     moveAtkErrorMessage.setVisible(false);
 
     submitButton.on('pointerdown', () => {
-      console.log("submit button clicked");
       this.startGame();
     });
 
