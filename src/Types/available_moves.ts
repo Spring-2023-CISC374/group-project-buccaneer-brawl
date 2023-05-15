@@ -1,0 +1,1 @@
+export default ["wait", "walk_forward", "walk_back", "jump", "jump_forward", "jump_back", "kick", "punch", "hook", "uppercut", "crhook", "roundhouse", "dodge", "roll_forward", "roll_back", "rest", "dashkick", "fire_cannon", "rising_uppercut"]

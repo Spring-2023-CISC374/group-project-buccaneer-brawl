@@ -1,4 +1,9 @@
-[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-c66648af7eb3fe8bc4f294546bfd86ef473780cde1dea487d3c4ff354943c9ae.svg)](https://classroom.github.com/online_ide?assignment_repo_id=10536616&assignment_repo_type=AssignmentRepo)
-# group-game-project
+# Buccaneer Brawl
 
-This assignment is where you will submit your code for your MVP as well as the rest of the versions of your educational game.
+<p>A game which implements the how to teach students algorithms and debugging.</p>
+<p> This game, a one to two player game will then allow the user to write in a list of moves (seperated by commas) in a text.</p>
+<p>Once the player is ready with the moves, you can hit start to run the game</p>
+<p>Sit back watch and enjoy</p>
+
+<p>A game created by Christopher Bennett, Maxwell Wang, Izah'e East, Robert Perez and Tavon Gage</p>
+<p>Shoot an issue if there is any problems with the game</p>
