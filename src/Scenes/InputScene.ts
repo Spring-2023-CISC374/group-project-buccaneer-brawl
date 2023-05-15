@@ -261,8 +261,7 @@ submitButton.setY(350)
     moveAtkErrorMessage.setVisible(false);
 
     submitButton.on('pointerdown', () => {
-      this.player2Ready = false;
-      this.player1Ready = false;
+      console.log("submit button clicked");
       this.startGame();
     });
 
@@ -365,6 +364,8 @@ submitButton.setY(350)
 
   startGame() {
     if(this.player1Ready && this.player2Ready) {
+      this.player2Ready = false;
+      this.player1Ready = false;
       this.scene.start('FightScene', {
         savedTextP1: this.savedTextP1,
         savedTextP2: this.savedTextP2,

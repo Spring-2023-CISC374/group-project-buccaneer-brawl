@@ -164,13 +164,25 @@ export default class FightScene extends Phaser.Scene {
     this.roundTimer = 49;
     this.roundTimerdelta = 0;
 
-    this.p1_curMoveText = this.add.text(16, 16, `Player 1 HP:`, {
+    this.add.text(16, 16, `RedBeard:`, {
       fontSize: "30px",
       color: "#ffffff",
       backgroundColor: "#a83232",
     });
 
-    this.p2_curMoveText = this.add.text(510, 16, `Player 2 HP:`, {
+    this.add.text(510, 16, `BluBeard:`, {
+      fontSize: "30px",
+      color: "#ffffff",
+      backgroundColor: "#3264a8",
+    });
+
+    this.p1_curMoveText = this.add.text(16, 16, `Player 1 Move`, {
+      fontSize: "30px",
+      color: "#ffffff",
+      backgroundColor: "#a83232",
+    });
+
+    this.p2_curMoveText = this.add.text(510, 16, `Player 2 Move`, {
       fontSize: "30px",
       color: "#ffffff",
       backgroundColor: "#3264a8",
