@@ -239,21 +239,48 @@ export default class DemoScene extends Phaser.Scene{
         this.player2?.sprite.anims.play("roundhouse")
         this.animationHandler();
        })
-    //    const dodge_btn = this.add.text(width / 4, height / 2, available_moves[12].toUpperCase(), {
-    //     fontSize: '21px',
-    //     fontFamily: 'Arial',
-    //     color: '#ffffff',
-    //     backgroundColor: '#000000',
-    //     padding: {
-    //       x: 16,
-    //       y: 8,
-    //     }
-    //  })
-    //   dodge_btn.setScale(1, 1).setX(12).setY(575).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
-    //   this.player2?.sprite.anims.play("dodge")
-    //   this.animationHandler();
-    //  })
-
+       const dash_kick_button = this.add.text(width / 4, height / 2, available_moves[16].toUpperCase() + " dmg: 11", {
+        fontSize: '21px',
+          fontFamily: 'Arial',
+          color: '#ffffff',
+          backgroundColor: '#000000',
+          padding: {
+            x: 16,
+            y: 8,
+          }
+       })
+       dash_kick_button.setScale(1, 1).setX(12).setY(450).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
+        this.player2?.sprite.anims.play("dashkick")
+        this.animationHandler();
+       })
+       const rising_uppercut_btn = this.add.text(width / 4, height / 2, available_moves[18].toUpperCase() + " dmg: 22", {
+        fontSize: '21px',
+          fontFamily: 'Arial',
+          color: '#ffffff',
+          backgroundColor: '#000000',
+          padding: {
+            x: 16,
+            y: 8,
+          }
+       })
+       rising_uppercut_btn.setScale(1, 1).setX(12).setY(485).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
+        this.player2?.sprite.anims.play("rising_uppercut")
+        this.animationHandler();
+       })
+       const fire_cannon_btn = this.add.text(width / 4, height / 2, available_moves[17].toUpperCase() + " dmg: 10", {
+        fontSize: '21px',
+          fontFamily: 'Arial',
+          color: '#ffffff',
+          backgroundColor: '#000000',
+          padding: {
+            x: 16,
+            y: 8,
+          }
+       })
+       fire_cannon_btn.setScale(1, 1).setX(12).setY(520).setInteractive({useHandCursor: true}).on("pointerdown", ()=>{
+        this.player2?.sprite.anims.play("fire_cannon")
+        this.animationHandler();
+       })
         const backToStartButton = this.add.text(width / 4, height / 2, 'BACK', {
             fontSize: '32px',
             fontFamily: 'Arial',
