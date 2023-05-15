@@ -185,10 +185,9 @@ export default class InputScene extends Phaser.Scene {
           this.saveInput();
         }
     });
-
-
-        
+    
     const invalidErrorMessage = this.add.text(10, 535, 'Failed to save code. \n Make sure you have spelled all the commands correctly\nand that your list of commands is seperated by commas', {
+
       fontSize: '20px',
       color: '#ff0000',
       backgroundColor: '#00000',
