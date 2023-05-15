@@ -153,6 +153,7 @@ export default class FightScene extends Phaser.Scene {
     this.timerText = this.add.text(316, 16, "Time: 49", {
       fontSize: "30px",
       color: "#000",
+      backgroundColor: "#ede661"
     });
 
     this.player1.sprite.anims.play("turn", true);
@@ -251,7 +252,6 @@ export default class FightScene extends Phaser.Scene {
     this.displayMoveText();
     this.switchPlayerSides();
 
-
     if (this.player1 && this.player2) {
       if (
         this.player1.action === "attack/fire_cannon" &&
@@ -283,7 +283,6 @@ export default class FightScene extends Phaser.Scene {
       this.player2.performNextAction(delta);
     }
 
-
     if (this.player1) {
       this.player1.fallCounter += delta;
     }
@@ -292,7 +291,7 @@ export default class FightScene extends Phaser.Scene {
       this.player2.fallCounter += delta;
     }
 
-   this.checkHitstunLanding();
+    this.checkHitstunLanding();
 
     //Continously see if player1 is colliding with player2
     if (this.player1 && this.player2) {
@@ -306,11 +305,44 @@ export default class FightScene extends Phaser.Scene {
     }
 
     this.decrementRoundTimer(delta);
+
+    this.restRecoverHealth();
+  }
+
+  private restRecoverHealth() {
+    if (this.player1 && this.player2) {
+      if (
+        this.player1.action === "rest" &&
+        this.player1.health < this.player1.maxHealth
+      ) {
+        const rng = Phaser.Math.Between(0, 3);
+
+        if (rng === 0) {
+          this.player1.health++;
+          this.p1_healthBar?.animate(
+            this.player1.health / this.player1.maxHealth
+          );
+        }
+      }
+      if (
+        this.player2.action === "rest" &&
+        this.player2.health < this.player2.maxHealth
+      ) {
+        const rng = Phaser.Math.Between(0, 3);
+
+        if (rng === 0) {
+          this.player2.health++;
+          this.p2_healthBar?.animate(
+            this.player2.health / this.player2.maxHealth
+          );
+        }
+      }
+    }
   }
 
   private displayMoveText() {
-    if(this.p1_responseText === undefined) return;
-    if(this.p2_responseText === undefined) return;
+    if (this.p1_responseText === undefined) return;
+    if (this.p2_responseText === undefined) return;
 
     const concatenatedTextP1 =
       this.p1_responseText !== undefined
@@ -342,7 +374,6 @@ export default class FightScene extends Phaser.Scene {
   }
 
   private switchPlayerSides() {
-
     if (this.player1 && this.player2) {
       if (this.player1.sprite.body.x < this.player2.sprite.body.x) {
         this.player1.sprite.flipX = false;
@@ -406,7 +437,6 @@ export default class FightScene extends Phaser.Scene {
         }
       }
     }
-
   }
 
   private attackRanges(player: Player, leftside: boolean) {
@@ -491,9 +521,7 @@ export default class FightScene extends Phaser.Scene {
         }
       }
     }
-
   }
-
 
   //Creates a health bar at x,y with a lenght of fullWidth. The created health bar will be treated as player1/player2's health bar when p1 is true/false respectively
   private makeHealthBar(x: number, y: number, fullWidth: number, p1: boolean) {
@@ -537,10 +565,13 @@ export default class FightScene extends Phaser.Scene {
     star.disableBody(true, true);
 
     if (this.player1 && this.player2) {
-      if (this.player1.sprite === player) {
-        this.player1.coins++;
-      } else {
-        this.player2.coins++;
+      if (this.player1.sprite === player && this.player1.health < this.player1.maxHealth - 5) {
+        this.player1.health += 1;
+        this.p1_healthBar?.animate(this.player1.health / this.player1.maxHealth);
+
+      } else if (this.player2.sprite === player && this.player2.health < this.player2.maxHealth - 1) {
+        this.player2.health += 1;
+        this.p2_healthBar?.animate(this.player2.health / this.player2.maxHealth);
       }
     }
   }
@@ -555,6 +586,7 @@ export default class FightScene extends Phaser.Scene {
       if (this.player1.sprite === player) {
         console.log("cannon hit");
         this.player1.health -= 10;
+        this.player1.sprite.setTint(0xff0000);
         if (this.player1.sprite.x < this.player2.sprite.x) {
           this.player1.sprite.setVelocityX(200);
         } else {
@@ -564,8 +596,15 @@ export default class FightScene extends Phaser.Scene {
         this.p1_healthBar?.animate(
           this.player1.health / this.player1.maxHealth
         );
+
+        setTimeout(() => {
+          if (this.player1) {
+            this.player1.sprite.setTint(0x000000);
+          }
+        }, 300);
       } else {
         this.player2.health -= 10;
+        this.player2.sprite.setTint(0x0fffcb);
         if (this.player2.sprite.x < this.player1.sprite.x) {
           this.player2.sprite.setVelocityX(200);
         } else {
@@ -575,6 +614,12 @@ export default class FightScene extends Phaser.Scene {
         this.p2_healthBar?.animate(
           this.player2.health / this.player2.maxHealth
         );
+
+        setTimeout(() => {
+          if (this.player2) {
+            this.player2.sprite.setTint(0x0096ff);
+          }
+        }, 300);
       }
       cannonball.destroy(true);
     }
@@ -587,14 +632,24 @@ export default class FightScene extends Phaser.Scene {
     const userSprite = user as Phaser.Physics.Arcade.Sprite;
     const targetSprite = target as Phaser.Physics.Arcade.Sprite;
 
-    // let player1priority = this.player1?.attackType === "punch" && this.player2?.attackType === "hook"
+    const player1priority =
+      (this.player1?.attackType === "punch" &&
+        this.player2?.attackType === "hook") ||
+      (this.player1?.attackType === "kick" &&
+        this.player2?.attackType === "punch") ||
+      (this.player1?.attackType === "hook" &&
+        this.player2?.attackType === "kick")
+   
+    const priorityTie = this.player1?.action === this.player2?.action;
+    //const player2priority = (this.player2?.attackType === "punch" && this.player1?.attackType === "hook") || (this.player2?.attackType === "kick" && this.player1?.attackType === "punch") || (this.player2?.attackType === "hook" && this.player1?.attackType === "kick")
 
     if (this.player1 && this.player2) {
       if (
         this.player1.action.startsWith("attack") &&
         this.player1.cooldown &&
         !this.player1.hitstun &&
-        !this.player2.invulnerable
+        !this.player2.invulnerable &&
+        (player1priority || priorityTie)
       ) {
         this.player1.spamQueue.push(this.player1.action.split("/")[1]);
         if (this.player1.spamQueue.length > 10) this.player1.spamQueue.shift();
@@ -684,7 +739,7 @@ export default class FightScene extends Phaser.Scene {
         this.player2.action.startsWith("attack") &&
         this.player2.cooldown &&
         !this.player2.hitstun &&
-        !this.player1.invulnerable
+        !this.player1.invulnerable && (!player1priority || priorityTie)
       ) {
         this.player2.spamQueue.push(this.player2.action.split("/")[1]);
         if (this.player2.spamQueue.length > 10) this.player2.spamQueue.shift();
@@ -826,7 +881,7 @@ export default class FightScene extends Phaser.Scene {
       if (this.player1 && this.player2) {
         if (this.player1?.health < this.player2?.health) winner = "BluBeard";
 
-        if(this.player1?.health === this.player2?.health) winner = "TIE"
+        if (this.player1?.health === this.player2?.health) winner = "TIE";
       }
 
       this.scene.start("ResultScene", {

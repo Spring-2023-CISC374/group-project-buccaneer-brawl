@@ -1,12 +1,12 @@
-import Phaser, { Physics } from 'phaser';
-import Player from '../Classes/player';
-import RegisterInput from '../Engine/registerInput';
+import Phaser, { Physics } from "phaser";
+import Player from "../Classes/player";
+import RegisterInput from "../Engine/registerInput";
 import HealthBar from "../Classes/HealthBar";
-import available_moves from '../Types/available_moves';
+import available_moves from "../Types/available_moves";
 
 export default class SPFightSceneLevel1 extends Phaser.Scene {
   constructor() {
-    super({ key: 'SPFightSceneLevel1' });
+    super({ key: "SPFightSceneLevel1" });
   }
   private aiMoves?: string[];
   private levels?: number;
@@ -26,7 +26,11 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
   private roundTimerdelta = 0;
   private timeNumber?: number;
   private timerText?: Phaser.GameObjects.Text;
+  private p1_curMoveText?: Phaser.GameObjects.Text;
 
+  private p1_movesText?: Phaser.GameObjects.Text;
+
+  private P1_keyIndex = 0;
 
   init(data: {
     p1_responseText: string[] | undefined;
@@ -40,8 +44,8 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
 
   create() {
     console.log("level: ", this.levels);
-    if(this.levels !== undefined) this.levels++;
-    if(this.levels !== undefined && this.levels > 3) this.levels = 3;
+    if (this.levels !== undefined) this.levels++;
+    if (this.levels !== undefined && this.levels > 3) this.levels = 3;
     console.log("level: ", this.levels);
     this.add.image(400, 300, "pirateship").setScale(2);
 
@@ -66,19 +70,17 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
         .setScale(2)
     );
 
-    if(this.levels === undefined) this.levels = 1;
-    const bossScale = this.levels <= 1 ? 1: this.levels * 0.8;
-      this.player2 = new Player(
-        this.physics.add
-          .sprite(700, 350, "dude")
-          .setSize(54, 108)
-          .setOffset(70, 12)
-          .setScale(2 * bossScale),
-        100 * this.levels,
-        0x0096ff
-      );
-    
-
+    if (this.levels === undefined) this.levels = 1;
+    const bossScale = this.levels <= 1 ? 1 : this.levels * 0.8;
+    this.player2 = new Player(
+      this.physics.add
+        .sprite(700, 350, "dude")
+        .setSize(54, 108)
+        .setOffset(70, 12)
+        .setScale(2 * bossScale),
+      100 * this.levels,
+      0x0096ff
+    );
 
     this.makeHealthBar(14, 60, 300, true);
     this.makeHealthBar(450, 60, 300, false);
@@ -148,19 +150,28 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
       this
     );
 
-    this.add.text(16, 16, 'Player 1 HP:', {
-      fontSize: '30px',
-      color: '#000',
-    });
-    this.add.text(510, 16, 'Player 2 HP:', {
-      fontSize: '30px',
-      color: '#000',
+    this.add.text(16, 16, `RedBeard:`, {
+      fontSize: "30px",
+      color: "#ffffff",
+      backgroundColor: "#a83232",
     });
 
+    this.add.text(510, 16, `BluBeard:`, {
+      fontSize: "30px",
+      color: "#ffffff",
+      backgroundColor: "#3264a8",
+    });
 
-    this.timerText = this.add.text(316, 16, "Time: 99", {
+    this.p1_curMoveText = this.add.text(16, 16, `Player 1 Move`, {
+      fontSize: "30px",
+      color: "#ffffff",
+      backgroundColor: "#a83232",
+    });
+
+    this.timerText = this.add.text(316, 16, "Time: 49", {
       fontSize: "30px",
       color: "#000",
+      backgroundColor: "#ede661",
     });
 
     this.player1.sprite.anims.play("turn", true);
@@ -172,12 +183,24 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
     this.roundTimer = 99;
     this.roundTimerdelta = 0;
 
-    this.aiMoves = []
+    this.aiMoves = [];
     const rng = Phaser.Math.Between(3, 12);
-    for(let i = 0; i < rng; i++) {
+    for (let i = 0; i < rng; i++) {
       this.aiMoves.push(this.getRandomMove());
-    }  
+    }
 
+    const concatenatedTextP1 =
+      this.p1_responseText !== undefined
+        ? this.p1_responseText
+            .slice(this.P1_keyIndex, this.P1_keyIndex + 5)
+            .join("\n")
+        : "";
+
+    this.p1_movesText = this.add.text(16, 76, `${concatenatedTextP1}`, {
+      fontSize: "15px",
+      color: "#ffffff",
+      backgroundColor: "#a83232",
+    });
   }
 
   update(time: number, delta: number) {
@@ -192,34 +215,39 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
       this.p1_responseText = ["random"];
     }
 
+    if (this.registerOne !== undefined) {
+      this.P1_keyIndex = this.registerOne?.validInput(
+        this.p1_responseText,
+        delta,
+        this.player1,
+        this.player2
+      );
+    }
 
-    this.registerOne?.validInput(
-      this.p1_responseText,
-      delta,
-      this.player1,
-      this.player2
-    );
-
-    if(this.aiMoves !== undefined) {
+    if (this.aiMoves !== undefined) {
       this.registerTwo?.validInput(
         this.aiMoves,
         delta,
         this.player2,
         this.player1
       );
-
     }
 
-    
     if (this.player1 && this.player2) {
-      if(this.player1.action === "attack/fire_cannon" && this.player1.timer < 10 && !this.player2.invulnerable) {
-          this.fireCannon(this.player1, this.player2);         
-      } else if (this.player2.action === "attack/fire_cannon" && this.player2.timer < 10 && !this.player1.invulnerable) {
+      if (
+        this.player1.action === "attack/fire_cannon" &&
+        this.player1.timer < 10 &&
+        !this.player2.invulnerable
+      ) {
+        this.fireCannon(this.player1, this.player2);
+      } else if (
+        this.player2.action === "attack/fire_cannon" &&
+        this.player2.timer < 10 &&
+        !this.player1.invulnerable
+      ) {
         this.fireCannon(this.player2, this.player1);
       }
     }
-
-
 
     //Alter both player's traction and fall speed.
     this.player1?.setPlayerTraction();
@@ -234,30 +262,6 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
     }
     if (this.player2) {
       this.player2.performNextAction(delta);
-    }
-
-    if (this.player1 && this.player2) {
-      if(this.player1.action !== "fire_cannon") {
-        if (this.player1.sprite.body.x < this.player2.sprite.body.x) {
-          this.player1.sprite.flipX = false;
-          this.player2.sprite.flipX = true;
-  
-          this.player1.sprite.setOffset(0, 12);
-          this.player2.sprite.setOffset(70, 12);
-          this.attackRanges(this.player1, true);
-          this.attackRanges(this.player2, false);
-        } else {
-          this.player1.sprite.flipX = true;
-          this.player2.sprite.flipX = false;
-  
-          this.player1.sprite.setOffset(70, 12);
-          this.player2.sprite.setOffset(0, 12);
-          this.attackRanges(this.player1, false);
-          this.attackRanges(this.player2, true);
-        }
-
-      }
-
     }
 
     if (this.player1) {
@@ -323,86 +327,183 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
         this
       );
     }
-
+    this.displayMoveText();
+    this.switchPlayerSides();
     this.decrementRoundTimer(delta);
+    this.restRecoverHealth();
   }
 
-  
   private getRandomMove(): string {
     const index = Math.floor(Math.random() * available_moves.length);
     return available_moves[index];
+  }
+
+  private restRecoverHealth() {
+    if (this.player1 && this.player2) {
+      if (
+        this.player1.action === "rest" &&
+        this.player1.health < this.player1.maxHealth
+      ) {
+        const rng = Phaser.Math.Between(0, 3);
+
+        if (rng === 0) {
+          this.player1.health++;
+          this.p1_healthBar?.animate(
+            this.player1.health / this.player1.maxHealth
+          );
+        }
+      }
+      if (
+        this.player2.action === "rest" &&
+        this.player2.health < this.player2.maxHealth
+      ) {
+        const rng = Phaser.Math.Between(0, 3);
+
+        if (rng === 0) {
+          this.player2.health++;
+          this.p2_healthBar?.animate(
+            this.player2.health / this.player2.maxHealth
+          );
+        }
+      }
+    }
+  }
+
+  private displayMoveText() {
+    if (this.p1_responseText === undefined) return;
+
+    const concatenatedTextP1 =
+      this.p1_responseText !== undefined
+        ? this.p1_responseText
+            .slice(this.P1_keyIndex, this.P1_keyIndex + 5)
+            .join("\n")
+        : "";
+
+    const p1IndexShown =
+      this.P1_keyIndex - 1 <= -1
+        ? this.p1_responseText.length - 1
+        : this.P1_keyIndex - 1;
+
+    this.p1_curMoveText?.setText(`${this.p1_responseText[p1IndexShown]}`);
+
+    this.p1_movesText?.setText(`${concatenatedTextP1}`);
+  }
+
+  private switchPlayerSides() {
+    if (this.player1 && this.player2) {
+      if (this.player1.sprite.body.x < this.player2.sprite.body.x) {
+        this.player1.sprite.flipX = false;
+        this.player2.sprite.flipX = true;
+
+        this.player1.sprite.setOffset(0, 12);
+        this.player2.sprite.setOffset(70, 12);
+        this.attackRanges(this.player1, true);
+        this.attackRanges(this.player2, false);
+
+        if (
+          this.p1_curMoveText !== undefined &&
+          this.p1_movesText !== undefined
+        ) {
+          this.p1_curMoveText.x = this.player1.sprite.x - 100;
+          this.p1_curMoveText.y = this.player1.sprite.y - 240;
+
+          this.p1_movesText.x = this.player1.sprite.x - 100;
+          this.p1_movesText.y = this.player1.sprite.y - 200;
+        }
+
+      } else {
+        this.player1.sprite.flipX = true;
+        this.player2.sprite.flipX = false;
+
+        this.player1.sprite.setOffset(70, 12);
+        this.player2.sprite.setOffset(0, 12);
+        this.attackRanges(this.player1, false);
+        this.attackRanges(this.player2, true);
+
+        if (
+          this.p1_curMoveText !== undefined &&
+          this.p1_movesText !== undefined
+        ) {
+          this.p1_curMoveText.x = this.player1.sprite.x;
+          this.p1_curMoveText.y = this.player1.sprite.y - 240;
+
+          this.p1_movesText.x = this.player1.sprite.x;
+          this.p1_movesText.y = this.player1.sprite.y - 200;
+        }
+      }
+    }
   }
 
   private attackRanges(player: Player, leftside: boolean) {
     const offset = leftside ? 0 : 80;
     const rangeMul = leftside ? 1 : -1;
 
-    const moveType = player.action.split('/')[1];
+    const moveType = player.action.split("/")[1];
 
     if (!player.hitstun) {
       if (
-        moveType === 'crhook' &&
+        moveType === "crhook" &&
         player.timer > 200 &&
         moveType !== undefined
       ) {
-        player.action = 'attack/' + moveType;
+        player.action = "attack/" + moveType;
       } else if (
-        moveType === 'roundhouse' &&
+        moveType === "roundhouse" &&
         player.timer > 400 &&
         moveType !== undefined
       ) {
-        player.action = 'attack/' + moveType;
+        player.action = "attack/" + moveType;
       } else if (
-        moveType === 'uppercut' &&
+        moveType === "uppercut" &&
         player.timer > 50 &&
         moveType !== undefined
       ) {
-        player.action = 'attack/' + moveType;
+        player.action = "attack/" + moveType;
       }
 
-      if (moveType === 'crhook' && player.timer > 200) {
+      if (moveType === "crhook" && player.timer > 200) {
         player.sprite.setOffset(30 * rangeMul + offset, 12);
-      } else if (moveType === 'roundhouse' && player.timer > 400) {
+      } else if (moveType === "roundhouse" && player.timer > 400) {
         player.sprite.setOffset(30 * rangeMul + offset, 12);
-      } else if (moveType !== 'crhook' && moveType !== 'roundhouse') {
+      } else if (moveType !== "crhook" && moveType !== "roundhouse") {
         player.sprite.setOffset(30 * rangeMul + offset, 12);
       }
     }
   }
 
-    //Creates a health bar at x,y with a lenght of fullWidth. The created health bar will be treated as player1/player2's health bar when p1 is true/false respectively
-    private makeHealthBar(x: number, y: number, fullWidth: number, p1: boolean) {
-      // background shadow
-      const leftShadowCap = this.add
-        .image(x, y, "left-cap-shadow")
-        .setOrigin(0, 0.5);
-  
-      const middleShaddowCap = this.add
-        .image(leftShadowCap.x + leftShadowCap.width, y, "middle-shadow")
-        .setOrigin(0, 0.5);
-      middleShaddowCap.displayWidth = fullWidth;
-  
-      this.add
-        .image(
-          middleShaddowCap.x + middleShaddowCap.displayWidth,
-          y,
-          "right-cap-shadow"
-        )
-        .setOrigin(0, 0.5);
-      if (p1) {
-        this.p1_healthBar = new HealthBar(this, x, y, fullWidth)
-          .withLeftCap(this.add.image(0, 0, "left-cap-green"))
-          .withMiddle(this.add.image(0, 0, "middle-green"))
-          .withRightCap(this.add.image(0, 0, "right-cap-green"))
-          .layout();
-      } else {
-        this.p2_healthBar = new HealthBar(this, x, y, fullWidth)
-          .withLeftCap(this.add.image(0, 0, "left-cap-green"))
-          .withMiddle(this.add.image(0, 0, "middle-green"))
-          .withRightCap(this.add.image(0, 0, "right-cap-green"))
-          .layout();
-      }
+  //Creates a health bar at x,y with a lenght of fullWidth. The created health bar will be treated as player1/player2's health bar when p1 is true/false respectively
+  private makeHealthBar(x: number, y: number, fullWidth: number, p1: boolean) {
+    // background shadow
+    const leftShadowCap = this.add
+      .image(x, y, "left-cap-shadow")
+      .setOrigin(0, 0.5);
+
+    const middleShaddowCap = this.add
+      .image(leftShadowCap.x + leftShadowCap.width, y, "middle-shadow")
+      .setOrigin(0, 0.5);
+    middleShaddowCap.displayWidth = fullWidth;
+
+    this.add
+      .image(
+        middleShaddowCap.x + middleShaddowCap.displayWidth,
+        y,
+        "right-cap-shadow"
+      )
+      .setOrigin(0, 0.5);
+    if (p1) {
+      this.p1_healthBar = new HealthBar(this, x, y, fullWidth)
+        .withLeftCap(this.add.image(0, 0, "left-cap-green"))
+        .withMiddle(this.add.image(0, 0, "middle-green"))
+        .withRightCap(this.add.image(0, 0, "right-cap-green"))
+        .layout();
+    } else {
+      this.p2_healthBar = new HealthBar(this, x, y, fullWidth)
+        .withLeftCap(this.add.image(0, 0, "left-cap-green"))
+        .withMiddle(this.add.image(0, 0, "middle-green"))
+        .withRightCap(this.add.image(0, 0, "right-cap-green"))
+        .layout();
     }
+  }
 
   private handleCollectCoin(
     player: Phaser.GameObjects.GameObject,
@@ -426,26 +527,30 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
   ) {
     const cannonball = b as Phaser.Physics.Arcade.Image;
     cannonball.disableBody(true, true);
-    cannonball.setVelocity(0,0);
+    cannonball.setVelocity(0, 0);
     if (this.player1 && this.player2) {
       if (this.player1.sprite === player) {
-          this.player1.health -= 10;
-          if(this.player1.sprite.x < this.player2.sprite.x) {
-            this.player1.sprite.setVelocityX(200)
-          } else {
-            this.player1.sprite.setVelocityX(-300)
-          }
-          this.player1.sprite.setVelocityY(-380);
-          this.p1_healthBar?.animate(this.player1.health / this.player1.maxHealth);
+        this.player1.health -= 10;
+        if (this.player1.sprite.x < this.player2.sprite.x) {
+          this.player1.sprite.setVelocityX(200);
+        } else {
+          this.player1.sprite.setVelocityX(-300);
+        }
+        this.player1.sprite.setVelocityY(-380);
+        this.p1_healthBar?.animate(
+          this.player1.health / this.player1.maxHealth
+        );
       } else {
         this.player2.health -= 10;
-        if(this.player2.sprite.x < this.player1.sprite.x) {
-          this.player2.sprite.setVelocityX(200)
+        if (this.player2.sprite.x < this.player1.sprite.x) {
+          this.player2.sprite.setVelocityX(200);
         } else {
-          this.player2.sprite.setVelocityX(-300)
+          this.player2.sprite.setVelocityX(-300);
         }
         this.player2.sprite.setVelocityY(-380);
-        this.p2_healthBar?.animate(this.player2.health / this.player2.maxHealth);        
+        this.p2_healthBar?.animate(
+          this.player2.health / this.player2.maxHealth
+        );
       }
       cannonball.destroy(true);
     }
@@ -537,13 +642,13 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
           this.scene.start("SPResultScene", {
             who_won: "RedBeard",
             levels: this.levels,
-            savedTextP1: this.savedTextP1
+            savedTextP1: this.savedTextP1,
           });
         }
 
         this.player2.health -= this.player1.damage;
         //HP bar drops to percentage of max HP
- 
+
         this.p2_healthBar?.animate(
           this.player2.health / this.player2.maxHealth
         );
@@ -588,11 +693,11 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
           if (this.player1.health <= 0) {
             this.player1.health = 0;
             this.physics.pause();
-            if(this.levels !== undefined) this.levels--;
+            if (this.levels !== undefined) this.levels--;
             this.scene.start("SPResultScene", {
               who_won: "BluBeard",
               levels: this.levels,
-              savedTextP1: this.savedTextP1
+              savedTextP1: this.savedTextP1,
             });
           }
 
@@ -609,7 +714,6 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
             const child = c as Phaser.Physics.Arcade.Image;
             child.enableBody(true, child.x, 0, true, true);
           });
-  
         }
         this.player1.health -= this.player2.damage;
         //HP bar drops to percentage of max HP
@@ -628,11 +732,11 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
         if (this.player1.health <= 0) {
           this.player1.health = 0;
           this.physics.pause();
-          if(this.levels !== undefined) this.levels--;
+          if (this.levels !== undefined) this.levels--;
           this.scene.start("SPResultScene", {
             who_won: "BluBeard",
             levels: this.levels,
-            savedTextP1: this.savedTextP1
+            savedTextP1: this.savedTextP1,
           });
         }
 
@@ -655,24 +759,30 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
   }
 
   private fireCannon(user: Player, target: Player) {
-      //user.coins -= 20;
-      if (user.sprite.x < target.sprite.x) {
-        //fire to the left
-        const cannonball: Phaser.Physics.Arcade.Image =
-          this.cannonballs?.create(user.sprite.x, user.sprite.y + 20, "cannonball");
-          cannonball.setScale(2, 2);
-          cannonball.setCollideWorldBounds(true);
-          cannonball.setVelocityX(1000);
-          cannonball.setGravityY(10);
-      } else {
-        //fire to the right
-        const cannonball: Phaser.Physics.Arcade.Image =
-          this.cannonballs?.create(user.sprite.x, user.sprite.y + 20, "cannonball");
-        cannonball.setScale(2, 2);
-        cannonball.setCollideWorldBounds(true);
-        cannonball.setVelocityX(-1000);
-        cannonball.setGravityY(10);
-      }
+    //user.coins -= 20;
+    if (user.sprite.x < target.sprite.x) {
+      //fire to the left
+      const cannonball: Phaser.Physics.Arcade.Image = this.cannonballs?.create(
+        user.sprite.x,
+        user.sprite.y + 20,
+        "cannonball"
+      );
+      cannonball.setScale(2, 2);
+      cannonball.setCollideWorldBounds(true);
+      cannonball.setVelocityX(1000);
+      cannonball.setGravityY(10);
+    } else {
+      //fire to the right
+      const cannonball: Phaser.Physics.Arcade.Image = this.cannonballs?.create(
+        user.sprite.x,
+        user.sprite.y + 20,
+        "cannonball"
+      );
+      cannonball.setScale(2, 2);
+      cannonball.setCollideWorldBounds(true);
+      cannonball.setVelocityX(-1000);
+      cannonball.setGravityY(10);
+    }
   }
 
   decrementRoundTimer(delta: number) {
@@ -685,16 +795,16 @@ export default class SPFightSceneLevel1 extends Phaser.Scene {
     }
 
     if (this.roundTimer <= 0) {
-      let winner = 'RedBeard';
+      let winner = "RedBeard";
 
       if (this.player1 && this.player2) {
         if (this.player1?.health < this.player2?.health) {
-          winner = 'BluBeard';
-          if(this.levels !== undefined) this.levels--;
-        } 
+          winner = "BluBeard";
+          if (this.levels !== undefined) this.levels--;
+        }
       }
 
-      this.scene.start('SPResultScene', {
+      this.scene.start("SPResultScene", {
         who_won: winner,
         levels: this.levels,
         savedTextP1: this.savedTextP1,
