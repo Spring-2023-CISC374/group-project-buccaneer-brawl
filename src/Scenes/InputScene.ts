@@ -41,7 +41,7 @@ export default class InputScene extends Phaser.Scene {
     //this.cameras.main.setBackgroundColor('#ffffff');
     const { width, height } = this.scale;
     const titlescreen = this.add.sprite(400, 330, 'titlescreen');
-    var rectangle = this.add.rectangle(500, 310, 225, 460, 0x000000);
+    const rectangle = this.add.rectangle(500, 310, 225, 460, 0x000000);
     rectangle.setVisible(true);
 
     titlescreen.scaleX = 3.5;
@@ -63,19 +63,17 @@ export default class InputScene extends Phaser.Scene {
       backgroundColor: '#000000',
     });*/
     for (let i = 0, y = 85; i < available_moves.length; i++, y += 24 ){
-      let text = this.add.text(400, y, available_moves[i], {
+      const text = this.add.text(400, y, available_moves[i], {
         fontSize: '20px',
         color: '#ffffff',
         backgroundColor: '#000000',
       }).setInteractive({ useHandCursor: true });
       text.on('pointerdown', () => {
-        let inputElement;
-
-        inputElement = document.getElementById(
+        const inputElement = document.getElementById(
           'myText1'
         ) as HTMLInputElement;
         
-        let original_text = inputElement.value
+        const original_text = inputElement.value
         if (inputElement.value != ''){
           inputElement.value = original_text + `, ${available_moves[i]}`;
         }
